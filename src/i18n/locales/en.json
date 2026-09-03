@@ -1,0 +1,64 @@
+{
+  "brand": {
+    "name": "[Brand Name TBD]",
+    "tagline": "Arab Dota 2 Community Platform"
+  },
+  "nav": {
+    "home": "Home",
+    "coaches": "Coaches",
+    "learn": "Learn",
+    "matches": "Matches",
+    "scene": "Scene",
+    "league": "League",
+    "community": "Community",
+    "coaching": "Coaching",
+    "pricing": "Pricing",
+    "wrapped": "Wrapped"
+  },
+  "common": {
+    "comingSoon": "Coming soon",
+    "language": "Language"
+  },
+  "pages": {
+    "home": {
+      "title": "Home",
+      "description": "Hero section, stats bar, latest content, roster highlight."
+    },
+    "coaches": {
+      "title": "Coaches",
+      "description": "Roster page: Eixn, GH, Omar, Ammar (and future additions) — bio, résumé/results, session schedule, verified track record, and each coach's content library."
+    },
+    "learn": {
+      "title": "Learn",
+      "description": "Lesson library (filter by hero / position / rank / coach / language), draft tool, weakness detector."
+    },
+    "matches": {
+      "title": "Matches",
+      "description": "Live tournament viewer, Arabic co-casting during majors, community replay feed, submit-a-replay."
+    },
+    "scene": {
+      "title": "Scene",
+      "description": "MENA team profiles, rosters, match results/standings, regional news feed."
+    },
+    "league": {
+      "title": "League",
+      "description": "In-house scrims/league, squad finder, verified-member leaderboard — Pro tier."
+    },
+    "community": {
+      "title": "Community",
+      "description": "Telegram/Discord links, live chat, profiles, giveaways."
+    },
+    "coaching": {
+      "title": "Coaching",
+      "description": "1:1 marketplace, live group session schedule across all coaches."
+    },
+    "pricing": {
+      "title": "Pricing",
+      "description": "Tier comparison, payment methods."
+    },
+    "wrapped": {
+      "title": "Wrapped",
+      "description": "Seasonal personalized recap, publicly shareable page per member."
+    }
+  }
+}

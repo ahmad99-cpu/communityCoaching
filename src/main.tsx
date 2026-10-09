@@ -1,14 +1,19 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
-import "@/i18n";
+import { MotionConfig } from "framer-motion";
+import { MemberCountsProvider } from "@/lib/memberCounts";
 import "./index.css";
 import { App } from "./App";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <BrowserRouter>
-      <App />
+      <MotionConfig reducedMotion="user">
+        <MemberCountsProvider>
+          <App />
+        </MemberCountsProvider>
+      </MotionConfig>
     </BrowserRouter>
   </StrictMode>,
 );

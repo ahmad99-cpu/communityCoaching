@@ -1,6 +1,6 @@
 {
   "brand": {
-    "name": "[Brand Name TBD]",
+    "name": "Community Coaching",
     "tagline": "Arab Dota 2 Community Platform"
   },
   "nav": {
@@ -17,7 +17,82 @@
   },
   "common": {
     "comingSoon": "Coming soon",
-    "language": "Language"
+    "language": "Language",
+    "close": "Close"
+  },
+  "home": {
+    "hero": {
+      "eyebrow": "Bilingual · Arabic + English",
+      "quote": "You don't need more games. You need someone who's climbed this ladder before, telling you exactly what's costing you rank.",
+      "titleAccent": "Jad \"Eixn\" Hammoud",
+      "subtitle": "Tier 1 Dota 2 analyst who's coached 500+ players to a better rank — plus secondary group coaching from GH, Omar, and Ammar. A bilingual lesson library, live sessions, and a community built for Arabic and English speakers alike.",
+      "ctaPrimary": "Get started",
+      "ctaSecondary": "Meet Eixn",
+      "watchTrailer": "Watch the trailer"
+    },
+    "giveaway": {
+      "eyebrow": "This month's giveaway",
+      "title": "Win real Dota 2 skins",
+      "subtitle": "Member and Pro subscribers are automatically entered — new prizes every month.",
+      "cta": "Enter the giveaway",
+      "membersNote": "Included with Member+"
+    },
+    "stats": {
+      "membersLabel": "Community members",
+      "lessonsLabel": "Lessons in the library",
+      "hoursLabel": "Hours of live coaching",
+      "matchesLabel": "Matches analyzed"
+    },
+    "roster": {
+      "eyebrow": "The roster",
+      "title": "Learn from players who've actually competed.",
+      "subtitle": "Eixn is the platform's main coach, backed by secondary group coaching from GH, Omar, and Ammar — each bringing their own playstyle, role, and lessons to the table.",
+      "mainCoachBadge": "Main coach",
+      "eixnBio": "Tier 1 Dota 2 analyst who coached PSG Quest to a Bali Major Top 4, an EWC Top 6, and a TI qualification — and has personally coached 500+ players to a better rank.",
+      "viewProfile": "View profile",
+      "viewEixnProfile": "View Eixn's profile",
+      "viewAll": "See the full roster",
+      "secondaryLabel": "Secondary coaches",
+      "secondarySubtitle": "Supplementary group coaching sessions, hosted by named pro players.",
+      "roles": {
+        "eixn": "Main Coach",
+        "gh": "Secondary Coach · Support",
+        "omar": "Secondary Coach",
+        "ammar": "Secondary Coach"
+      }
+    },
+    "content": {
+      "eyebrow": "From the library",
+      "title": "Fresh lessons, every patch.",
+      "subtitle": "Hero guides, replay breakdowns, and macro theory — filterable by hero, position, rank, coach, and language.",
+      "viewAll": "Browse the library",
+      "lessons": {
+        "lesson1": {
+          "tag": "Position 5 · Beginner",
+          "title": "Support Vision: Ward Timings That Actually Matter"
+        },
+        "lesson2": {
+          "tag": "Position 2 · Intermediate",
+          "title": "Mid Lane Tempo: Punishing a Losing Matchup"
+        },
+        "lesson3": {
+          "tag": "Strategy · Advanced",
+          "title": "Drafting Around a Hard Initiator"
+        }
+      }
+    },
+    "cta": {
+      "title": "Ready to climb?",
+      "subtitle": "Join for the lesson library, live group coaching, and community giveaways — cancel any time.",
+      "button": "View pricing"
+    },
+    "footer": {
+      "tagline": "Bilingual Dota 2 coaching, by players who've been there.",
+      "platform": "Platform",
+      "community": "Community",
+      "workingTitle": "Community Coaching — working title. Brand name not yet finalized.",
+      "rights": "All rights reserved."
+    }
   },
   "pages": {
     "home": {

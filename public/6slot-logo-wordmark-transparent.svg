@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="45 45 590 146">
+<g fill="none" stroke-width="18" stroke-linejoin="miter" stroke-linecap="square">
+<path transform="translate(50,50)" d="M82 9H9V91H91V50H9" stroke="#E8B54A"/>
+<path transform="translate(170,50)" d="M91 9H9V50H91V91H9" stroke="#F5F5F5"/>
+<path transform="translate(290,50)" d="M9 9V91H91" stroke="#F5F5F5"/>
+<rect transform="translate(410,50)" x="9" y="9" width="82" height="82" stroke="#F5F5F5"/>
+<path transform="translate(530,50)" d="M9 9H91M50 9V91" stroke="#F5F5F5"/>
+</g>
+<g transform="translate(410,50)">
+<path d="M27 27C40 33 43 45 50 50S61 67 73 73" fill="none" stroke="#E8B54A" stroke-width="7" stroke-linecap="round"/>
+<rect x="25" y="65" width="11" height="11" fill="#F5F5F5"/>
+<rect x="64" y="24" width="11" height="11" fill="#F5F5F5"/>
+</g>
+<rect x="50" y="172" width="80" height="14" rx="4" fill="#E8B54A"/>
+<g fill="none" stroke="#34465F" stroke-width="3">
+<rect x="151.5" y="173.5" width="77" height="11" rx="4"/>
+<rect x="251.5" y="173.5" width="77" height="11" rx="4"/>
+<rect x="351.5" y="173.5" width="77" height="11" rx="4"/>
+<rect x="451.5" y="173.5" width="77" height="11" rx="4"/>
+<rect x="551.5" y="173.5" width="77" height="11" rx="4"/>
+</g>
+</svg>

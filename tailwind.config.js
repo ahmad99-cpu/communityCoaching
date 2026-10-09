@@ -1,41 +1,46 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  darkMode: "class",
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
       colors: {
-        // Radiant/Dire riff per SPEC.md §8 — placeholder until brand identity is locked (§10).
-        radiant: {
-          DEFAULT: "#5FBF4A",
-          light: "#8FE07E",
-          dark: "#3E8A2F",
+        // 6SLOT palette — navy + gold, matching eixn-dota.com (brief §1).
+        // Gold is reserved for CTAs, the founder counter, key headline words and the logo "6".
+        navy: {
+          DEFAULT: "#0E1724",
+          raised: "#16212F",
+          border: "#24324A",
         },
-        dire: {
-          DEFAULT: "#C0392B",
-          light: "#E06C5E",
-          dark: "#8E2A20",
+        gold: {
+          DEFAULT: "#E8B54A",
+          light: "#F2CB74",
+          dark: "#C4932F",
         },
-        ink: {
-          DEFAULT: "#0B0B0F",
-          raised: "#15151B",
-          border: "#26262E",
-        },
-        paper: {
-          DEFAULT: "#F5F5F7",
-          muted: "#A8A8B3",
+        text: {
+          DEFAULT: "#F5F5F5",
+          muted: "#8FA0B5",
         },
       },
       fontFamily: {
-        // Latin + Arabic pairing candidates per SPEC.md §8 — test both before locking in.
-        sans: ["Inter", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "sans-serif"],
-        arabic: ["Cairo", "IBM Plex Sans Arabic", "Tahoma", "sans-serif"],
+        // Same families as eixn-dota.com.
+        sans: ["Montserrat", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "sans-serif"],
+        display: ["Cinzel", "Georgia", "serif"],
       },
       borderRadius: {
         card: "14px",
         control: "10px",
       },
+      keyframes: {
+        "pulse-ring": {
+          "0%": { transform: "scale(0.85)", opacity: "0.6" },
+          "70%": { transform: "scale(1.6)", opacity: "0" },
+          "100%": { transform: "scale(1.6)", opacity: "0" },
+        },
+      },
+      animation: {
+        "pulse-ring": "pulse-ring 2.2s cubic-bezier(0.4,0,0.6,1) infinite",
+      },
     },
   },
-  plugins: [require("tailwindcss-rtl")],
+  plugins: [],
 };

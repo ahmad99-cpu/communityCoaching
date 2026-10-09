@@ -5,12 +5,14 @@ Dota 2 coaching platform), rebuilt as a **new, standalone brand** for the Arab/M
 community — bilingual **Arabic + English** from day one, not a single-language site with a
 translated layer bolted on. Brand new visual design, not a reskin of Dotaflix.
 
-**Eixn is part of this** — Eixn (Jad) is one coach on the platform's roster, not excluded from
-it. But the platform is bigger than any single coach: it's built around a **roster**, and the
-headline draw is **group coaching hosted by recognizable Dota 2 pro players** — named so far:
-**GH**, **Omar**, **Ammar**. That roster model, more than bilingual support alone, is what
-actually separates this from Dotaflix (which is built around one coach's personal methodology).
-See §3 (Coaches / Roster) and §4.6.
+**Eixn (Jad Hammoud) is the platform's main coach** — mirroring Dotaflix's own structure, where
+Astini is the primary coach/face of the platform and RdO is a secondary coach running
+supplementary sessions. Here, Eixn plays the Astini role: his existing, verified track record
+(Tier 1 analyst, competed at The International ×3 and Riyadh Masters, 11,000 MMR, coached PSG
+Quest to a Bali Major Top 4 / EWC Top 6 / TI qualification, 500+ players coached) is the
+platform's credibility engine and its homepage/brand face. **GH, Omar, and Ammar** play the RdO
+role — secondary coaches hosting supplementary group sessions, adding roster depth and their
+own audiences, but not co-equal billing with Eixn. See §3 (Coaches / Roster) and §4.6.
 
 Last updated: 2026-09-03.
 
@@ -40,11 +42,13 @@ Core pieces:
 
 Pricing reference: free tier (9 sample lessons) → ~R$40/mo mid tier → ~R$120/mo pro tier.
 
-**Key structural difference for us**: Dotaflix's whole brand is one coach's face and
-methodology. Ours is a multi-coach roster — closer to "a stable of pros" than "one
-personality's course." That changes the trust story (credibility from real competitive
-résumés, not one person's track record), the content model (each coach's own sessions/style),
-and the business model (revenue share across multiple paid talent, not one owner-operator).
+**Key structural similarity, and the difference**: like Dotaflix, this platform has one main
+coach as its face and methodology — Eixn, playing the Astini role. Unlike Dotaflix, that main
+coach isn't working alone: GH, Omar, and Ammar (once confirmed) add secondary group coaching
+under the same roster, the way RdO supplements Astini on Dotaflix, just with more secondary
+coaches, each bringing name recognition of their own. The real differentiators are bilingual
+parity (§4.1) and real Arab pro competitive credibility across the whole roster, not the
+absence of a lead coach.
 
 ---
 
@@ -68,35 +72,39 @@ and the business model (revenue share across multiple paid talent, not one owner
 
 ## 3. Coaches / Roster (the core differentiator)
 
-Unlike Dotaflix's single-coach model, this platform is built around **multiple named coaches**,
-each running their own group coaching sessions under the platform umbrella.
+Like Dotaflix, this platform has one main coach as its face — **Eixn (Jad Hammoud)** — with
+secondary coaches running supplementary group sessions under the same roster. See the header
+note above and §1 for how this maps onto Dotaflix's Astini/RdO structure.
 
 ### 3.1 Roster (as specified so far)
 
 | Coach | Role | Status |
 |---|---|---|
-| **Eixn (Jad)** | Coach | Existing coach/brand, joining this platform as one member of the roster — separate from any of his existing private business tooling, which is out of scope here |
-| **GH** | Pro player, group coaching | Likely **Ghaddar "GH" Eid** — Lebanese support player, Team Liquid, TI7 (2017) champion. **Verify this is the intended GH and confirm current involvement/rights before publishing** — a name this recognizable is a major credibility asset if confirmed, and a liability if wrong or unauthorized. |
-| **Omar** | Pro player, group coaching | Identity/bio not yet confirmed on my end — need full name, role/position, team history, and confirmed agreement to be listed, before this goes in any public copy. |
-| **Ammar** | Pro player, group coaching | Same as above — need confirmed identity, bio, and agreement before publishing. |
+| **Eixn (Jad Hammoud)** | **Main coach** — platform face, primary methodology, existing verified track record | Confirmed. Real, finalized bio/credentials: Tier 1 analyst, competed at The International ×3 and Riyadh Masters, 11,000 MMR, coached PSG Quest to a Tier 1 org — Bali Major Top 4, EWC Top 6, TI qualification — and has personally coached 500+ players. (Source: his existing coaching landing page content, `Projects/coachingDota/content.md` — reuse these facts verbatim rather than restating them differently.) |
+| **GH** | Secondary coach, group coaching | Likely **Ghaddar "GH" Eid** — Lebanese support player, Team Liquid, TI7 (2017) champion. **Verify this is the intended GH and confirm current involvement/rights before publishing** — a name this recognizable is a major credibility asset if confirmed, and a liability if wrong or unauthorized. |
+| **Omar** | Secondary coach, group coaching | Identity/bio not yet confirmed on my end — need full name, role/position, team history, and confirmed agreement to be listed, before this goes in any public copy. |
+| **Ammar** | Secondary coach, group coaching | Same as above — need confirmed identity, bio, and agreement before publishing. |
 
 **Do not publish player names/likenesses without their explicit agreement and a clear
 arrangement (§4.6).** Using a known pro's name to market a paid product without a deal in
 place is both a legal and reputational risk — this is the single highest-priority item to
 lock down before any marketing copy goes out.
 
-### 3.2 Why this matters more than it looks like
-- **Credibility engine**: Dotaflix has to build trust around one coach's claimed results.
-  Real, checkable pro competitive history (tournament results, team history) does that
-  instantly and is much harder to challenge.
+### 3.2 Why the secondary coaches still matter
+Eixn being the main coach doesn't make GH/Omar/Ammar decorative — same logic Dotaflix applies
+to RdO, just with more secondary coaches and bigger names:
+- **Credibility, doubled**: Eixn's own verified track record is the platform's foundation, but
+  each secondary coach who's a checkable, recognizable pro (once confirmed, §3.1) adds
+  independent credibility of their own, the same way RdO's presence adds to Astini's without
+  competing with it.
 - **Content variety**: different playstyles/roles/personalities across the roster means the
-  library isn't "one person's opinion" — a support main, a mid player, etc. can each own their
-  lane instead of one generalist trying to cover everything.
-- **Marketing surface**: each coach brings their own existing fanbase/audience (stream
-  followers, social following) — this is organic distribution Dotaflix's single-coach model
-  doesn't get for free.
-- **Scheduling capacity**: live group coaching scales better with more hosts — one coach can
-  only run so many live sessions a week before burning out or capping subscriber growth.
+  library isn't only Eixn's perspective — other roles/styles fill in what one coach's own
+  background (support-focused, per his existing bio) doesn't naturally cover.
+- **Marketing surface**: each secondary coach brings their own existing fanbase/audience
+  (stream followers, social following) on top of Eixn's — organic distribution beyond what one
+  coach's audience alone would reach.
+- **Scheduling capacity**: live group coaching scales better with more hosts — Eixn alone can
+  only run so many live sessions a week before capping subscriber growth or burning out.
 
 ---
 
@@ -156,10 +164,11 @@ stay a lighter news feed rather than a maintained roster database.
   access, and preferred community platforms. The pricing and payment section below reflects
   this; content localization (dialect, examples, streamer shoutouts) should too, eventually.
 
-### 4.6 Coach compensation model (new — required because of the roster model)
-Dotaflix doesn't need this because it's one owner-operator. We do, because GH/Omar/Ammar
-(once confirmed) are presumably being paid or revenue-shared for hosting sessions under the
-platform, separate from Eixn's existing arrangement. Needs a decision before build:
+### 4.6 Coach compensation model (required because of the secondary-coach roster)
+Dotaflix has a light version of this problem too (RdO as a secondary coach), but ours is
+bigger: Eixn is both the main coach and the platform's owner/operator, while GH/Omar/Ammar
+(once confirmed) are presumably being paid or revenue-shared for hosting secondary sessions
+under his platform, not co-owners of it. Needs a decision before build:
 - **Revenue share per coach** (e.g. subscriber revenue split by which coach's sessions a
   member actually attends) vs. **flat appearance fee per session** vs. **hybrid**.
 - Whether subscriptions are **platform-wide** (one price, access to all coaches) or
@@ -275,9 +284,10 @@ Adapted from Dotaflix's nav (Jogar / Partidas / Aprender / Comunidade / Team) wi
 routing, plus new pages for the roster model and signature features (§5):
 
 - **Home** — hero section, stats bar, latest content, roster highlight
-- **Coaches** — roster page: Eixn, GH, Omar, Ammar (and future additions), each with a bio,
-  résumé/results, session schedule, verified track record (§5.4), and content library filtered
-  to that coach
+- **Coaches** — roster page led by **Eixn** (main coach — full bio, résumé, session schedule,
+  content library) with **GH, Omar, Ammar** (and future additions) as secondary coaches, each
+  with their own bio, résumé/results, session schedule, verified track record (§5.4), and
+  content library filtered to that coach
 - **Learn** — lesson library (filter by hero / position / rank / coach / language), draft tool,
   weakness detector (§5.2)
 - **Matches** — live tournament viewer, Arabic co-casting during majors (§5.1), community
@@ -303,17 +313,19 @@ that template. Considerations specific to this project:
 
 - **Dark theme by default** — matches Dota's own visual language and how the audience
   actually plays/watches (streaming, late-night sessions).
-- **Coach-forward design**: since real named pros are the credibility engine (§3.2), their
-  photos/likenesses (once rights are confirmed, §3.1) should be central to the homepage and
-  marketing — closer to how esports orgs present a roster page than how Dotaflix presents one
-  coach's personal brand.
+- **Eixn-forward design, roster-backed**: Eixn's photo/likeness and existing verified track
+  record (§3.1) should be central to the homepage and marketing — closer to how Dotaflix
+  presents Astini's personal brand than a flat esports-roster page — with GH/Omar/Ammar (once
+  rights are confirmed) featured prominently as secondary coaches, not equal-billing tiles.
 - **Typography**: needs a paired Arabic/Latin font family that both look intentional, not
   like Arabic was bolted onto a Latin design. Candidates to evaluate: **IBM Plex Sans
   Arabic** or **Cairo** paired with **Inter** or **Poppins** for Latin text — test actual
   Arabic readability at body-text size before committing, not just headline size.
-- **Color**: Dota's own Radiant (green) vs Dire (red) split is an obvious, recognizable
-  motif to riff on for an accent palette — worth exploring rather than an unrelated brand
-  color.
+- **Color**: black base with **crimson red** (Dota 2's own brand/logo red) as the primary
+  accent and **Aegis gold** (the Aegis of Champions trophy color) as a secondary/premium
+  accent — chosen over a Radiant/Dire green-vs-red split as more immediately recognizable as
+  "Dota 2" specifically, and the gold gives a natural way to signal premium tiers/moments
+  without introducing a third unrelated color.
 - **RTL-native components**: stat bars, video scrubbers, tier-comparison tables, and nav all
   need to mirror correctly, not just text-align differently.
 - **"Wrapped" page needs to be built shareable-first** (§5.1) — designed for a screenshot/story
@@ -344,8 +356,9 @@ be worth building) — sequencing them after Phase 1/2 is about capability, not 
 ## 10. Open decisions (need your input before this becomes a build spec)
 
 - **Confirm roster identities and rights** (§3.1) — highest priority, blocks any public
-  marketing copy. Need full names, bios, competitive history, and explicit agreement from
-  GH, Omar, and Ammar to be featured.
+  marketing copy. Eixn's bio/credentials are already confirmed and reusable; still need full
+  names, bios, competitive history, and explicit agreement from GH, Omar, and Ammar to be
+  featured as secondary coaches.
 - **Coach compensation model** (§4.6) — revenue share, flat fee, or hybrid; platform-wide vs.
   per-coach passes; exclusivity terms.
 - **Brand name.** Needs to work in both Arabic and English, and ideally in Latin script for

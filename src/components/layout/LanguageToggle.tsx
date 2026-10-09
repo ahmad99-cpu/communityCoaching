@@ -1,5 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { useNavigate, useLocation, useParams } from "react-router-dom";
+import { motion } from "framer-motion";
 import { SUPPORTED_LANGUAGES, type SupportedLanguage } from "@/i18n";
 
 /**
@@ -32,13 +33,18 @@ export function LanguageToggle() {
           onClick={() => switchTo(code)}
           aria-pressed={code === lang}
           className={
-            "rounded-[6px] px-2.5 py-1 text-sm font-medium uppercase transition-colors " +
-            (code === lang
-              ? "bg-radiant text-ink"
-              : "text-paper-muted hover:text-paper")
+            "relative rounded-[6px] px-2.5 py-1 text-sm font-medium uppercase transition-colors " +
+            (code === lang ? "text-paper" : "text-paper-muted hover:text-paper")
           }
         >
-          {code}
+          {code === lang && (
+            <motion.span
+              layoutId="lang-pill"
+              className="absolute inset-0 rounded-[6px] bg-crimson"
+              transition={{ type: "spring", stiffness: 500, damping: 34 }}
+            />
+          )}
+          <span className="relative">{code}</span>
         </button>
       ))}
     </div>

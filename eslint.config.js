@@ -12,6 +12,13 @@ const browserGlobals = {
   URL: "readonly",
   fetch: "readonly",
   localStorage: "readonly",
+  KeyboardEvent: "readonly",
+  performance: "readonly",
+  requestAnimationFrame: "readonly",
+  cancelAnimationFrame: "readonly",
+  setInterval: "readonly",
+  clearInterval: "readonly",
+  Navigator: "readonly",
 };
 
 const nodeGlobals = {
@@ -44,6 +51,8 @@ export default [
       ...reactHooks.configs.recommended.rules,
       "react-refresh/only-export-components": ["warn", { allowConstantExport: true }],
       "@typescript-eslint/no-unused-vars": ["warn", { argsIgnorePattern: "^_" }],
+      // TypeScript already checks undefined identifiers (incl. DOM/React types); see typescript-eslint docs.
+      "no-undef": "off",
     },
   },
 ];

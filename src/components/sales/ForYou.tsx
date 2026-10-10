@@ -18,7 +18,9 @@ export function ForYou() {
     <section className="py-20 sm:py-24">
       <Container>
         <Reveal>
-          <h2 className="section-heading text-center">Is 6SLOT for you?</h2>
+          <h2 className="section-heading text-center">
+            Is <span className="text-gold">6SLOT</span> for you?
+          </h2>
         </Reveal>
 
         <div className="mx-auto mt-12 grid max-w-4xl gap-4 md:grid-cols-2">

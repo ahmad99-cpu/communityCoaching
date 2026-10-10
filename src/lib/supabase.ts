@@ -13,7 +13,9 @@ if (!isSupabaseConfigured) {
   );
 }
 
+// `||` not `??`: an empty line like `VITE_SUPABASE_URL=` in .env gives "", which would
+// otherwise reach createClient and crash the whole site.
 export const supabase = createClient(
-  supabaseUrl ?? "https://placeholder.supabase.co",
-  supabaseAnonKey ?? "placeholder-anon-key",
+  supabaseUrl || "https://placeholder.supabase.co",
+  supabaseAnonKey || "placeholder-anon-key",
 );

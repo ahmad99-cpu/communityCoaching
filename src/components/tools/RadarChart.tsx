@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { fmt, SLOTS } from "@/components/tools/wheelData";
+import { fmt } from "@/components/tools/wheelData";
 
 const SIZE = 560;
 const CX = SIZE / 2;
@@ -29,14 +29,25 @@ function labelLines(name: string) {
  * - filled gold shape = now
  * - faint outline = previous result (monthly retake)
  */
-export function RadarChart({ slots, previous, weakestIndex }: { slots: number[]; previous?: number[]; weakestIndex: number }) {
+export function RadarChart({
+  names,
+  slots,
+  previous,
+  weakestIndex,
+}: {
+  /** The 6 slot names, in order. */
+  names: string[];
+  slots: number[];
+  previous?: number[];
+  weakestIndex: number;
+}) {
   return (
     <svg viewBox={`0 0 ${SIZE} 500`} className="mx-auto w-full max-w-xl" role="img" aria-label="Your 6SLOT wheel">
       {/* grid rings */}
       {[2.5, 5, 7.5].map((v) => (
         <polygon key={v} points={polygon(Array(6).fill(v))} fill="none" stroke="#24324A" strokeWidth="1" />
       ))}
-      {SLOTS.map((_, i) => {
+      {names.map((_, i) => {
         const [x, y] = point(i, 10);
         return <line key={i} x1={CX} y1={CY} x2={x} y2={y} stroke="#24324A" strokeWidth="1" />;
       })}
@@ -67,16 +78,16 @@ export function RadarChart({ slots, previous, weakestIndex }: { slots: number[];
       })}
 
       {/* labels */}
-      {SLOTS.map((slot, i) => {
+      {names.map((name, i) => {
         const [x, y] = point(i, 13.6);
         const anchor = Math.abs(x - CX) < 4 ? "middle" : x > CX ? "start" : "end";
-        const lines = labelLines(slot.name);
+        const lines = labelLines(name);
         const gap = 10 - slots[i];
         const weakest = i === weakestIndex;
         const lineH = 17;
         const top = y - ((lines.length + 1) * lineH) / 2 + 12;
         return (
-          <text key={slot.name} x={x} y={top} textAnchor={anchor} fontFamily="Montserrat, sans-serif">
+          <text key={i} x={x} y={top} textAnchor={anchor} fontFamily="Montserrat, sans-serif">
             {lines.map((line, li) => (
               <tspan key={li} x={x} dy={li === 0 ? 0 : lineH} fontSize="14" fontWeight="700" fill={weakest ? "#E8B54A" : "#F5F5F5"}>
                 {line}

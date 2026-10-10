@@ -4,7 +4,7 @@
  * The founder counter and giveaway progress are LIVE: every PayPal payment is recorded
  * in Supabase (supabase/subscriptions.sql + supabase/functions/), and the site reads the
  * counts from there. Nothing to update by hand when someone joins or cancels.
- * To add a member who paid outside the site, add a row in Supabase (see README).
+ * Giveaway, price cards, FAQ and the two tests are edited from the admin dashboard (/admin).
  */
 export const site = {
   /** Shown only until Supabase is connected (or if it can't be reached). */
@@ -12,23 +12,8 @@ export const site = {
   /** Keep in sync with founder_cap() in supabase/subscriptions.sql. */
   founderSpots: 20,
 
-  prices: {
-    founder: 19,
-    member: 29,
-    oneOnOne: 55,
-  },
-
   /** First session, in UTC. Shown to visitors in their own timezone. */
   firstSessionUtc: "2026-10-31T12:00:00Z",
-
-  giveaway: {
-    /** Current goal. When it's reached, set the next goal (e.g. 35, then 50). */
-    goal: 20,
-    prize: "Free 1-on-1 coaching session with Eixn",
-    prizeValue: 55,
-    /** Flip to an object to reveal the next prize; null keeps the blacked-out Aegis. */
-    next: null as null | { goal: number; prize: string },
-  },
 
   links: {
     /** Members-only Discord invite, shown on the thank-you page after payment. */

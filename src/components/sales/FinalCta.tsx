@@ -2,9 +2,10 @@ import { Container } from "@/components/layout/Container";
 import { Reveal } from "@/components/common/Reveal";
 import { CtaButton } from "@/components/site/CtaButton";
 import { FounderSpotsLeft } from "@/components/site/FounderSpotsLeft";
-import { site } from "@/config/site";
+import { useContent } from "@/lib/content";
 
 export function FinalCta() {
+  const founderPrice = useContent("pricing").founder.price;
   return (
     <section className="pb-24">
       <Container>
@@ -22,7 +23,7 @@ export function FinalCta() {
             </p>
             <CtaButton className="mt-8 w-full px-10 py-4 text-base sm:w-auto" />
             <p className="mt-5 flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-sm text-text-muted">
-              <span>${site.prices.founder}/month locked forever</span>
+              <span>${founderPrice}/month locked forever</span>
               <span aria-hidden>·</span>
               <span>Try your first session risk-free</span>
               <span aria-hidden>·</span>

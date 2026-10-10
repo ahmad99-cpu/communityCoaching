@@ -3,7 +3,9 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Container } from "@/components/layout/Container";
 import { CtaButton } from "@/components/site/CtaButton";
 import { LeadCapture } from "@/components/tools/LeadCapture";
-import { POSITION_QUESTIONS, POSITION_RESULTS, scorePositions, type Position } from "@/components/tools/positionData";
+import { scorePositions } from "@/components/tools/positionData";
+import type { Position } from "@/content/types";
+import { useContent } from "@/lib/content";
 import { saveLead } from "@/lib/leads";
 import { site } from "@/config/site";
 
@@ -17,32 +19,33 @@ const slide = {
 };
 
 export function PositionTest() {
+  const { questions, results } = useContent("position_test");
   const [step, setStep] = useState<Step>("intro");
   const [index, setIndex] = useState(0);
   const [answers, setAnswers] = useState<number[]>([]);
   const [position, setPosition] = useState<Position | null>(null);
 
-  const q = POSITION_QUESTIONS[index];
+  const q = questions[index];
 
   function pick(a: number) {
     const next = [...answers];
     next[index] = a;
     setAnswers(next);
     window.setTimeout(() => {
-      if (index < POSITION_QUESTIONS.length - 1) setIndex(index + 1);
+      if (index < questions.length - 1) setIndex(index + 1);
       else setStep("lead");
     }, 180);
   }
 
   async function submitLead(discord: string) {
-    const best = scorePositions(answers);
+    const best = scorePositions(questions, answers);
     setPosition(best);
     await saveLead("position_test", discord, { position: best, answers });
     setStep("result");
     window.scrollTo(0, 0);
   }
 
-  const result = position ? POSITION_RESULTS[position] : null;
+  const result = position ? results[position] : null;
 
   return (
     <section className="py-14 sm:py-20">
@@ -53,7 +56,7 @@ export function PositionTest() {
               <p className="text-xs font-bold uppercase tracking-[0.2em] text-gold">Free · optional</p>
               <h1 className="mt-4 text-4xl font-black uppercase tracking-tight sm:text-6xl">Position test</h1>
               <p className="mt-5 text-lg text-text-muted">
-                {POSITION_QUESTIONS.length} questions about how you think in game. No right answers. Find the position that
+                {questions.length} questions about how you think in game. No right answers. Find the position that
                 fits you best.
               </p>
               <button className="btn-gold mt-9 px-12 py-4 text-base" onClick={() => setStep("questions")}>
@@ -68,12 +71,12 @@ export function PositionTest() {
           {step === "questions" && (
             <motion.div key={`q-${index}`} {...slide} className="mx-auto max-w-2xl">
               <div className="flex justify-end text-xs font-bold uppercase tracking-widest text-text-muted">
-                {index + 1} / {POSITION_QUESTIONS.length}
+                {index + 1} / {questions.length}
               </div>
               <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-navy-raised">
                 <div
                   className="h-full rounded-full bg-gold transition-all duration-300"
-                  style={{ width: `${(index / POSITION_QUESTIONS.length) * 100}%` }}
+                  style={{ width: `${(index / questions.length) * 100}%` }}
                 />
               </div>
 

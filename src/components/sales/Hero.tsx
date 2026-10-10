@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { Container } from "@/components/layout/Container";
 import { CtaButton } from "@/components/site/CtaButton";
 import { FounderSpotsLeft } from "@/components/site/FounderSpotsLeft";
-import { site } from "@/config/site";
+import { useContent } from "@/lib/content";
 import { formatFirstSessionLocal, formatFirstSessionUtc, visitorIsOnUtc } from "@/lib/sessionTime";
 
 const fade = (delay: number) => ({
@@ -13,6 +13,7 @@ const fade = (delay: number) => ({
 });
 
 export function Hero() {
+  const founderPrice = useContent("pricing").founder.price;
   const local = formatFirstSessionLocal();
   const utc = formatFirstSessionUtc();
   const onUtc = visitorIsOnUtc();
@@ -49,7 +50,7 @@ export function Hero() {
         <motion.div {...fade(0.24)} className="mt-9 flex flex-col items-center gap-4">
           <CtaButton className="w-full px-10 py-4 text-base sm:w-auto" />
           <p className="text-sm text-text-muted">
-            ${site.prices.founder}/month locked forever · Try your first session risk-free · Cancel anytime
+            ${founderPrice}/month locked forever · Try your first session risk-free · Cancel anytime
           </p>
         </motion.div>
 

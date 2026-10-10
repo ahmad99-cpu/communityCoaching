@@ -7,14 +7,14 @@ import { ScalePicker } from "@/components/tools/ScalePicker";
 import { RadarChart } from "@/components/tools/RadarChart";
 import { RollingCar } from "@/components/tools/RollingCar";
 import {
+  flattenStatements,
   fmt,
   loadWheelHistory,
   saveWheelHistory,
   scoreWheel,
-  SLOTS,
-  STATEMENTS,
   type WheelHistoryEntry,
 } from "@/components/tools/wheelData";
+import { useContent } from "@/lib/content";
 import { saveLead } from "@/lib/leads";
 
 type Step = "intro" | "questions" | "lead" | "result";
@@ -27,12 +27,17 @@ const slide = {
 };
 
 export function WheelTest() {
+  const { slots: wheelSlots } = useContent("wheel_test");
+  const statements = useMemo(() => flattenStatements(wheelSlots), [wheelSlots]);
   const [step, setStep] = useState<Step>("intro");
   const [index, setIndex] = useState(0);
   const [answers, setAnswers] = useState<number[]>([]);
   const [previous, setPrevious] = useState<WheelHistoryEntry | null>(null);
 
-  const result = useMemo(() => (answers.length === STATEMENTS.length ? scoreWheel(answers) : null), [answers]);
+  const result = useMemo(
+    () => (answers.length === statements.length ? scoreWheel(answers) : null),
+    [answers, statements.length],
+  );
 
   function pick(n: number) {
     const next = [...answers];
@@ -40,7 +45,7 @@ export function WheelTest() {
     setAnswers(next);
     // Short pause so the selection is visible before moving on.
     window.setTimeout(() => {
-      if (index < STATEMENTS.length - 1) setIndex(index + 1);
+      if (index < statements.length - 1) setIndex(index + 1);
       else setStep("lead");
     }, 180);
   }
@@ -51,9 +56,9 @@ export function WheelTest() {
     setPrevious(history.length ? history[history.length - 1] : null);
     saveWheelHistory(result.slots);
     await saveLead("wheel_test", discord, {
-      slots: Object.fromEntries(SLOTS.map((s, i) => [s.name, result.slots[i]])),
+      slots: Object.fromEntries(wheelSlots.map((s, i) => [s.name, result.slots[i]])),
       total: result.total,
-      weakest: SLOTS[result.weakestIndex].name,
+      weakest: wheelSlots[result.weakestIndex].name,
     });
     setStep("result");
     window.scrollTo(0, 0);
@@ -80,7 +85,7 @@ export function WheelTest() {
                 Start
               </button>
               <div className="mt-12 grid grid-cols-2 gap-2 text-left text-sm sm:grid-cols-3">
-                {SLOTS.map((s, i) => (
+                {wheelSlots.map((s, i) => (
                   <div key={s.name} className="card px-4 py-3">
                     <span className="font-black text-gold">{i + 1}</span>{" "}
                     <span className="font-semibold text-text">{s.name}</span>
@@ -94,21 +99,21 @@ export function WheelTest() {
             <motion.div key={`q-${index}`} {...slide} className="mx-auto max-w-2xl">
               <div className="flex items-center justify-between text-xs font-bold uppercase tracking-widest text-text-muted">
                 <span>
-                  Slot {STATEMENTS[index].slotIndex + 1} · {STATEMENTS[index].slotName}
+                  Slot {statements[index].slotIndex + 1} · {statements[index].slotName}
                 </span>
                 <span>
-                  {index + 1} / {STATEMENTS.length}
+                  {index + 1} / {statements.length}
                 </span>
               </div>
               <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-navy-raised">
                 <div
                   className="h-full rounded-full bg-gold transition-all duration-300"
-                  style={{ width: `${(index / STATEMENTS.length) * 100}%` }}
+                  style={{ width: `${(index / statements.length) * 100}%` }}
                 />
               </div>
 
               <div className="card mt-8 p-6 sm:p-10">
-                <h2 className="text-xl font-extrabold leading-snug sm:text-2xl">"{STATEMENTS[index].text}"</h2>
+                <h2 className="text-xl font-extrabold leading-snug sm:text-2xl">"{statements[index].text}"</h2>
                 <p className="mt-2 text-sm text-text-muted">How true is this for you?</p>
                 <div className="mt-8">
                   <ScalePicker value={answers[index]} onPick={pick} />
@@ -141,7 +146,7 @@ export function WheelTest() {
               </h1>
 
               <div className="mt-6">
-                <RadarChart slots={result.slots} previous={previous?.slots} weakestIndex={result.weakestIndex} />
+                <RadarChart names={wheelSlots.map((s) => s.name)} slots={result.slots} previous={previous?.slots} weakestIndex={result.weakestIndex} />
               </div>
               <div className="mt-1 flex flex-wrap justify-center gap-x-6 gap-y-2 text-xs font-semibold text-text-muted">
                 <span className="flex items-center gap-2">
@@ -165,7 +170,7 @@ export function WheelTest() {
               <p className="mx-auto mt-10 max-w-2xl text-lg leading-relaxed text-text-muted">
                 You're <strong className="text-text">{fmt(result.total)}/60</strong> built,{" "}
                 <strong className="text-text">{fmt(60 - result.total)}</strong> points from fully built. Biggest gap:{" "}
-                <strong className="text-gold">{SLOTS[result.weakestIndex].name}</strong> (+
+                <strong className="text-gold">{wheelSlots[result.weakestIndex].name}</strong> (+
                 {fmt(10 - result.slots[result.weakestIndex])}). A wheel with a flat spot doesn't roll. That's where your
                 MMR keeps getting stuck.
               </p>

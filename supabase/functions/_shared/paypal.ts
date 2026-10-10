@@ -53,8 +53,8 @@ export interface PayPalSubscription {
   status: "APPROVAL_PENDING" | "APPROVED" | "ACTIVE" | "SUSPENDED" | "CANCELLED" | "EXPIRED";
   plan_id: string;
   custom_id?: string;
-  subscriber?: { email_address?: string };
-  billing_info?: { last_payment?: { time?: string } };
+  subscriber?: { email_address?: string; name?: { given_name?: string; surname?: string } };
+  billing_info?: { last_payment?: { time?: string }; next_billing_time?: string };
 }
 
 /** Maps a PayPal subscription status to our row status (null = leave as is). */
@@ -88,6 +88,9 @@ export async function syncSubscription(sub: PayPalSubscription) {
   if (status) fields.status = status;
   if (sub.subscriber?.email_address) fields.payer_email = sub.subscriber.email_address;
   if (sub.billing_info?.last_payment?.time) fields.last_payment_at = sub.billing_info.last_payment.time;
+  if (sub.billing_info?.next_billing_time) fields.next_billing_at = sub.billing_info.next_billing_time;
+  const name = [sub.subscriber?.name?.given_name, sub.subscriber?.name?.surname].filter(Boolean).join(" ");
+  if (name) fields.payer_name = name;
 
   const byPaypal = await supabase.from("subscriptions").select("id").eq("paypal_subscription_id", sub.id).maybeSingle();
   let rowId = byPaypal.data?.id as string | undefined;

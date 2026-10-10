@@ -59,6 +59,10 @@ built-in content (`src/content/defaults.ts`).
 Access is enforced by the database (row-level security), not just the page: a signed-in
 account that isn't in `admins` can't read students or change anything.
 
+**Next session (topic + date):** Dashboard (`/admin`) > Next session. If you forget to update it after a
+session, the site moves it to the same time next week and shows "Topic announced soon". (One-time setup: run
+`supabase/next_session.sql` in the Supabase SQL editor so the dashboard can save it.)
+
 In **`src/config/site.ts`**:
 
 - `links.discordInvite`: members' Discord invite on the thank-you page.
@@ -89,7 +93,7 @@ How it works:
 3. `paypal-webhook` keeps everything right afterwards (activations, renewals, cancellations,
    suspensions, expiries) and verifies every webhook signature with PayPal.
 
-The $29 Member plan only opens once 20 founders have **paid** (not just started checkout).
+The $29 Member plan only opens once 25 founders have **paid** (not just started checkout).
 
 Setup (needs the [Supabase CLI](https://supabase.com/docs/guides/cli)):
 

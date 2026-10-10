@@ -1,4 +1,4 @@
-import { isSupabaseConfigured, supabase } from "@/lib/supabase";
+import { insertRow, isSupabaseConfigured } from "@/lib/supabaseRest";
 
 export type LeadSource = "wheel_test" | "position_test";
 
@@ -22,7 +22,7 @@ export async function saveLead(source: LeadSource, discord: string, result: unkn
 
   if (!isSupabaseConfigured) return;
 
-  const { error } = await supabase.from("leads").insert({
+  const { error } = await insertRow("leads", {
     source: lead.source,
     discord: lead.discord,
     result: lead.result,

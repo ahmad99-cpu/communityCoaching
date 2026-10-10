@@ -1,89 +1,135 @@
+import { useRef } from "react";
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
-import { Container } from "@/components/layout/Container";
+import { WideContainer } from "@/components/layout/Container";
 import { CtaButton } from "@/components/site/CtaButton";
 import { FounderSpotsLeft } from "@/components/site/FounderSpotsLeft";
-import { useContent } from "@/lib/content";
-import { formatFirstSessionLocal, formatFirstSessionUtc, visitorIsOnUtc } from "@/lib/sessionTime";
+import { Icon } from "@/components/site/Icons";
+import { useHeroParallax } from "@/hooks/useHeroParallax";
+import eixnPortrait from "@/assets/eixn-portrait.webp";
+import eixnPortrait720 from "@/assets/eixn-portrait-720.webp";
+import eixnPortrait480 from "@/assets/eixn-portrait-480.webp";
 
-const fade = (delay: number) => ({
-  initial: { opacity: 0, y: 18 },
-  animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.6, delay, ease: [0.22, 1, 0.36, 1] as const },
-});
+// Hero entrance runs in plain CSS (.hero-in in index.css), so the headline and portrait
+// animate on first paint without waiting for JavaScript animation code.
+const fade = (delay: number) => ({ style: { animationDelay: `${delay}s` } });
 
 export function Hero() {
-  const founderPrice = useContent("pricing").founder.price;
-  const local = formatFirstSessionLocal();
-  const utc = formatFirstSessionUtc();
-  const onUtc = visitorIsOnUtc();
+  const sectionRef = useRef<HTMLElement>(null);
+  useHeroParallax(sectionRef);
 
   return (
-    <section className="relative overflow-hidden">
-      {/* Soft gold glow + hex grid backdrop */}
+    <section ref={sectionRef} className="relative overflow-hidden">
+      {/* Soft gold glow (centred on mobile, behind the portrait on desktop) + grid backdrop */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_0%,rgba(232,181,74,0.13),transparent_70%)]"
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_0%,rgba(232,181,74,0.13),transparent_70%)] lg:bg-[radial-gradient(ellipse_40%_60%_at_78%_40%,rgba(232,181,74,0.12),transparent_70%)]"
       />
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 opacity-[0.06] [background-image:linear-gradient(#8FA0B5_1px,transparent_1px),linear-gradient(90deg,#8FA0B5_1px,transparent_1px)] [background-size:56px_56px] [mask-image:radial-gradient(ellipse_at_top,black,transparent_70%)]"
       />
 
-      <Container className="relative pb-20 pt-16 text-center sm:pb-28 sm:pt-24">
-        <motion.p {...fade(0)} className="text-xs font-bold uppercase tracking-[0.2em] text-gold sm:text-sm">
-          Tier 1 Analyst · The International ×3 &amp; Riyadh Masters
-        </motion.p>
+      {/* Near full width on desktop so the copy sits left and the portrait right, with no empty gutters. */}
+      <WideContainer className="relative grid lg:min-h-[min(calc(100svh-7.5rem),1080px)] lg:grid-cols-[minmax(0,1fr)_auto] lg:gap-x-[clamp(2rem,4vw,5rem)]">
+        {/* Portrait (same cutout and motion as eixn-dota.com). Mobile: on top, with the headline
+            overlapping its faded bottom. Desktop: right column, anchored to the bottom edge. */}
+        <div className="relative mx-auto w-full max-w-[290px] pt-8 sm:max-w-[340px] lg:order-last lg:-mr-[clamp(2.5rem,6vw,7.5rem)] lg:flex lg:w-auto lg:max-w-none lg:items-end lg:pt-6">
+          <div className="hero-portrait group relative w-full lg:w-auto">
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_38%,rgba(232,181,74,0.4)_0%,rgba(232,181,74,0.16)_32%,transparent_58%)] opacity-75 blur-[42px] transition-opacity duration-500 group-hover:opacity-95"
+            />
+            <div className="hero-portrait-frame relative">
+              <img
+                src={eixnPortrait}
+                srcSet={`${eixnPortrait480} 480w, ${eixnPortrait720} 720w, ${eixnPortrait} 960w`}
+                sizes="(min-width: 1024px) 66vh, (min-width: 640px) 340px, 290px"
+                alt="Eixn, Dota 2 coach and Tier 1 analyst"
+                width={960}
+                height={1370}
+                {...{ fetchpriority: "high" }} // lowercase: React 18 doesn't know fetchPriority yet
+                className="hero-portrait-img relative block h-auto w-full lg:h-[min(calc(100svh-9.5rem),1000px)] lg:w-auto lg:max-w-none [mask-image:linear-gradient(to_bottom,black_72%,transparent_96%)]"
+              />
+            </div>
+          </div>
+        </div>
 
-        <motion.h1
-          {...fade(0.08)}
-          className="mx-auto mt-6 max-w-4xl text-4xl font-black uppercase leading-[1.05] tracking-tight sm:text-6xl lg:text-7xl"
-        >
-          Stuck at the same rank? <span className="text-gold">Fix it one topic at a time.</span>
-        </motion.h1>
+        {/* Copy */}
+        <div className="relative z-10 -mt-20 pb-20 text-center sm:-mt-24 sm:pb-24 lg:mt-0 lg:max-w-[760px] lg:self-center lg:py-20 lg:text-left">
+          <h1
+            {...fade(0)}
+            className="hero-in mx-auto max-w-3xl text-4xl font-black uppercase leading-[1.04] tracking-tight sm:text-6xl lg:mx-0 lg:max-w-none lg:text-[clamp(3rem,4.3vw,5.25rem)]"
+          >
+            Stuck at the same rank? <span className="text-gold">Fix it one topic at a time.</span>
+          </h1>
 
-        <motion.p {...fade(0.16)} className="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-text-muted sm:text-lg">
-          Every week, one topic. Submit your replays, and Eixn breaks them down live. You drill it, leave with
-          homework, and actually understand it. Plus special guests along the way.
-        </motion.p>
-
-        <motion.div {...fade(0.24)} className="mt-9 flex flex-col items-center gap-4">
-          <CtaButton className="w-full px-10 py-4 text-base sm:w-auto" />
-          <p className="text-sm text-text-muted">
-            ${founderPrice}/month locked forever · Try your first session risk-free · Cancel anytime
+          <p {...fade(0.08)} className="hero-in mx-auto mt-6 max-w-xl text-base leading-relaxed text-text-muted sm:text-lg lg:mx-0 xl:max-w-2xl xl:text-xl">
+            One topic a week, learned together as a group. Eixn breaks it down live using members&apos; replays and
+            examples he prepares for each topic, then everyone puts it into practice before the session ends. And every
+            so often, a pro player drops in. We&apos;re not saying who yet.
           </p>
-        </motion.div>
 
-        <motion.div {...fade(0.32)} className="card mx-auto mt-10 max-w-xl px-6 py-5">
-          <p className="text-sm font-bold text-text sm:text-base">
-            First session: {onUtc ? `${utc.day} · ${utc.time}` : `${local.day} · ${local.time}`}
-            {!onUtc && <span className="ml-2 font-medium text-text-muted">(your time)</span>}
-          </p>
-          {!onUtc && <p className="mt-1 text-xs text-text-muted">{utc.day} · {utc.time}</p>}
-          <p className="mt-3 text-sm leading-relaxed text-text-muted">
-            Every Saturday, 2 to 3 hours. Times can shift based on a weekly member survey, and every session is
-            recorded.
-          </p>
-        </motion.div>
+          <div
+            {...fade(0.16)}
+            className="hero-in mt-8 flex flex-col items-center gap-x-6 gap-y-4 sm:flex-row sm:justify-center lg:justify-start"
+          >
+            <CtaButton className="w-full px-10 py-4 text-base sm:w-auto" />
+            <FounderSpotsLeft className="text-sm" />
+          </div>
+          {/* Friction removers only (Graziosi/Hormozi): the price comes after the value stack, in Pricing. */}
+          <ul
+            {...fade(0.22)}
+            className="hero-in mt-5 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-sm text-text-muted lg:justify-start"
+          >
+            <li className="flex items-center gap-2">
+              <Icon name="calendar" className="h-4 w-4 text-gold" />
+              Live every Saturday on Discord
+            </li>
+            <li className="flex items-center gap-2">
+              <Icon name="shield" className="h-4 w-4 text-gold" />
+              <span>
+                First-session guarantee{" "}
+                <Link to="/policies/refund" className="text-xs underline decoration-text-muted/60 underline-offset-2 hover:text-text">
+                  (terms)
+                </Link>
+              </span>
+            </li>
+            <li className="flex items-center gap-2">
+              <Icon name="check" className="h-4 w-4 text-gold" />
+              Cancel anytime
+            </li>
+          </ul>
 
-        <motion.div
-          {...fade(0.4)}
-          className="mt-8 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-sm font-semibold text-text"
-        >
-          <span>500+ players coached</span>
-          <span className="text-navy-border" aria-hidden>|</span>
-          <span>11,000 MMR</span>
-          <span className="text-navy-border" aria-hidden>|</span>
-          <FounderSpotsLeft />
-        </motion.div>
+          {/* Second path for visitors not ready to buy (lead magnet): clearly visible, but outlined so the
+              gold "Claim" button stays the main action. */}
+          <div {...fade(0.3)} className="hero-in mt-8 flex justify-center lg:justify-start">
+            <Link
+              to="/how-built-are-you"
+              className="group flex w-full max-w-xl items-center gap-4 rounded-card border border-gold/40 bg-navy-raised/70 p-4 text-left transition hover:border-gold hover:bg-navy-raised sm:p-5"
+            >
+              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-control border border-gold/40 bg-navy text-gold">
+                <Icon name="hexagon" className="h-6 w-6" />
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="block font-bold text-text sm:text-lg">Not sure where you stand?</span>
+                <span className="mt-0.5 block text-sm text-text-muted">
+                  Take the free 2-minute <strong className="font-semibold text-text">How Built Are You?</strong> test and
+                  see which of your 6 slots is holding your MMR back.
+                </span>
+              </span>
+              <span
+                aria-hidden
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-gold/50 text-gold transition group-hover:translate-x-1 group-hover:bg-gold group-hover:text-navy"
+              >
+                <Icon name="arrow" className="h-4 w-4" />
+              </span>
+            </Link>
+          </div>
+        </div>
+      </WideContainer>
 
-        <motion.p {...fade(0.48)} className="mt-8 text-sm text-text-muted">
-          <em>Not sure where you stand?</em>{" "}
-          <Link to="/how-built-are-you" className="font-bold text-text underline decoration-gold/60 underline-offset-4 hover:decoration-gold">
-            Check how built you are (2 min) →
-          </Link>
-        </motion.p>
-      </Container>
+      {/* Blend the bottom edge (where the portrait is cut off) into the next section. */}
+      <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 hidden h-24 bg-gradient-to-b from-transparent to-navy lg:block" />
     </section>
   );
 }

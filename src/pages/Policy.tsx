@@ -9,7 +9,8 @@ const POLICIES: Record<string, { title: string; body: string[] }> = {
   refund: {
     title: "Refund & Cancellation",
     body: [
-      "Try your first session. If 6SLOT isn't for you, ask for a full refund before your second session. No questions asked.",
+      "Try your first session. If 6SLOT isn't for you, ask for a refund before your second session. No questions asked.",
+      "Refunds go back through PayPal, to the card or PayPal account you paid with. PayPal keeps its processing fee when a payment is refunded, so that fee (usually around $1 on a $19 payment) is deducted from your refund.",
       "You can cancel anytime. If your subscription isn't renewed before the next session, your access ends. Founders who cancel lose the $19 price permanently.",
       "Full policy text coming soon.",
     ],

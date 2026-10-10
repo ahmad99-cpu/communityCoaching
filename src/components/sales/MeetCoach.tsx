@@ -36,8 +36,8 @@ export function MeetCoach() {
             </p>
             <p>
               Since then, <G>Eixn</G> has helped <G>500+ players</G> climb out of their rank through 1-on-1 coaching.{" "}
-              <G>6SLOT</G> is how he brings that same approach to more players at once: one topic a week, real replays,
-              real drills, and a community grinding the same way you are.
+              <G>6SLOT</G> is how he brings that same approach to more players at once: one topic a week, real games,
+              live practice, and a community grinding the same way you are.
             </p>
           </div>
         </Reveal>

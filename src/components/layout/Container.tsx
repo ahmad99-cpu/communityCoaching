@@ -9,3 +9,15 @@ import type { ReactNode } from "react";
 export function Container({ children, className = "" }: { children: ReactNode; className?: string }) {
   return <div className={`mx-auto w-full max-w-6xl px-4 ${className}`}>{children}</div>;
 }
+
+/**
+ * Near full-width wrapper for the header and the sales-page hero, so wide desktop
+ * screens don't get big empty gutters. Side padding grows with the window.
+ */
+export function WideContainer({ children, className = "" }: { children: ReactNode; className?: string }) {
+  return (
+    <div className={`mx-auto w-full max-w-[1760px] px-4 sm:px-6 lg:px-[clamp(2.5rem,6vw,7.5rem)] ${className}`}>
+      {children}
+    </div>
+  );
+}

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, m } from "framer-motion";
 import { Container } from "@/components/layout/Container";
 import { CtaButton } from "@/components/site/CtaButton";
 import { LeadCapture } from "@/components/tools/LeadCapture";
@@ -52,7 +52,7 @@ export function PositionTest() {
       <Container>
         <AnimatePresence mode="wait">
           {step === "intro" && (
-            <motion.div key="intro" {...slide} className="mx-auto max-w-2xl text-center">
+            <m.div key="intro" {...slide} className="mx-auto max-w-2xl text-center">
               <p className="text-xs font-bold uppercase tracking-[0.2em] text-gold">Free · optional</p>
               <h1 className="mt-4 text-4xl font-black uppercase tracking-tight sm:text-6xl">Position test</h1>
               <p className="mt-5 text-lg text-text-muted">
@@ -65,11 +65,11 @@ export function PositionTest() {
               <p className="mx-auto mt-10 max-w-md text-sm italic text-text-muted">
                 Where the questions come from: built from years of coaching all five positions.
               </p>
-            </motion.div>
+            </m.div>
           )}
 
           {step === "questions" && (
-            <motion.div key={`q-${index}`} {...slide} className="mx-auto max-w-2xl">
+            <m.div key={`q-${index}`} {...slide} className="mx-auto max-w-2xl">
               <div className="flex justify-end text-xs font-bold uppercase tracking-widest text-text-muted">
                 {index + 1} / {questions.length}
               </div>
@@ -108,17 +108,17 @@ export function PositionTest() {
                   ← Back
                 </button>
               )}
-            </motion.div>
+            </m.div>
           )}
 
           {step === "lead" && (
-            <motion.div key="lead" {...slide}>
+            <m.div key="lead" {...slide}>
               <LeadCapture onSubmit={submitLead} />
-            </motion.div>
+            </m.div>
           )}
 
           {step === "result" && result && (
-            <motion.div key="result" {...slide} className="mx-auto max-w-2xl text-center">
+            <m.div key="result" {...slide} className="mx-auto max-w-2xl text-center">
               <p className="text-xs font-bold uppercase tracking-[0.2em] text-gold">Your best position</p>
               <h1 className="mt-3 text-4xl font-black tracking-tight sm:text-5xl">{result.name}</h1>
               <p className="mx-auto mt-6 max-w-xl text-lg leading-relaxed text-text-muted">{result.why}</p>
@@ -148,7 +148,7 @@ export function PositionTest() {
                   </a>
                 </div>
               </div>
-            </motion.div>
+            </m.div>
           )}
         </AnimatePresence>
       </Container>

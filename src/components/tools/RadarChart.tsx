@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { fmt } from "@/components/tools/wheelData";
 
 const SIZE = 560;
@@ -61,7 +61,7 @@ export function RadarChart({
       )}
 
       {/* now */}
-      <motion.polygon
+      <m.polygon
         points={polygon(slots)}
         fill="rgba(232,181,74,0.35)"
         stroke="#E8B54A"
@@ -82,7 +82,6 @@ export function RadarChart({
         const [x, y] = point(i, 13.6);
         const anchor = Math.abs(x - CX) < 4 ? "middle" : x > CX ? "start" : "end";
         const lines = labelLines(name);
-        const gap = 10 - slots[i];
         const weakest = i === weakestIndex;
         const lineH = 17;
         const top = y - ((lines.length + 1) * lineH) / 2 + 12;
@@ -94,7 +93,7 @@ export function RadarChart({
               </tspan>
             ))}
             <tspan x={x} dy={lineH + 2} fontSize="13" fontWeight="600" fill="#8FA0B5">
-              {fmt(slots[i])}/10{gap > 0 ? ` · +${fmt(gap)}` : " · built"}
+              {fmt(slots[i])}/10
             </tspan>
           </text>
         );

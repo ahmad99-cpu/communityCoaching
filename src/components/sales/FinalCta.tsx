@@ -19,13 +19,15 @@ export function FinalCta() {
               Your next slot starts <span className="text-gold">this week.</span>
             </h2>
             <p className="mx-auto mt-4 max-w-xl text-text-muted sm:text-lg">
-              One topic. Your replays. Live drills. Join before the founder spots are gone.
+              One topic a week. Real games. Live practice. Join before the founder spots are gone.
             </p>
             <CtaButton className="mt-8 w-full px-10 py-4 text-base sm:w-auto" />
             <p className="mt-5 flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-sm text-text-muted">
-              <span>${founderPrice}/month locked forever</span>
+              <span>${founderPrice}/month founder price</span>
               <span aria-hidden>·</span>
-              <span>Try your first session risk-free</span>
+              <span>First-session guarantee</span>
+              <span aria-hidden>·</span>
+              <span>Cancel anytime</span>
               <span aria-hidden>·</span>
               <FounderSpotsLeft label="spots left" />
             </p>

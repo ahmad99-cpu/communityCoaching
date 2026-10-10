@@ -5,6 +5,7 @@ import { isSupabaseConfigured } from "@/lib/supabase";
 
 const NAV = [
   { to: "/admin", label: "Students", icon: "👥", end: true },
+  { to: "/admin/next-session", label: "Next session", icon: "🗓️" },
   { to: "/admin/giveaway", label: "Giveaway", icon: "🎁" },
   { to: "/admin/pricing", label: "Price cards", icon: "💳" },
   { to: "/admin/faq", label: "Q&A", icon: "❓" },

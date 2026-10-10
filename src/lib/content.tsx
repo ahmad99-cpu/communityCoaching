@@ -1,7 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import { DEFAULT_CONTENT } from "@/content/defaults";
 import type { ContentKey, SiteContent } from "@/content/types";
-import { isSupabaseConfigured, supabase } from "@/lib/supabase";
+import { isSupabaseConfigured, selectRows } from "@/lib/supabaseRest";
 
 interface ContentValue {
   content: SiteContent;
@@ -15,7 +15,7 @@ const ContentContext = createContext<ContentValue | null>(null);
  * Merges a saved section over its default, so a section saved before a new field
  * existed still renders (the new field falls back to its default).
  */
-function mergeSection<K extends ContentKey>(key: K, saved: unknown): SiteContent[K] {
+export function mergeSection<K extends ContentKey>(key: K, saved: unknown): SiteContent[K] {
   const fallback = DEFAULT_CONTENT[key];
   if (!saved || typeof saved !== "object") return fallback;
   let source = saved as Record<string, unknown>;
@@ -50,13 +50,13 @@ export function ContentProvider({ children }: { children: ReactNode }) {
 
   const reload = useCallback(async () => {
     if (!isSupabaseConfigured) return;
-    const { data, error } = await supabase.from("site_content").select("key, value");
+    const { data, error } = await selectRows<{ key: ContentKey; value: unknown }>("site_content", "key, value");
     if (error || !data) {
       console.warn("[content] using built-in content:", error?.message);
       return;
     }
     const next = { ...DEFAULT_CONTENT };
-    for (const row of data as { key: ContentKey; value: unknown }[]) {
+    for (const row of data) {
       if (row.key in next) (next as Record<ContentKey, unknown>)[row.key] = mergeSection(row.key, row.value);
     }
     setContent(next);
@@ -82,28 +82,4 @@ export function useContent<K extends ContentKey>(key: K): SiteContent[K] {
 
 export function useContentReload() {
   return useContentContext().reload;
-}
-
-/** Admin only (enforced by row-level security): saves one section. */
-export async function saveContent<K extends ContentKey>(key: K, value: SiteContent[K]) {
-  const { error } = await supabase.from("site_content").upsert({ key, value });
-  if (error) throw new Error(error.message);
-}
-
-/**
- * Admin only: re-reads one section fresh from the database, applies `change`, and saves.
- * Used for small targeted updates (like publishing a giveaway winner) so they never
- * overwrite something the other admin saved in the meantime.
- */
-export async function patchContent<K extends ContentKey>(key: K, change: (current: SiteContent[K]) => SiteContent[K]) {
-  const { data, error } = await supabase.from("site_content").select("value").eq("key", key).maybeSingle();
-  if (error) throw new Error(error.message);
-  const current = mergeSection(key, data?.value);
-  await saveContent(key, change(current));
-}
-
-/** Admin only: removes a saved section so the site goes back to the built-in default. */
-export async function resetContent(key: ContentKey) {
-  const { error } = await supabase.from("site_content").delete().eq("key", key);
-  if (error) throw new Error(error.message);
 }

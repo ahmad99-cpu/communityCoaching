@@ -28,7 +28,7 @@ alter table public.subscriptions enable row level security;
 -- No policies on purpose: anon/authenticated can't read or write rows directly.
 
 -- Founder spots. Change here if the cap ever changes (keep src/config/site.ts in sync).
-create or replace function public.founder_cap() returns int language sql immutable as $$ select 20 $$;
+create or replace function public.founder_cap() returns int language sql immutable as $$ select 25 $$;
 
 -- How long an unpaid checkout holds a founder spot.
 create or replace function public.pending_hold() returns interval language sql immutable as $$ select interval '30 minutes' $$;

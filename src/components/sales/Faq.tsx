@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, m } from "framer-motion";
 import { Container } from "@/components/layout/Container";
 import { Reveal } from "@/components/common/Reveal";
 import { useContent } from "@/lib/content";
@@ -22,7 +22,7 @@ function Item({ q, a, open, onToggle }: { q: string; a: string; open: boolean; o
       </button>
       <AnimatePresence initial={false}>
         {open && (
-          <motion.div
+          <m.div
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
@@ -30,7 +30,7 @@ function Item({ q, a, open, onToggle }: { q: string; a: string; open: boolean; o
             className="overflow-hidden"
           >
             <p className="pb-5 pr-10 text-sm leading-relaxed text-text-muted sm:text-base">{a}</p>
-          </motion.div>
+          </m.div>
         )}
       </AnimatePresence>
     </div>

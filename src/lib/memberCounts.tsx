@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import { site } from "@/config/site";
-import { isSupabaseConfigured, supabase } from "@/lib/supabase";
+import { isSupabaseConfigured, rpc } from "@/lib/supabaseRest";
 
 interface Counts {
   /** Active founder subscriptions. */
@@ -36,7 +36,7 @@ export function MemberCountsProvider({ children }: { children: ReactNode }) {
 
   const refresh = useCallback(async () => {
     if (!isSupabaseConfigured) return;
-    const { data, error } = await supabase.rpc("get_member_counts");
+    const { data, error } = await rpc<{ founders: number; members: number }>("get_member_counts");
     if (error || !data) {
       console.warn("[counts] could not load live member counts:", error?.message);
       return;

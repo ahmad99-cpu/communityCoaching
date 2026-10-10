@@ -1,6 +1,7 @@
 import { useEffect, useState, type ReactNode } from "react";
 import type { ContentKey, SiteContent } from "@/content/types";
-import { patchContent, resetContent, saveContent, useContent, useContentReload } from "@/lib/content";
+import { useContent, useContentReload } from "@/lib/content";
+import { patchContent, resetContent, saveContent } from "@/admin/content";
 
 /** Shared form building blocks for the admin dashboard. */
 

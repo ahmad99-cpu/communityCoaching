@@ -35,10 +35,87 @@
   }
 }
 
+/* Hero entrance (src/components/sales/Hero.tsx): CSS so it starts on first paint. */
+@keyframes hero-in {
+  from {
+    opacity: 0;
+    transform: translateY(var(--hero-in-y, 18px));
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.hero-in {
+  animation: hero-in 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+/* Hero portrait: same motion as eixn-dota.com. Blur-in entrance, gentle scroll drift
+   (--parallax-y from useHeroParallax), small lift + brighten on hover. */
+@keyframes hero-portrait-in {
+  from {
+    opacity: 0;
+    transform: translateY(40px) scale(0.97);
+    filter: blur(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+}
+.hero-portrait {
+  animation: hero-portrait-in 1.3s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both;
+}
+.hero-portrait-frame {
+  transform: translateY(var(--parallax-y, 0px));
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.hero-portrait:hover .hero-portrait-frame {
+  transform: translateY(calc(var(--parallax-y, 0px) - 8px));
+}
+.hero-portrait-img {
+  /* Cool grade so the lighting matches the navy page. */
+  filter: saturate(0.86) contrast(1.05) brightness(0.96) hue-rotate(-4deg);
+  transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1), filter 0.5s ease;
+}
+.hero-portrait:hover .hero-portrait-img {
+  transform: scale(1.02);
+  filter: saturate(0.95) contrast(1.03) brightness(1) hue-rotate(-2deg);
+}
+
+/* Wheel test result reveal: one-time gold burst (src/components/tools/Celebrate.tsx). */
+@keyframes celebrate {
+  0% {
+    opacity: 1;
+    transform: translate(0, 0) rotate(0deg) scale(0.6);
+  }
+  70% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--x), calc(var(--y) + 60px)) rotate(var(--r)) scale(1);
+  }
+}
+.celebrate-particle {
+  opacity: 0;
+  animation: celebrate 1.4s cubic-bezier(0.16, 1, 0.3, 1) 0.25s both;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
   }
+  .celebrate-particle {
+    display: none;
+  }
+  .hero-portrait-frame,
+  .hero-portrait-img {
+    transform: none !important;
+    transition: none;
+  }
+  .hero-in,
+  .hero-portrait,
   .animate-pulse-ring,
   .animate-winner-border,
   .animate-winner-shine,

@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import { supabase } from "@/lib/supabase";
-import { patchContent, useContent, useContentReload } from "@/lib/content";
+import { useContent, useContentReload } from "@/lib/content";
+import { patchContent } from "@/admin/content";
 import { prizeTitle } from "@/content/prize";
 import { PRIZE_CATEGORY_LABELS, type GiveawayItem, type Prize, type PrizeCategory } from "@/content/types";
 import { Panel, SmallButton, inputClass } from "@/admin/ui";

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { isPayPalConfigured, loadPayPal } from "@/lib/paypal";
-import { isSupabaseConfigured, supabase } from "@/lib/supabase";
+import { invokeFunction, isSupabaseConfigured } from "@/lib/supabaseRest";
 import { useMemberCounts } from "@/lib/memberCounts";
 
 type Plan = "founder" | "member";
@@ -14,18 +14,14 @@ class SpotUnavailableError extends Error {}
  * atomically, so the 21st founder can't get through even if two people pay at once.
  */
 async function createSubscription(plan: Plan): Promise<string> {
-  const { data, error } = await supabase.functions.invoke<{ subscriptionId?: string; error?: string }>(
+  const { data, error } = await invokeFunction<{ subscriptionId?: string; error?: string }>(
     "paypal-create-subscription",
-    { body: { plan } },
+    { plan },
   );
   if (data?.subscriptionId) return data.subscriptionId;
 
-  // supabase-js puts non-2xx bodies on error.context (a Response).
-  let code = data?.error;
-  const ctx = (error as { context?: Response } | null)?.context;
-  if (!code && ctx && typeof ctx.json === "function") {
-    code = ((await ctx.json().catch(() => ({}))) as { error?: string }).error;
-  }
+  // Non-2xx responses still carry the function's { error: code } body on data.
+  const code = data?.error;
   if (code === "founder_sold_out" || code === "member_not_open") throw new SpotUnavailableError(code);
   throw new Error(code ?? error?.message ?? "create_failed");
 }
@@ -69,9 +65,7 @@ export function PayPalCheckout({ plan }: { plan: Plan }) {
             setStatus("finishing");
             if (data.subscriptionID) {
               // Best effort: if this fails the PayPal webhook still records the payment.
-              await supabase.functions
-                .invoke("paypal-activate", { body: { subscriptionId: data.subscriptionID } })
-                .catch(() => {});
+              await invokeFunction("paypal-activate", { subscriptionId: data.subscriptionID });
             }
             await refresh();
             navigate("/thank-you");

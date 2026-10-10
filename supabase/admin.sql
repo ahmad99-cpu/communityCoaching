@@ -37,7 +37,7 @@ grant execute on function public.is_admin() to anon, authenticated;
 -- defaults built into the site (src/content/defaults.ts).
 -- ---------------------------------------------------------------------------
 create table if not exists public.site_content (
-  key        text primary key check (key in ('giveaway', 'pricing', 'faq', 'wheel_test', 'position_test')),
+  key        text primary key check (key in ('giveaway', 'pricing', 'faq', 'wheel_test', 'position_test', 'next_session')),
   value      jsonb not null,
   updated_at timestamptz not null default now(),
   updated_by uuid references auth.users (id) on delete set null

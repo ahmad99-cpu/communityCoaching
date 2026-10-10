@@ -1,10 +1,10 @@
 import { Hero } from "@/components/sales/Hero";
+import { Reviews } from "@/components/sales/Reviews";
 import { Giveaway } from "@/components/sales/Giveaway";
 import { WhatYouGet } from "@/components/sales/WhatYouGet";
 import { MeetCoach } from "@/components/sales/MeetCoach";
-import { ForYou } from "@/components/sales/ForYou";
+import { Imagine } from "@/components/sales/Imagine";
 import { Pricing } from "@/components/sales/Pricing";
-import { Referral } from "@/components/sales/Referral";
 import { Faq } from "@/components/sales/Faq";
 import { FinalCta } from "@/components/sales/FinalCta";
 
@@ -13,12 +13,12 @@ export function SalesPage() {
   return (
     <>
       <Hero />
-      <Giveaway />
+      <Reviews />
       <WhatYouGet />
       <MeetCoach />
-      <ForYou />
+      <Imagine />
+      <Giveaway />
       <Pricing />
-      <Referral />
       <Faq />
       <FinalCta />
     </>

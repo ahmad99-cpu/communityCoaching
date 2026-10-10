@@ -10,10 +10,7 @@ export const site = {
   /** Shown only until Supabase is connected (or if it can't be reached). */
   fallbackMemberCount: 0,
   /** Keep in sync with founder_cap() in supabase/subscriptions.sql. */
-  founderSpots: 20,
-
-  /** First session, in UTC. Shown to visitors in their own timezone. */
-  firstSessionUtc: "2026-10-31T12:00:00Z",
+  founderSpots: 25,
 
   links: {
     /** Members-only Discord invite, shown on the thank-you page after payment. */

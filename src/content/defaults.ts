@@ -28,21 +28,21 @@ export const DEFAULT_CONTENT: SiteContent = {
 
   pricing: {
     heading: "Claim your spot",
-    subheading: "Every member gets the full 6SLOT experience. Founders just pay less, forever.",
+    subheading: "6SLOT is $29/month. The first 25 members lock in the $19 launch price, forever.",
     founder: {
       name: "Founder",
       price: 19,
-      subtitle: "Locked in forever. First 20 members only.",
-      badge: "🔥 Limited",
+      subtitle: "Launch price, locked in forever. First 25 members only.",
+      badge: "Limited",
       features: [
         "Weekly 2 to 3 hour live sessions",
-        "Your replays broken down live",
-        "Live drills every session",
+        "Real games broken down live (members' replays and Eixn's prepared examples)",
+        "Live practice every session",
         "Homework & progress rewards",
-        "Start Here kit",
-        "The Session Vault",
+        "Direct line: ask Eixn anything, answered within 24 hours",
+        "The Session Vault: recordings of every past session",
         "Members-only Discord & stack partners",
-        "Special events: guest pros, watch parties, giveaways",
+        "Special events: pro player guests, watch parties, giveaways",
         "10% off sessions with Eixn",
       ],
       highlight: "Founder perks: gold Founder role and a vote on every month's topics",
@@ -57,9 +57,42 @@ export const DEFAULT_CONTENT: SiteContent = {
       highlight: "",
       buttonLabel: "Join 6SLOT",
     },
-    valueBoxTitle: "A single 1-on-1 session with Eixn costs $55.",
-    valueBox: "As a founder, you get 4 live sessions a month, 2 to 3 hours each, plus everything above, for $19.",
-    guarantee: "Try your first session. Not for you? Full refund, no questions asked.",
+    stackTitle: "Everything you get every month",
+    stack: [
+      {
+        item: "4 live sessions with Eixn",
+        detail: "2 to 3 hours every Saturday. One topic, real games, live practice.",
+        value: 220,
+        founderOnly: false,
+      },
+      {
+        item: "The Session Vault",
+        detail: "Recordings of every past session. Missed one, or joined later? Watch any topic, anytime.",
+        value: 49,
+        founderOnly: false,
+      },
+      {
+        item: "Direct line to Eixn",
+        detail: "Ask anything in the members' Discord, answered within 24 hours.",
+        value: 49,
+        founderOnly: false,
+      },
+      {
+        item: "Homework, check-ins & progress rewards",
+        detail: "Specific tasks after every session, a monthly progress check, and rewards for the most improved.",
+        value: 39,
+        founderOnly: false,
+      },
+      {
+        item: "Members' Discord & stack partners",
+        detail: "Players grinding the same topics as you, and teammates to queue with.",
+        value: 19,
+        founderOnly: false,
+      },
+    ],
+    valueBoxTitle: "How we value it:",
+    valueBox: "a single 1-on-1 session with Eixn costs $55. Four live sessions a month at that rate is $220, and each one runs 2 to 3 hours.",
+    guarantee: "Try your first session. Not for you? Get your money back, no questions asked.",
     smallPrint: "Cancel anytime. Founders who cancel lose their $19 price permanently.",
   },
 
@@ -67,7 +100,7 @@ export const DEFAULT_CONTENT: SiteContent = {
     items: [
       {
         q: "Who is 6SLOT for?",
-        a: "Players who've been stuck at the same rank for months or even years. You know a lot about Dota, you watch the tournaments and the guides, but you still can't see what's actually costing you games. If you're ready to find out and put in the work, this is for you.",
+        a: "Any Dota player who wants to get better with a group instead of alone. Maybe you've been stuck at the same rank for months, maybe you want to finally learn a second role, or maybe 1-on-1 coaching was never in your budget. 6SLOT gives you a pro-level coach every week and a community grinding the same topics as you, for less than the price of a single 1-on-1 session a month.",
       },
       {
         q: "Which positions does it cover?",
@@ -75,11 +108,11 @@ export const DEFAULT_CONTENT: SiteContent = {
       },
       {
         q: "I've watched tons of guides already. Why is this different?",
-        a: "Guides show you what good players do. They don't show you what you're doing wrong. 6SLOT breaks down real member replays, then you practice the fix live in drills. Watching teaches you, practicing changes your games.",
+        a: "Guides show you what good players do. They don't show you what you're doing wrong. 6SLOT breaks down real games, members' replays and examples Eixn prepares for each topic, then the group practices the fix live. Watching teaches you, practicing changes your games.",
       },
       {
         q: "Will I actually get attention in a group?",
-        a: "Yes. You can ask questions live, submit replays every week, and get feedback in the Discord between sessions. And as 6SLOT grows, it grows with you: more sessions, more pro guests, more events.",
+        a: "Yes. You can ask questions live, submit replays for each topic, practice with the group, and get feedback in the Discord between sessions. And as 6SLOT grows, it grows with you: more sessions, more pro guests, more events.",
       },
       {
         q: "How fast will I see results?",
@@ -95,39 +128,35 @@ export const DEFAULT_CONTENT: SiteContent = {
       },
       {
         q: "How do replay submissions work?",
-        a: "Before each session, submit a replay that fits that week's topic in the replay channel. Eixn picks the replays that best show the topic and breaks them down live, so even when it's not your game, it's your mistake being fixed.",
+        a: "Before each session, you can submit a replay that fits that week's topic. Eixn picks a few, puts them next to the examples he prepares, and uses them to teach the topic to the whole group. Even when it's not your game, it's usually the same mistake you make.",
       },
       {
-        q: "Do I have to join the drills?",
-        a: 'No, but you should. Drills are where the topic goes from "I understand it" to "I can actually do it."',
+        q: "Do I have to join the practice?",
+        a: 'No, but you should. Practice is where the topic goes from "I understand it" to "I can actually do it."',
       },
       {
-        q: "Who are the guest pro players?",
-        a: "From time to time, pro players join sessions as special guests to share how they think about the game and answer member questions. Guests are announced in Discord ahead of time. Stay tuned, the first names are coming soon.",
+        q: "Who are the pro player guests?",
+        a: "We're keeping that quiet for now. Pro players will drop into sessions to share how they think about the game and take your questions. The first names are coming soon, and members hear first in Discord.",
       },
       {
         q: "How do giveaways work?",
         a: "Giveaways unlock as 6SLOT grows. Every member is entered automatically, and winners are announced in Discord. The next one is still a secret. Stay tuned.",
       },
       {
-        q: "Why is the founder price so low?",
-        a: "Because founders are the first ones in. They help shape the sessions, the topics and the community from day one, and in return they keep $19/month for as long as they stay subscribed. Once the 20 founder spots are gone, the price is $29.",
+        q: "Why do founders pay $19 instead of $29?",
+        a: "6SLOT is $29/month. Founders are the first 25 in: they help shape the sessions, the topics and the community from day one, so they lock in the $19 launch price for as long as they stay subscribed. Once the 25 founder spots are gone, it's $29.",
       },
       {
-        q: "How does the referral program work?",
-        a: "Invite a friend to 6SLOT. If they join, their first month is $19 instead of $29, and you get one free month. The free month can be earned once per member. Just make sure your friend mentions your name when they message Eixn.",
-      },
-      {
-        q: "Can I bring a friend to try a session?",
-        a: "Yes. Every member can bring one friend to try a live session for free. Message Eixn on Discord before the session with your friend's Discord username, and they'll get access for that session.",
+        q: "What's the direct line to Eixn?",
+        a: "A members-only channel in the Discord where you can ask Eixn anything: a question about the topic, a moment from your game, a hero you're stuck on. Every question gets an answer within 24 hours.",
       },
       {
         q: "What do I need to join?",
-        a: "Dota 2, Discord, and a card or PayPal account. A mic is optional but useful for drills and questions.",
+        a: "Dota 2, Discord, and a card or PayPal account. A mic is optional but useful for practice and questions.",
       },
       {
         q: "How do I get access after paying?",
-        a: "Instantly. After you pay, you're taken straight to the Discord invite and the Start Here kit. Message Eixn with the email you paid with, and your full member access is unlocked within 24 hours.",
+        a: "Instantly. After you pay, you're taken straight to the Discord invite. Message Eixn with the email you paid with, and your full member access is unlocked within 24 hours.",
       },
       { q: "What language are the sessions in?", a: "English." },
       {
@@ -136,7 +165,7 @@ export const DEFAULT_CONTENT: SiteContent = {
       },
       {
         q: "Is there a refund?",
-        a: "Yes. Try your first session, and if 6SLOT isn't for you, ask for a full refund before your second session. No questions asked.",
+        a: "Yes. Try your first session, and if 6SLOT isn't for you, ask for a refund before your second session. No questions asked. Refunds go back through PayPal, and PayPal's processing fee (usually around $1) is deducted, because PayPal doesn't return it to us.",
       },
       {
         q: "What's the difference between 6SLOT and 1-on-1 coaching?",
@@ -150,29 +179,29 @@ export const DEFAULT_CONTENT: SiteContent = {
       {
         name: "Role & Drafting",
         statements: [
-          "I know how to play my main role, and a secondary role when I don't get my main",
-          "My hero pool is big enough to play any game, including picking counters",
+          "I play my main role well, and I can also play a second role (like offlane) when I don't get my main",
+          "I understand matchups and hero counters, and I pick accordingly",
         ],
       },
       {
         name: "Laning",
         statements: [
+          "I understand lane equilibrium and resource management, and I know when and how to pull",
           "I know how to win or go even in a hard matchup",
-          "I understand resource management, pulling, and lane equilibrium",
         ],
       },
       {
         name: "Farming & Itemization",
         statements: [
           "I change my build based on the enemy heroes, not a guide",
-          "I hit my item timings on time, not delayed",
+          "I'm always farmed: as a core I have good farming patterns and hit my item timings, as a support I'm never broke",
         ],
       },
       {
         name: "Map Movement & Positioning",
         statements: [
-          "I'm never walking around the map doing nothing, I always know where I should be next",
           "I'm always in the right place on the map based on the game time and the next objective",
+          "I check the minimap and vision before I move, so I rarely walk into the enemy",
         ],
       },
       {
@@ -185,8 +214,8 @@ export const DEFAULT_CONTENT: SiteContent = {
       {
         name: "Mindset & Decisions",
         statements: [
-          "I stay calm and keep communicating after mistakes or bad teammates",
-          "I can explain why I lost a game, beyond blaming my team",
+          "After a loss, I look at my own mistakes instead of blaming my team",
+          "I adapt to whatever situation my teammates put me in, and make the best of it",
         ],
       },
     ],
@@ -329,5 +358,10 @@ export const DEFAULT_CONTENT: SiteContent = {
         heroes: ["Crystal Maiden", "Witch Doctor", "Oracle", "Dazzle", "Lion"],
       },
     },
+  },
+
+  next_session: {
+    startsAt: "2026-10-31T12:00:00Z",
+    topic: "",
   },
 };

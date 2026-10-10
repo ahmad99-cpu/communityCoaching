@@ -51,7 +51,7 @@ export interface PlanCard {
   price: number;
   /** e.g. "Locked in forever. First 20 members only." */
   subtitle: string;
-  /** Small pill on the card, e.g. "🔥 Limited". Empty hides it. */
+  /** Small pill on the card, e.g. "Limited". Empty hides it. */
   badge: string;
   features: string[];
   /** Highlighted last line, e.g. "Founder perks: gold Founder role…". Text before the first ":" shows in gold. Empty hides it. */
@@ -59,12 +59,26 @@ export interface PlanCard {
   buttonLabel: string;
 }
 
+/** One line of the value stack under the price cards. */
+export interface StackItem {
+  item: string;
+  /** Short outcome line under the item. */
+  detail: string;
+  /** USD per month. */
+  value: number;
+  /** Shown as a "Founder bonus" and left out of the Member total. */
+  founderOnly: boolean;
+}
+
 export interface PricingContent {
   heading: string;
   subheading: string;
   founder: PlanCard;
   member: PlanCard;
-  /** 💡 box under the cards: bold first line + text. */
+  /** Hormozi-style value stack: everything included, with a value per line and a total. */
+  stackTitle: string;
+  stack: StackItem[];
+  /** Footnote under the stack explaining the values: bold first line + text. */
   valueBoxTitle: string;
   valueBox: string;
   guarantee: string;
@@ -103,12 +117,21 @@ export interface PositionTestContent {
   results: Record<Position, PositionResult>;
 }
 
+/** The "Next session" card in the hero, set from the dashboard. */
+export interface NextSessionContent {
+  /** Start time as an ISO string in UTC, e.g. "2026-10-31T12:00:00Z". */
+  startsAt: string;
+  /** This week's topic. Empty shows "Topic drops soon". */
+  topic: string;
+}
+
 export interface SiteContent {
   giveaway: GiveawayContent;
   pricing: PricingContent;
   faq: FaqContent;
   wheel_test: WheelTestContent;
   position_test: PositionTestContent;
+  next_session: NextSessionContent;
 }
 
 export type ContentKey = keyof SiteContent;

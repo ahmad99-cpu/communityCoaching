@@ -86,7 +86,8 @@ export interface PricingContent {
 }
 
 export interface FaqContent {
-  items: { q: string; a: string }[];
+  /** `group` is the small title the question sits under; questions keep their order inside each group. */
+  items: { q: string; a: string; group?: string }[];
 }
 
 export interface WheelSlot {

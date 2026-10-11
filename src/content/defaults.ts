@@ -28,7 +28,7 @@ export const DEFAULT_CONTENT: SiteContent = {
 
   pricing: {
     heading: "Claim your spot",
-    subheading: "6SLOT is $29/month. The first 25 members lock in the $19 launch price, forever.",
+    subheading: "6SLOT is $29/month. The first 25 members lock in the $19 launch price for as long as they stay.",
     founder: {
       name: "Founder",
       price: 19,
@@ -42,8 +42,11 @@ export const DEFAULT_CONTENT: SiteContent = {
         "Direct line: ask Eixn anything, answered within 24 hours",
         "The Session Vault: recordings of every past session",
         "Members-only Discord & stack partners",
-        "Special events: pro player guests, watch parties, giveaways",
-        "10% off sessions with Eixn",
+        "Bonus Lobby Nights: 5v5 lobbies coached live by Eixn, streamed for the group",
+        "Pro player guests (names coming soon)",
+        "Watch parties with live analysis of tournament games",
+        "Members-only giveaways: coaching sessions, Dota 2 skins, merch and more",
+        "10% off 1-on-1 sessions with Eixn",
       ],
       highlight: "Founder perks: gold Founder role and a vote on every month's topics",
       buttonLabel: "Claim my founder spot",
@@ -98,78 +101,68 @@ export const DEFAULT_CONTENT: SiteContent = {
 
   faq: {
     items: [
+      // How 6SLOT works
       {
+        group: "How 6SLOT works",
         q: "Who is 6SLOT for?",
         a: "Any Dota player who wants to get better with a group instead of alone. Maybe you've been stuck at the same rank for months, maybe you want to finally learn a second role, or maybe 1-on-1 coaching was never in your budget. 6SLOT gives you a pro-level coach every week and a community grinding the same topics as you, for less than the price of a single 1-on-1 session a month.",
       },
       {
-        q: "Which positions does it cover?",
-        a: "All five. Each topic is broken down for every role, so whether you play carry or hard support, you'll know what it means for you.",
+        group: "How 6SLOT works",
+        q: "What happens in a weekly session?",
+        a: "Each week has one topic. Before the session, members submit replays that fit it. Live, Eixn breaks the topic down using a few of those replays and examples he prepares, then the whole group practices it together: 2v2 lane battles, recreated teamfights and more. You leave with homework and post your progress in the Discord. Even when it's not your replay, it's usually the same mistake you make.",
       },
       {
-        q: "I've watched tons of guides already. Why is this different?",
-        a: "Guides show you what good players do. They don't show you what you're doing wrong. 6SLOT breaks down real games, members' replays and examples Eixn prepares for each topic, then the group practices the fix live. Watching teaches you, practicing changes your games.",
-      },
-      {
-        q: "Will I actually get attention in a group?",
-        a: "Yes. You can ask questions live, submit replays for each topic, practice with the group, and get feedback in the Discord between sessions. And as 6SLOT grows, it grows with you: more sessions, more pro guests, more events.",
-      },
-      {
-        q: "How fast will I see results?",
-        a: "It depends on where you start and how much you put into the homework. Most players notice they're thinking differently about the game after the first session. The rank follows when you apply it consistently.",
-      },
-      {
+        group: "How 6SLOT works",
         q: "When are the sessions?",
-        a: "Every Saturday, 2 to 3 hours on Discord, starting October 31 at 12:00 UTC. Times can shift based on a weekly member survey so they work for as many people as possible.",
+        a: "Once a week, 2 to 3 hours live on Discord, in English. The first session is October 31 at 12:00 UTC. Times can shift based on a weekly member survey, so they work for as many members as possible.",
       },
       {
+        group: "How 6SLOT works",
         q: "What if I can't make it live?",
-        a: "Every session is recorded and saved in the Session Vault. Watch it whenever it works for you.",
+        a: "Every session is recorded and saved in the Session Vault. Watch it whenever it works for you, and catch up on any topic you missed.",
       },
       {
-        q: "How do replay submissions work?",
-        a: "Before each session, you can submit a replay that fits that week's topic. Eixn picks a few, puts them next to the examples he prepares, and uses them to teach the topic to the whole group. Even when it's not your game, it's usually the same mistake you make.",
+        group: "How 6SLOT works",
+        q: "Which roles does it cover?",
+        a: "All five. Each topic is broken down for every role, and some weeks we go deep on a single role or hero.",
+      },
+      // The community
+      {
+        group: "The community",
+        q: "Will I actually get attention in a group?",
+        a: "Yes. You can submit replays, ask questions live and practice with the group. Between sessions you have the direct line to Eixn, answered within 24 hours, plus the homework check-ins and bonus Lobby Nights where Eixn coaches 5v5 teams live.",
       },
       {
-        q: "Do I have to join the practice?",
-        a: 'No, but you should. Practice is where the topic goes from "I understand it" to "I can actually do it."',
+        group: "The community",
+        q: "What happens between sessions?",
+        a: "The members' Discord keeps going all week: the direct line to Eixn, stack partners to queue with and homework check-ins. On top of that come bonus Lobby Nights, pro player guests, watch parties and members-only giveaways, where every member is entered automatically.",
       },
       {
-        q: "Who are the pro player guests?",
-        a: "We're keeping that quiet for now. Pro players will drop into sessions to share how they think about the game and take your questions. The first names are coming soon, and members hear first in Discord.",
+        group: "The community",
+        q: "How is this different from 1-on-1 coaching?",
+        a: "1-on-1 goes deep on your games only, at $55 an hour. 6SLOT works on the fundamentals every player struggles with, every week, with a group learning from each other's games, for less than a single 1-on-1 session a month. Members also get 10% off 1-on-1 sessions with Eixn whenever they want an extra push.",
       },
+      // Joining & pricing
       {
-        q: "How do giveaways work?",
-        a: "Giveaways unlock as 6SLOT grows. Every member is entered automatically, and winners are announced in Discord. The next one is still a secret. Stay tuned.",
-      },
-      {
+        group: "Joining & pricing",
         q: "Why do founders pay $19 instead of $29?",
         a: "6SLOT is $29/month. Founders are the first 25 in: they help shape the sessions, the topics and the community from day one, so they lock in the $19 launch price for as long as they stay subscribed. Once the 25 founder spots are gone, it's $29.",
       },
       {
-        q: "What's the direct line to Eixn?",
-        a: "A members-only channel in the Discord where you can ask Eixn anything: a question about the topic, a moment from your game, a hero you're stuck on. Every question gets an answer within 24 hours.",
+        group: "Joining & pricing",
+        q: "How do I join?",
+        a: "You need Dota 2, Discord and a card or PayPal account. A mic helps for practice and questions, but it's optional. After you pay, you're taken straight to the Discord invite. Message Eixn with the email you paid with, and your member access is unlocked within 24 hours.",
       },
       {
-        q: "What do I need to join?",
-        a: "Dota 2, Discord, and a card or PayPal account. A mic is optional but useful for practice and questions.",
+        group: "Joining & pricing",
+        q: "Can I bring a friend?",
+        a: "Yes. Once a month, every member can bring one friend to a live session for free: message Eixn on Discord before the session with your friend's Discord username. If your friend becomes a member, you get one free month (once per member). Just make sure they mention your name when they message Eixn.",
       },
       {
-        q: "How do I get access after paying?",
-        a: "Instantly. After you pay, you're taken straight to the Discord invite. Message Eixn with the email you paid with, and your full member access is unlocked within 24 hours.",
-      },
-      { q: "What language are the sessions in?", a: "English." },
-      {
-        q: "Can I cancel anytime?",
-        a: "Yes, cancel anytime. If your subscription isn't renewed before the next session, your access ends. Founders who cancel lose the $19 price permanently.",
-      },
-      {
-        q: "Is there a refund?",
-        a: "Yes. Try your first session, and if 6SLOT isn't for you, ask for a refund before your second session. No questions asked. Refunds go back through PayPal, and PayPal's processing fee (usually around $1) is deducted, because PayPal doesn't return it to us.",
-      },
-      {
-        q: "What's the difference between 6SLOT and 1-on-1 coaching?",
-        a: "6SLOT teaches the fundamentals everyone struggles with, every week, at a low price. 1-on-1 coaching goes deep on your games only. Members get 10% off sessions with Eixn whenever they want that extra push.",
+        group: "Joining & pricing",
+        q: "Can I cancel or get a refund?",
+        a: "Yes, cancel anytime. If your subscription isn't renewed before the next session, your access ends, and founders who cancel lose the $19 price for good. Not for you after your first session? Ask for a refund before your second one, no questions asked. Refunds go back through PayPal, minus PayPal's processing fee (usually around $1), because PayPal doesn't return it to us.",
       },
     ],
   },

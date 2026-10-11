@@ -83,13 +83,13 @@ export function Hero() {
           >
             <li className="flex items-center gap-2">
               <Icon name="calendar" className="h-4 w-4 text-gold" />
-              Live every Saturday on Discord
+              Live every week on Discord
             </li>
             <li className="flex items-center gap-2">
               <Icon name="shield" className="h-4 w-4 text-gold" />
               <span>
-                First-session guarantee{" "}
-                <Link to="/policies/refund" className="text-xs underline decoration-text-muted/60 underline-offset-2 hover:text-text">
+                First-session money-back guarantee{" "}
+                <Link to="/policies/refund" className="-my-2.5 inline-block py-2.5 text-xs underline decoration-text-muted/60 underline-offset-2 hover:text-text">
                   (terms)
                 </Link>
               </span>

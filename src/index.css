@@ -83,6 +83,29 @@
   filter: saturate(0.95) contrast(1.03) brightness(1) hue-rotate(-2deg);
 }
 
+/* Topic marquee (Inside 6SLOT): two rows of topic tags drifting in opposite directions.
+   The track holds the list twice, so shifting it by half loops seamlessly. */
+@keyframes topic-marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+.topic-marquee {
+  mask-image: linear-gradient(90deg, transparent, black 8%, black 92%, transparent);
+}
+.topic-marquee__track {
+  display: flex;
+  width: max-content;
+  gap: 0.75rem;
+  animation: topic-marquee 40s linear infinite;
+}
+.topic-marquee__track--reverse {
+  animation-direction: reverse;
+}
+.topic-marquee:hover .topic-marquee__track {
+  animation-play-state: paused;
+}
+
 /* Wheel test result reveal: one-time gold burst (src/components/tools/Celebrate.tsx). */
 @keyframes celebrate {
   0% {
@@ -107,6 +130,15 @@
     scroll-behavior: auto;
   }
   .celebrate-particle {
+    display: none;
+  }
+  .topic-marquee__track {
+    animation: none;
+    flex-wrap: wrap;
+    width: auto;
+    justify-content: center;
+  }
+  .topic-marquee__track [aria-hidden="true"] {
     display: none;
   }
   .hero-portrait-frame,

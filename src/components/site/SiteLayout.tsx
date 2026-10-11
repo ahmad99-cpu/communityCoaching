@@ -3,6 +3,7 @@ import { Outlet, useLocation } from "react-router-dom";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { NextSessionBar } from "@/components/site/NextSessionBar";
 import { SiteFooter } from "@/components/site/SiteFooter";
+import { scrollToJoin } from "@/lib/scrollToJoin";
 
 /** Scrolls to `#hash` targets (e.g. the Join button → /#pricing), otherwise to the top on page change. */
 function ScrollManager() {
@@ -12,7 +13,8 @@ function ScrollManager() {
     if (hash) {
       // Wait a frame so the target section exists after a route change.
       const id = requestAnimationFrame(() => {
-        document.getElementById(hash.slice(1))?.scrollIntoView({ behavior: "smooth", block: "start" });
+        if (hash === "#pricing") scrollToJoin();
+        else document.getElementById(hash.slice(1))?.scrollIntoView({ behavior: "smooth", block: "start" });
       });
       return () => cancelAnimationFrame(id);
     }

@@ -1,5 +1,6 @@
 import { Container } from "@/components/layout/Container";
 import { site } from "@/config/site";
+import { Giveaway } from "@/components/sales/Giveaway";
 
 const STEPS = [
   {
@@ -48,6 +49,15 @@ export function ThankYou() {
           ))}
         </ol>
       </Container>
+
+      {/* Welcome surprise: they're already in the giveaways. */}
+      <div className="mt-8">
+        <Giveaway
+          eyebrow="Your first bonus"
+          title="You're already entered"
+          intro="Every member is entered automatically in the 6SLOT giveaways. Each time we hit a new member goal, a new prize unlocks. Bring your friends and watch the bars fill."
+        />
+      </div>
     </section>
   );
 }

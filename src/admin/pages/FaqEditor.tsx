@@ -26,6 +26,9 @@ export function FaqEditor() {
               </div>
             </div>
             <div className="mt-3 space-y-3">
+              <Field label="Group" hint="The small title it sits under, e.g. “How 6SLOT works”. Same text = same group.">
+                <TextInput value={item.group ?? ""} onChange={(group) => setItems(items.map((x, j) => (j === i ? { ...x, group } : x)))} />
+              </Field>
               <Field label="Question">
                 <TextInput value={item.q} onChange={(q) => setItems(items.map((x, j) => (j === i ? { ...x, q } : x)))} />
               </Field>
@@ -35,7 +38,7 @@ export function FaqEditor() {
             </div>
           </div>
         ))}
-        <SmallButton tone="gold" onClick={() => setItems([...items, { q: "", a: "" }])}>+ Add question</SmallButton>
+        <SmallButton tone="gold" onClick={() => setItems([...items, { q: "", a: "", group: items[items.length - 1]?.group ?? "" }])}>+ Add question</SmallButton>
       </div>
 
       <SaveBar

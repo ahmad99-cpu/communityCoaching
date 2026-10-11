@@ -17,6 +17,17 @@ export const site = {
     discordInvite: "https://discord.gg/REPLACE_ME",
     /** 1-on-1 entry offer on eixn-dota.com, linked from the position test result. */
     realProblemDiagnostic: "https://www.eixn-dota.com/coaching",
+    /**
+     * "Still have a question?" under the FAQ. Discord is the main way to reach Eixn; the others
+     * show as smaller links. Leave a link empty ("") to hide it.
+     */
+    ask: {
+      discord: "https://discord.gg/n5ABqN44nX",
+      instagram: "https://www.instagram.com/eixndota",
+      tiktok: "https://www.tiktok.com/@jadhamoud8",
+      /** Add the Facebook page link here to show the Facebook button. */
+      facebook: "https://www.facebook.com/p/Eixn-61583056599814/",
+    },
     socials: [
       { label: "Discord", href: "https://discord.gg/n5ABqN44nX", icon: "discord" },
       { label: "YouTube", href: "https://www.youtube.com/@eixndota", icon: "youtube" },

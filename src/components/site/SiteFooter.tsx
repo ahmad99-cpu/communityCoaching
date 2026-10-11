@@ -35,7 +35,7 @@ export function SiteFooter() {
             <Logo />
             <p className="mt-3 text-sm font-semibold text-text">Get fully built.</p>
             <p className="mt-1 text-sm text-text-muted">Dota 2 group coaching with Eixn.</p>
-            <div className="mt-6 flex gap-4">
+            <div className="-ml-2.5 mt-5 flex gap-1">
               {site.links.socials.map((s) => (
                 <a
                   key={s.label}
@@ -43,7 +43,7 @@ export function SiteFooter() {
                   target="_blank"
                   rel="noreferrer"
                   aria-label={s.label}
-                  className="text-text-muted transition hover:text-text"
+                  className="flex h-10 w-10 items-center justify-center rounded-full text-text-muted transition hover:bg-navy-raised hover:text-text"
                 >
                   <SocialIcon name={s.icon} />
                 </a>

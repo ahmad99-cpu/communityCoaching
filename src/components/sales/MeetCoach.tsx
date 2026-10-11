@@ -1,9 +1,41 @@
 import { Container } from "@/components/layout/Container";
+import { useEffect, useRef, useState } from "react";
 import { Reveal } from "@/components/common/Reveal";
+import { useCountUp } from "@/hooks/useCountUp";
 
 /** Gold highlight for names, same as eixn-dota.com (brief §3.5 design note). */
 function G({ children }: { children: React.ReactNode }) {
   return <strong className="font-bold text-gold">{children}</strong>;
+}
+
+/**
+ * Counts a stat like "11K" or "500+" up from 0 the first time it scrolls into view; text stats
+ * ("Tier 1") stay as they are. Shows the final value straight away for reduced motion.
+ */
+function StatValue({ value }: { value: string }) {
+  const match = value.match(/^(\d+)(.*)$/);
+  const ref = useRef<HTMLSpanElement>(null);
+  const [inView, setInView] = useState(false);
+  const numeric = Boolean(match);
+  const reduce = typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || !numeric || reduce) return;
+    const io = new IntersectionObserver(([e]) => e.isIntersecting && setInView(true), { threshold: 0.6 });
+    io.observe(el);
+    return () => io.disconnect();
+  }, [numeric, reduce]);
+
+  const target = match ? Number(match[1]) : 0;
+  const counted = useCountUp(target, inView, 1400);
+  if (!match || reduce) return <span ref={ref}>{value}</span>;
+  return (
+    <span ref={ref} className="tabular-nums">
+      {counted}
+      {match[2]}
+    </span>
+  );
 }
 
 const STATS = [
@@ -18,7 +50,10 @@ export function MeetCoach() {
     <section className="border-y border-navy-border bg-navy-raised/40 py-20 sm:py-24">
       <Container>
         <Reveal className="mx-auto max-w-3xl">
-          <h2 className="section-heading text-center">Meet Your Coach</h2>
+          <div className="text-center">
+            <p className="text-xs font-black uppercase tracking-[0.2em] text-gold">The coach behind 6SLOT</p>
+            <h2 className="section-heading mt-3">Meet your coach</h2>
+          </div>
 
           <div className="mt-10 space-y-5 text-base leading-relaxed text-text-muted sm:text-lg">
             <p>
@@ -45,7 +80,9 @@ export function MeetCoach() {
         <Reveal className="mx-auto mt-12 grid max-w-4xl grid-cols-2 gap-px overflow-hidden rounded-card border border-navy-border bg-navy-border sm:grid-cols-4">
           {STATS.map((s) => (
             <div key={s.label} className="flex flex-col items-center justify-center bg-navy-raised px-4 py-6 text-center">
-              <span className="text-3xl font-black text-text">{s.value}</span>
+              <span className="text-3xl font-black text-text">
+                <StatValue value={s.value} />
+              </span>
               <span className="mt-1 text-xs font-bold uppercase tracking-widest text-text-muted">{s.label}</span>
               {s.note && <span className="mt-1.5 text-[11px] italic leading-snug text-text-muted">{s.note}</span>}
             </div>

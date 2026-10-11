@@ -1,8 +1,9 @@
 import { Link } from "react-router-dom";
+import { scrollToJoin } from "@/lib/scrollToJoin";
 
 /**
- * The main "CLAIM MY FOUNDER SPOT" call to action. Always jumps to the pricing
- * section (where checkout lives), from any page.
+ * The main "CLAIM MY FOUNDER SPOT" call to action. Always jumps to the membership card
+ * (where checkout lives), from any page.
  */
 export function CtaButton({
   children = "Claim my founder spot",
@@ -18,11 +19,7 @@ export function CtaButton({
       onClick={(e) => {
         // Already on the sales page: scroll directly, so repeat clicks still work
         // even when the URL hash is already #pricing.
-        const pricing = document.getElementById("pricing");
-        if (pricing) {
-          e.preventDefault();
-          pricing.scrollIntoView({ behavior: "smooth", block: "start" });
-        }
+        if (scrollToJoin()) e.preventDefault();
       }}
     >
       {children}

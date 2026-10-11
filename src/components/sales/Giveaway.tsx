@@ -157,10 +157,19 @@ const GRID: Record<number, string> = {
 };
 
 /**
- * Members-only giveaways, shown as a prize grid just before Pricing (a bonus on top of the
- * offer, Hormozi-style). Each prize unlocks at a member goal; the next one stays a mystery.
+ * Members-only giveaways as a prize grid. Each prize unlocks at a member goal; the next one stays
+ * a mystery. Shown on the thank-you page (a welcome surprise after joining, Robbins-style) rather
+ * than on the sales page, where giveaways are a one-line bonus in the offer.
  */
-export function Giveaway() {
+export function Giveaway({
+  eyebrow = "Members-only giveaways",
+  title = "Prizes that unlock as we grow",
+  intro = "Every member is entered automatically. Each time 6SLOT hits a new member goal, a new prize unlocks: coaching sessions, Dota 2 skins, merch and more.",
+}: {
+  eyebrow?: string;
+  title?: string;
+  intro?: string;
+}) {
   const { items, next } = useContent("giveaway");
   const { members } = useMemberCounts();
 
@@ -168,12 +177,9 @@ export function Giveaway() {
     <section className="py-20 sm:py-24">
       <Container>
         <Reveal className="mx-auto max-w-2xl text-center">
-          <p className="text-xs font-black uppercase tracking-[0.2em] text-gold">Members-only giveaways</p>
-          <h2 className="section-heading mt-3">Prizes that unlock as we grow</h2>
-          <p className="mt-4 text-text-muted sm:text-lg">
-            Every member is entered automatically. Each time 6SLOT hits a new member goal, a new prize unlocks: coaching,
-            Dota 2 items and team merch.
-          </p>
+          <p className="text-xs font-black uppercase tracking-[0.2em] text-gold">{eyebrow}</p>
+          <h2 className="section-heading mt-3">{title}</h2>
+          <p className="mt-4 text-text-muted sm:text-lg">{intro}</p>
         </Reveal>
 
         <div className={`mx-auto mt-12 grid gap-4 sm:grid-cols-2 ${GRID[Math.min(items.length + 1, 4)]}`}>

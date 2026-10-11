@@ -5,6 +5,7 @@ import { Container } from "@/components/layout/Container";
 import { Reveal } from "@/components/common/Reveal";
 import { FounderSpotsLeft } from "@/components/site/FounderSpotsLeft";
 import { PayPalCheckout } from "@/components/sales/PayPalCheckout";
+import { Referral } from "@/components/sales/Referral";
 import { site } from "@/config/site";
 import { useMemberCounts } from "@/lib/memberCounts";
 import { useContent } from "@/lib/content";
@@ -93,7 +94,7 @@ function MembershipCard() {
   const plan = foundersSoldOut ? pricing.member : pricing.founder;
 
   return (
-    <div className="card relative grid overflow-hidden border-2 border-gold shadow-[0_0_60px_-20px_rgba(232,181,74,0.5)] md:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]">
+    <div id="join" className="card relative grid overflow-hidden border-2 border-gold shadow-[0_0_60px_-20px_rgba(232,181,74,0.5)] md:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]">
       <div className="flex flex-col p-6 sm:p-8 md:border-r md:border-navy-border">
         {!foundersSoldOut && (
           <span className="self-start rounded-full bg-gold px-3 py-1 text-[11px] font-black uppercase tracking-widest text-navy">
@@ -102,12 +103,13 @@ function MembershipCard() {
         )}
         <h3 className="mt-4 text-sm font-black uppercase tracking-[0.2em] text-text">6SLOT Membership</h3>
         <p className="mt-3">
+          {/* The real anchor: $29 is the actual price once founder spots are gone. */}
           {!foundersSoldOut && pricing.member.price > pricing.founder.price && (
             <span className="mr-3 align-[0.6em] text-2xl font-bold text-text-muted line-through decoration-2">
               <span className="sr-only">Regular price </span>${pricing.member.price}
             </span>
           )}
-          <span className="text-6xl font-black text-text">${plan.price}</span>
+          <span className="text-6xl font-black text-gold">${plan.price}</span>
           <span className="text-text-muted"> / month</span>
         </p>
         <p className="mt-2 text-sm text-text-muted">
@@ -143,41 +145,6 @@ function MembershipCard() {
   );
 }
 
-/**
- * The value reveal (like the price reveal at Tony Robbins' events): what everything is worth,
- * struck out, then your price big in gold. The total comes from the value stack in the dashboard
- * (Price cards → Value stack). While founder spots are open it shows the founder price; after, $29.
- */
-function ValueReveal() {
-  const pricing = useContent("pricing");
-  const { foundersSoldOut } = useMemberCounts();
-  const items = pricing.stack.filter((s) => !(foundersSoldOut && s.founderOnly));
-  const total = items.reduce((sum, s) => sum + s.value, 0);
-  const plan = foundersSoldOut ? pricing.member : pricing.founder;
-  const saving = total > 0 ? Math.round((1 - plan.price / total) * 100) : 0;
-
-  if (total === 0) return null;
-  return (
-    <div className="text-center">
-      <p className="text-sm font-bold uppercase tracking-[0.2em] text-text-muted">Total value</p>
-      <p className="mt-1 text-3xl font-black text-text-muted line-through decoration-2 sm:text-4xl">${total}/month</p>
-      <p className="mt-5 text-sm font-bold uppercase tracking-[0.2em] text-text">
-        {foundersSoldOut ? "Your price" : "Your founder price"}
-      </p>
-      <p className="mt-1 text-5xl font-black text-gold sm:text-6xl">
-        ${plan.price}
-        <span className="text-2xl text-text-muted">/month</span>
-      </p>
-      {saving > 0 && <p className="mt-2 text-sm font-semibold text-text">That&apos;s {saving}% less than what it&apos;s worth.</p>}
-      {(pricing.valueBoxTitle || pricing.valueBox) && (
-        <p className="mx-auto mt-5 max-w-2xl text-xs leading-relaxed text-text-muted">
-          <strong className="text-text">{pricing.valueBoxTitle}</strong> {pricing.valueBox}
-        </p>
-      )}
-    </div>
-  );
-}
-
 function Checkout({ open, plan }: { open: boolean; plan: "founder" | "member" }) {
   return (
     <AnimatePresence initial={false}>
@@ -207,22 +174,20 @@ export function Pricing() {
     <section id="pricing" className="scroll-mt-16 py-20 sm:py-24">
       <Container>
         <Reveal className="mx-auto max-w-2xl text-center">
-          <h2 className="section-heading">{pricing.heading}</h2>
+          <p className="text-xs font-black uppercase tracking-[0.2em] text-gold">Membership</p>
+          <h2 className="section-heading mt-3">{pricing.heading}</h2>
           <p className="mt-4 text-text-muted sm:text-lg">{pricing.subheading}</p>
         </Reveal>
 
-        {/* What it's worth, then the price, then the card to join. */}
         <Reveal className="mx-auto mt-12 max-w-4xl space-y-4">
-          <ValueReveal />
-          <div className="pt-8">
-            <MembershipCard />
-          </div>
+          <MembershipCard />
+          <Referral />
 
           <div className="flex items-center justify-center gap-3 rounded-card border border-navy-border bg-navy-raised/60 px-5 py-4 text-center">
             <Icon name="shield" className="h-6 w-6 text-gold" />
             <p className="text-sm font-bold text-text sm:text-base">
               {pricing.guarantee}{" "}
-              <Link to="/policies/refund" className="text-xs font-semibold text-text-muted underline underline-offset-2 hover:text-text">
+              <Link to="/policies/refund" className="-my-2.5 inline-block py-2.5 text-xs font-semibold text-text-muted underline underline-offset-2 hover:text-text">
                 Terms
               </Link>
             </p>

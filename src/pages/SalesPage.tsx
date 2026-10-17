@@ -3,6 +3,7 @@ import { Reviews } from "@/components/sales/Reviews";
 import { InsideSixSlot } from "@/components/sales/InsideSixSlot";
 import { MeetCoach } from "@/components/sales/MeetCoach";
 import { Pricing } from "@/components/sales/Pricing";
+import { BattlePassTeaser } from "@/components/sales/BattlePassTeaser";
 import { Faq } from "@/components/sales/Faq";
 import { FinalCta } from "@/components/sales/FinalCta";
 
@@ -15,6 +16,7 @@ export function SalesPage() {
       <InsideSixSlot />
       <MeetCoach />
       <Pricing />
+      <BattlePassTeaser />
       <Faq />
       <FinalCta />
     </>

@@ -9,7 +9,10 @@ const FREE_TOOLS = [
   { label: "Position Test", to: "/position-test" },
 ];
 
-const COMING_SOON = ["Meta Picks", "Counter Picker", "Find a Team"];
+const COMMUNITY = [{ label: "Battle Pass", to: "/battle-pass" }];
+
+// Free tools unlock through the Battle Pass (src/content/battlePass.ts).
+const COMING_SOON = ["Hero Tier List · Level 1", "Patch Summary · Level 2", "Counter Picker · Level 3"];
 
 const POLICIES = [
   { label: "Refund & Cancellation", to: "/policies/refund" },
@@ -30,7 +33,7 @@ export function SiteFooter() {
   return (
     <footer className="border-t border-navy-border bg-navy-raised/40">
       <Container className="py-14">
-        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1fr]">
+        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1fr_1fr]">
           <div>
             <Logo />
             <p className="mt-3 text-sm font-semibold text-text">Get fully built.</p>
@@ -53,6 +56,16 @@ export function SiteFooter() {
 
           <Column title="Free tools">
             {FREE_TOOLS.map((l) => (
+              <li key={l.to}>
+                <Link to={l.to} className="text-text transition hover:text-gold">
+                  {l.label}
+                </Link>
+              </li>
+            ))}
+          </Column>
+
+          <Column title="Community">
+            {COMMUNITY.map((l) => (
               <li key={l.to}>
                 <Link to={l.to} className="text-text transition hover:text-gold">
                   {l.label}

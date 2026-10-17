@@ -53,7 +53,7 @@ function groupItems(items: { q: string; a: string; group?: string }[]) {
 
 export function Faq() {
   const { items } = useContent("faq");
-  const [open, setOpen] = useState<string | null>(items[0]?.q ?? null);
+  const [open, setOpen] = useState<string | null>(null);
   const groups = groupItems(items);
 
   return (

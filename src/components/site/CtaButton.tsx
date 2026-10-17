@@ -1,17 +1,13 @@
 import { Link } from "react-router-dom";
+import { useMemberCounts } from "@/lib/memberCounts";
 import { scrollToJoin } from "@/lib/scrollToJoin";
 
 /**
- * The main "CLAIM MY FOUNDER SPOT" call to action. Always jumps to the membership card
- * (where checkout lives), from any page.
+ * The main "CLAIM MY FOUNDER SPOT" call to action. Always jumps to the membership card first
+ * (price, what's included, guarantee), from any page; the card's button opens PayPal.
  */
-export function CtaButton({
-  children = "Claim my founder spot",
-  className = "",
-}: {
-  children?: React.ReactNode;
-  className?: string;
-}) {
+export function CtaButton({ children, className = "" }: { children?: React.ReactNode; className?: string }) {
+  const { foundersSoldOut } = useMemberCounts();
   return (
     <Link
       to="/#pricing"
@@ -22,7 +18,7 @@ export function CtaButton({
         if (scrollToJoin()) e.preventDefault();
       }}
     >
-      {children}
+      {children ?? (foundersSoldOut ? "Join 6SLOT" : "Claim my founder spot")}
     </Link>
   );
 }

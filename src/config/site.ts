@@ -1,20 +1,38 @@
 /**
  * 6SLOT site config — content Jad may want to tweak.
  *
- * The founder counter and giveaway progress are LIVE: every PayPal payment is recorded
- * in Supabase (supabase/subscriptions.sql + supabase/functions/), and the site reads the
- * counts from there. Nothing to update by hand when someone joins or cancels.
- * Giveaway, price cards, FAQ and the two tests are edited from the admin dashboard (/admin).
+ * Payments and the founder counter live in `join` below. Price cards, FAQ and the two tests
+ * are edited from the admin dashboard (/admin).
  */
 export const site = {
-  /** Shown only until Supabase is connected (or if it can't be reached). */
-  fallbackMemberCount: 0,
-  /** Keep in sync with founder_cap() in supabase/subscriptions.sql. */
-  founderSpots: 25,
+  join: {
+    /** Founder PayPal payment link ($19). The pay buttons open it in a new tab. */
+    founderLink: "https://www.paypal.com/ncp/payment/MCNF7AWJ6KX6N",
+    /** Regular-price ($27) payment link, used once founder spots are full. Empty = the button is disabled. */
+    memberLink: "",
+    /** Founder spots available. */
+    founderCap: 25,
+    /** FOUNDERS_TAKEN: founders who have paid. Update by hand after each founder payment. */
+    foundersTaken: 0,
+    /** All paying members, founders included. Drives the Battle Pass. Never counted lower than foundersTaken. */
+    membersTaken: 0,
+    /**
+     * Later: a URL (e.g. a Google Apps Script web app) returning JSON like {"foundersTaken": 12},
+     * optionally with "membersTaken". Empty = use the numbers above. If it fails, the numbers above are used.
+     */
+    countsUrl: "",
+  },
 
   links: {
-    /** Members-only Discord invite, shown on the thank-you page after payment. */
-    discordInvite: "https://discord.gg/REPLACE_ME",
+    /** DISCORD_INVITE_LINK: the Discord invite on the thank-you page after payment (the public server). */
+    discordInvite: "https://discord.gg/n5ABqN44nX",
+    /** ONBOARDING_FORM_LINK: the 2-minute onboarding form on the thank-you page. */
+    onboardingForm: "https://docs.google.com/forms/d/e/1FAIpQLScvYmdK4GzBbOTUXj_RgBECUd6DoIcyNpWNWrwvmtlHI2pE1g/viewform",
+    /**
+     * WELCOME_VIDEO_LINK: Eixn's welcome video at the top of the thank-you page. A YouTube link
+     * (unlisted is fine) or a direct .mp4 link. Empty = no video section.
+     */
+    welcomeVideo: "",
     /** 1-on-1 entry offer on eixn-dota.com, linked from the position test result. */
     realProblemDiagnostic: "https://www.eixn-dota.com/coaching",
     /**
@@ -38,9 +56,8 @@ export const site = {
   },
 
   /**
-   * PayPal Business. Only the client ID lives in the browser; the plan IDs and secret
-   * are Supabase Edge Function secrets, because subscriptions are created server-side
-   * (that is what keeps the founder cap exact). Payments redirect to /thank-you.
+   * PayPal subscriptions (not used yet: the site runs on the payment links in `join` for now).
+   * Kept for the switch to subscriptions: PayPalCheckout + the Supabase functions use this.
    */
   paypal: {
     clientId: import.meta.env.VITE_PAYPAL_CLIENT_ID ?? "",

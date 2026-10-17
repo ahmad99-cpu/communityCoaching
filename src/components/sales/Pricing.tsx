@@ -1,10 +1,9 @@
-import { useState } from "react";
 import { Link } from "react-router-dom";
-import { AnimatePresence, m } from "framer-motion";
+import { m } from "framer-motion";
 import { Container } from "@/components/layout/Container";
 import { Reveal } from "@/components/common/Reveal";
 import { FounderSpotsLeft } from "@/components/site/FounderSpotsLeft";
-import { PayPalCheckout } from "@/components/sales/PayPalCheckout";
+import { AfterPayNote, PayButton } from "@/components/site/PayButton";
 import { Referral } from "@/components/sales/Referral";
 import { site } from "@/config/site";
 import { useMemberCounts } from "@/lib/memberCounts";
@@ -23,14 +22,15 @@ function Check() {
 /** Founder spots claimed so far, with what happens when they're gone. */
 function FounderProgress({ memberPrice }: { memberPrice: number }) {
   const { founderSpotsLeft } = useMemberCounts();
-  const claimed = site.founderSpots - founderSpotsLeft;
-  const pct = (claimed / site.founderSpots) * 100;
+  const cap = site.join.founderCap;
+  const claimed = cap - founderSpotsLeft;
+  const pct = (claimed / cap) * 100;
 
   return (
     <div>
       <div className="flex items-end justify-between text-xs font-semibold text-text-muted">
         <span>
-          <strong className="text-gold">{claimed}</strong> / {site.founderSpots} founder spots claimed
+          <strong className="text-gold">{claimed}</strong> / {cap} founder spots claimed
         </span>
       </div>
       <div
@@ -38,7 +38,7 @@ function FounderProgress({ memberPrice }: { memberPrice: number }) {
         role="progressbar"
         aria-label="Founder spots claimed"
         aria-valuemin={0}
-        aria-valuemax={site.founderSpots}
+        aria-valuemax={cap}
         aria-valuenow={claimed}
       >
         <m.div
@@ -49,7 +49,7 @@ function FounderProgress({ memberPrice }: { memberPrice: number }) {
           transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
         />
       </div>
-      <p className="mt-2 text-xs text-text-muted">Goes to ${memberPrice}/month after the first {site.founderSpots} members.</p>
+      <p className="mt-2 text-xs text-text-muted">Goes to ${memberPrice}/month after the first {cap} members.</p>
     </div>
   );
 }
@@ -84,11 +84,10 @@ function Features({ plan, showHighlight }: { plan: PlanCard; showHighlight: bool
 
 /**
  * One tier, one card. While founder spots are open it sells the founder launch price
- * ($29 struck through, $19 locked in); once they're gone the same card switches to $29.
- * Behind the scenes these are still the two PayPal plans (founder / member).
+ * ($27 struck through, $19 locked in); once they're gone the same card switches to $27.
+ * The button opens the matching PayPal payment link (site.join) in a new tab.
  */
 function MembershipCard() {
-  const [open, setOpen] = useState(false);
   const { foundersSoldOut } = useMemberCounts();
   const pricing = useContent("pricing");
   const plan = foundersSoldOut ? pricing.member : pricing.founder;
@@ -103,7 +102,7 @@ function MembershipCard() {
         )}
         <h3 className="mt-4 text-sm font-black uppercase tracking-[0.2em] text-text">6SLOT Membership</h3>
         <p className="mt-3">
-          {/* The real anchor: $29 is the actual price once founder spots are gone. */}
+          {/* The real anchor: $27 is the actual price once founder spots are gone. */}
           {!foundersSoldOut && pricing.member.price > pricing.founder.price && (
             <span className="mr-3 align-[0.6em] text-2xl font-bold text-text-muted line-through decoration-2">
               <span className="sr-only">Regular price </span>${pricing.member.price}
@@ -123,15 +122,11 @@ function MembershipCard() {
         )}
 
         <div className="mt-auto pt-8">
-          <button className="btn-gold w-full py-4 text-base" aria-expanded={open} onClick={() => setOpen(!open)}>
-            {plan.buttonLabel}
-          </button>
-          <Checkout open={open} plan={foundersSoldOut ? "member" : "founder"} />
-          {!foundersSoldOut && (
-            <p className="mt-4 flex h-6 items-center justify-center text-sm">
-              <FounderSpotsLeft label="founder spots left" />
-            </p>
-          )}
+          <PayButton className="w-full py-4 text-base">{plan.buttonLabel}</PayButton>
+          <p className="mt-4 flex h-6 items-center justify-center text-sm">
+            <FounderSpotsLeft label="founder spots left" />
+          </p>
+          <AfterPayNote className="mt-3 text-center" />
         </div>
       </div>
 
@@ -142,28 +137,6 @@ function MembershipCard() {
         </div>
       </div>
     </div>
-  );
-}
-
-function Checkout({ open, plan }: { open: boolean; plan: "founder" | "member" }) {
-  return (
-    <AnimatePresence initial={false}>
-      {open && (
-        <m.div
-          initial={{ height: 0, opacity: 0 }}
-          animate={{ height: "auto", opacity: 1 }}
-          exit={{ height: 0, opacity: 0 }}
-          className="overflow-hidden"
-        >
-          <div className="pt-4">
-            <p className="mb-3 text-center text-xs font-semibold uppercase tracking-widest text-text-muted">
-              Pay with card or PayPal
-            </p>
-            <PayPalCheckout plan={plan} />
-          </div>
-        </m.div>
-      )}
-    </AnimatePresence>
   );
 }
 

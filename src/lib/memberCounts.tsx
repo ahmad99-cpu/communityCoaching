@@ -1,52 +1,62 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import { site } from "@/config/site";
-import { isSupabaseConfigured, rpc } from "@/lib/supabaseRest";
 
 interface Counts {
-  /** Active founder subscriptions. */
+  /** Founders who have paid. */
   founders: number;
-  /** All active subscriptions (founders + members). Drives the giveaway. */
+  /** All paying members, founders included. Drives the Battle Pass. */
   members: number;
 }
 
 interface MemberCountsValue extends Counts {
   founderSpotsLeft: number;
   foundersSoldOut: boolean;
-  /** True once real numbers have loaded from Supabase (false = config fallback). */
+  /** True once numbers have loaded from `site.join.countsUrl` (false = the hand-updated config numbers). */
   live: boolean;
   refresh: () => Promise<void>;
 }
 
-// Until Supabase is connected the site shows the fallback number from src/config/site.ts.
+const { founderCap, foundersTaken, membersTaken, countsUrl } = site.join;
+const clampFounders = (n: number) => Math.min(Math.max(0, Math.floor(n)), founderCap);
+
+// The hand-updated numbers in src/config/site.ts. Used until (or whenever) countsUrl can't be read.
 const FALLBACK: Counts = {
-  founders: Math.min(site.fallbackMemberCount, site.founderSpots),
-  members: site.fallbackMemberCount,
+  founders: clampFounders(foundersTaken),
+  members: Math.max(membersTaken, foundersTaken),
 };
 
 const MemberCountsContext = createContext<MemberCountsValue | null>(null);
 
 /**
- * Live founder/member counts from Supabase (get_member_counts, see supabase/subscriptions.sql).
- * Each PayPal payment marks a subscription active server-side, so the counter goes up on
- * every claim. Refreshes on load, every minute, and when the tab regains focus.
+ * Founder and member counts. Today: the numbers in site.join (updated by hand). Later: a URL
+ * returning {"foundersTaken": 12} (optionally "membersTaken"), read on load, every minute and
+ * when the tab regains focus. If the URL fails, the config numbers stay.
  */
 export function MemberCountsProvider({ children }: { children: ReactNode }) {
   const [counts, setCounts] = useState<Counts>(FALLBACK);
   const [live, setLive] = useState(false);
 
   const refresh = useCallback(async () => {
-    if (!isSupabaseConfigured) return;
-    const { data, error } = await rpc<{ founders: number; members: number }>("get_member_counts");
-    if (error || !data) {
-      console.warn("[counts] could not load live member counts:", error?.message);
-      return;
+    if (!countsUrl) return;
+    try {
+      const res = await fetch(countsUrl, { cache: "no-store" });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = (await res.json()) as { foundersTaken?: unknown; membersTaken?: unknown };
+      const founders = Number(data.foundersTaken);
+      if (!Number.isFinite(founders)) throw new Error("no foundersTaken in the response");
+      const members = Number(data.membersTaken);
+      setCounts({
+        founders: clampFounders(founders),
+        members: Math.max(Number.isFinite(members) ? members : 0, founders),
+      });
+      setLive(true);
+    } catch (err) {
+      console.warn("[counts] could not load counts, using the config numbers:", (err as Error).message);
     }
-    const d = data as { founders: number; members: number };
-    setCounts({ founders: d.founders, members: d.members });
-    setLive(true);
   }, []);
 
   useEffect(() => {
+    if (!countsUrl) return;
     refresh();
     const id = window.setInterval(refresh, 60_000);
     const onFocus = () => refresh();
@@ -58,7 +68,7 @@ export function MemberCountsProvider({ children }: { children: ReactNode }) {
   }, [refresh]);
 
   const value = useMemo<MemberCountsValue>(() => {
-    const founderSpotsLeft = Math.max(0, site.founderSpots - counts.founders);
+    const founderSpotsLeft = Math.max(0, founderCap - counts.founders);
     return { ...counts, founderSpotsLeft, foundersSoldOut: founderSpotsLeft === 0, live, refresh };
   }, [counts, live, refresh]);
 

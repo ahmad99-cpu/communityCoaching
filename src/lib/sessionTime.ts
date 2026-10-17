@@ -4,7 +4,7 @@ import { useContent } from "@/lib/content";
 const HOUR = 60 * 60 * 1000;
 const WEEK = 7 * 24 * HOUR;
 /** Sessions run 2 to 3 hours; until then the card says "Live now". */
-const SESSION_LENGTH = 3 * HOUR;
+export const SESSION_LENGTH = 3 * HOUR;
 
 /**
  * Formats a session in the visitor's own timezone with its short name,

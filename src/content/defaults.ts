@@ -28,7 +28,7 @@ export const DEFAULT_CONTENT: SiteContent = {
 
   pricing: {
     heading: "Claim your spot",
-    subheading: "6SLOT is $29/month. The first 25 members lock in the $19 launch price for as long as they stay.",
+    subheading: "6SLOT is $27/month. The first 25 members lock in the $19 launch price for as long as they stay.",
     founder: {
       name: "Founder",
       price: 19,
@@ -53,7 +53,7 @@ export const DEFAULT_CONTENT: SiteContent = {
     },
     member: {
       name: "Member",
-      price: 29,
+      price: 27,
       subtitle: "Available once founder spots are gone.",
       badge: "",
       features: ["Everything in Founder (except founder perks)"],
@@ -146,13 +146,13 @@ export const DEFAULT_CONTENT: SiteContent = {
       // Joining & pricing
       {
         group: "Joining & pricing",
-        q: "Why do founders pay $19 instead of $29?",
-        a: "6SLOT is $29/month. Founders are the first 25 in: they help shape the sessions, the topics and the community from day one, so they lock in the $19 launch price for as long as they stay subscribed. Once the 25 founder spots are gone, it's $29.",
+        q: "Why do founders pay $19 instead of $27?",
+        a: "6SLOT is $27/month. Founders are the first 25 in: they help shape the sessions, the topics and the community from day one, so they lock in the $19 launch price for as long as they stay subscribed. Once the 25 founder spots are gone, it's $27.",
       },
       {
         group: "Joining & pricing",
         q: "How do I join?",
-        a: "You need Dota 2, Discord and a card or PayPal account. A mic helps for practice and questions, but it's optional. After you pay, you're taken straight to the Discord invite. Message Eixn with the email you paid with, and your member access is unlocked within 24 hours.",
+        a: "You need Dota 2, Discord and a card or PayPal account. A mic helps for practice and questions, but it's optional. After you pay, you land on a page with your next steps: join the Discord and fill a 2-minute onboarding form with the email you paid with. Eixn gives you access within 24 hours.",
       },
       {
         group: "Joining & pricing",

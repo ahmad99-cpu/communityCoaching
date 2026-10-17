@@ -106,6 +106,32 @@
   animation-play-state: paused;
 }
 
+/* Battle Pass Aegis (src/components/site/AegisEmblem.tsx): front view with a gold glow and a
+   light sweep across the metal. */
+.aegis-emblem {
+  position: relative;
+  filter: drop-shadow(0 0 16px rgba(232, 181, 74, 0.45));
+}
+.aegis-emblem__shine {
+  position: absolute;
+  inset: 0;
+  mask-size: 100% 100%;
+  -webkit-mask-size: 100% 100%;
+  background: linear-gradient(105deg, transparent 35%, rgba(255, 244, 214, 0.55) 50%, transparent 65%) no-repeat;
+  background-size: 250% 100%;
+  animation: aegis-shine 4s ease-in-out infinite;
+  mix-blend-mode: screen;
+}
+@keyframes aegis-shine {
+  0%,
+  45% {
+    background-position: 130% 0;
+  }
+  100% {
+    background-position: -30% 0;
+  }
+}
+
 /* Wheel test result reveal: one-time gold burst (src/components/tools/Celebrate.tsx). */
 @keyframes celebrate {
   0% {
@@ -146,6 +172,7 @@
     transform: none !important;
     transition: none;
   }
+  .aegis-emblem__shine,
   .hero-in,
   .hero-portrait,
   .animate-pulse-ring,

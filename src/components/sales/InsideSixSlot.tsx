@@ -30,7 +30,7 @@ const LOOP: { when: string; title: string; body: string; icon: IconName }[] = [
   {
     when: "All week",
     title: "Take it into your games",
-    body: "Specific homework, a check-in channel to post your progress, and rewards for the members who improve the most.",
+    body: "Specific homework, a check-in channel to post your progress, and shoutouts for the members who improve the most.",
     icon: "clipboard",
   },
 ];

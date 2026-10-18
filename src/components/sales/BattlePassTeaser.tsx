@@ -27,7 +27,7 @@ export function BattlePassTeaser() {
               <p className="text-xs font-black uppercase tracking-[0.2em] text-gold">6SLOT Battle Pass</p>
               <p className="mt-2 text-xl font-extrabold text-text sm:text-2xl">Every new member unlocks rewards for everyone.</p>
               <p className="mt-1.5 text-sm text-text-muted">
-                6 levels of giveaways as the community grows, all the way to a real Aegis replica at 1,000 members.
+                4 levels of giveaways as the community grows, all the way to a real Aegis replica at 100 members.
               </p>
               {/* Mini track */}
               <ol aria-label="Battle Pass levels" className="mt-5 flex items-center">

@@ -7,12 +7,13 @@ import { site } from "@/config/site";
 const FREE_TOOLS = [
   { label: "How Built Are You?", to: "/how-built-are-you" },
   { label: "Position Test", to: "/position-test" },
+  { label: "Counter Picker", to: "/counter-picker" },
 ];
 
 const COMMUNITY = [{ label: "Battle Pass", to: "/battle-pass" }];
 
-// Free tools unlock through the Battle Pass (src/content/battlePass.ts).
-const COMING_SOON = ["Hero Tier List · Level 1", "Patch Summary · Level 2", "Counter Picker · Level 3"];
+// Free tools for every Dota player, launching around the 6SLOT launch.
+const COMING_SOON = ["Patch Summary", "Player Report", "Lane Combos", "Item Builds", "Eixn's Tier List"];
 
 const POLICIES = [
   { label: "Refund & Cancellation", to: "/policies/refund" },

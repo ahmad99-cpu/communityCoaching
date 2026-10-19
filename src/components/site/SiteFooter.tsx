@@ -16,6 +16,7 @@ const COMMUNITY = [{ label: "Battle Pass", to: "/battle-pass" }];
 const COMING_SOON = ["Patch Summary", "Player Report", "Lane Combos", "Item Builds", "Eixn's Tier List"];
 
 const POLICIES = [
+  { label: "Terms of Service", to: "/policies/terms" },
   { label: "Refund & Cancellation", to: "/policies/refund" },
   { label: "Privacy", to: "/policies/privacy" },
   { label: "Giveaway Rules", to: "/policies/giveaway" },

@@ -38,7 +38,7 @@ export const DEFAULT_CONTENT: SiteContent = {
         "Weekly 2 to 3 hour live sessions",
         "Real games broken down live (members' replays and Eixn's prepared examples)",
         "Live practice every session",
-        "Homework & progress rewards",
+        "Practice tasks & progress rewards",
         "Direct line: ask Eixn anything, answered within 24 hours",
         "The Session Vault: recordings of every past session",
         "Members-only Discord & stack partners",
@@ -81,7 +81,7 @@ export const DEFAULT_CONTENT: SiteContent = {
         founderOnly: false,
       },
       {
-        item: "Homework, check-ins & progress rewards",
+        item: "Practice tasks, check-ins & progress rewards",
         detail: "Specific tasks after every session, a monthly progress check, and rewards for the most improved.",
         value: 39,
         founderOnly: false,
@@ -110,7 +110,7 @@ export const DEFAULT_CONTENT: SiteContent = {
       {
         group: "How 6SLOT works",
         q: "What happens in a weekly session?",
-        a: "Each week has one topic. Before the session, members submit replays that fit it. Live, Eixn breaks the topic down using a few of those replays and examples he prepares, then the whole group practices it together: 2v2 lane battles, recreated teamfights and more. You leave with homework and post your progress in the Discord. Even when it's not your replay, it's usually the same mistake you make.",
+        a: "Each week has one topic. Before the session, members submit replays that fit it. Live, Eixn breaks the topic down using a few of those replays and examples he prepares, then the whole group practices it together: 2v2 lane battles, recreated teamfights and more. You leave with a practice task and post your progress in the Discord. Even when it's not your replay, it's usually the same mistake you make.",
       },
       {
         group: "How 6SLOT works",
@@ -131,12 +131,12 @@ export const DEFAULT_CONTENT: SiteContent = {
       {
         group: "The community",
         q: "Will I actually get attention in a group?",
-        a: "Yes. You can submit replays, ask questions live and practice with the group. Between sessions you have the direct line to Eixn, answered within 24 hours, plus the homework check-ins and bonus Lobby Nights where Eixn coaches 5v5 teams live.",
+        a: "Yes. You can submit replays, ask questions live and practice with the group. Between sessions you have the direct line to Eixn, answered within 24 hours, plus the progress check-ins and bonus Lobby Nights where Eixn coaches 5v5 teams live.",
       },
       {
         group: "The community",
         q: "What happens between sessions?",
-        a: "The members' Discord keeps going all week: the direct line to Eixn, stack partners to queue with and homework check-ins. On top of that come bonus Lobby Nights, pro player guests, watch parties and members-only giveaways, where every member is entered automatically.",
+        a: "The members' Discord keeps going all week: the direct line to Eixn, stack partners to queue with and progress check-ins. On top of that come bonus Lobby Nights, pro player guests, watch parties and members-only giveaways, where every member is entered automatically.",
       },
       {
         group: "The community",

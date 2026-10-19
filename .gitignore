@@ -17,3 +17,6 @@ npm-debug.log*
 .idea
 
 *.tsbuildinfo
+
+# Supabase CLI cache
+supabase/.temp/

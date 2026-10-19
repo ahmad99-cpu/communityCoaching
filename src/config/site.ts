@@ -8,8 +8,8 @@ export const site = {
   join: {
     /** Founder PayPal payment link ($19). The pay buttons open it in a new tab. */
     founderLink: "https://www.paypal.com/ncp/payment/MCNF7AWJ6KX6N",
-    /** Regular-price ($27) payment link, used once founder spots are full. Empty = the button is disabled. */
-    memberLink: "",
+    /** Regular-price ($27) payment link, used automatically once founder spots are full. */
+    memberLink: "https://www.paypal.com/ncp/payment/9G53UTFCUR5RY",
     /** Founder spots available. */
     founderCap: 25,
     /** FOUNDERS_TAKEN: founders who have paid. Update by hand after each founder payment. */

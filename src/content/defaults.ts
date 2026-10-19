@@ -2,7 +2,7 @@ import type { SiteContent } from "@/content/types";
 
 /**
  * Built-in content: what the site shows until an admin saves a section in the
- * dashboard (/admin). Saved sections in Supabase `site_content` replace these.
+ * dashboard (/adminDashboard). Saved sections in Supabase `site_content` replace these.
  */
 export const DEFAULT_CONTENT: SiteContent = {
   giveaway: {

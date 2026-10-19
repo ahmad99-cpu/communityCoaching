@@ -15,7 +15,7 @@ function Unit({ value, label }: { value: number; label: string }) {
 /**
  * Event-style announcement bar above the header (like Tony Robbins' event pages): the next
  * live session, its topic, the time in the visitor's own timezone, and a countdown.
- * Topic and date are set in the dashboard (/admin → Next session).
+ * Topic and date are set in the dashboard (/adminDashboard → Next session).
  */
 export function NextSessionBar() {
   const { start, topic, live, msUntil } = useNextSession();

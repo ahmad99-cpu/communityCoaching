@@ -2,6 +2,7 @@ import { lazy, Suspense, useEffect } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import { SiteLayout } from "@/components/site/SiteLayout";
 import { SalesPage } from "@/pages/SalesPage";
+import { ADMIN_BASE } from "@/admin/basePath";
 
 // Secondary pages get their own small chunks so the sales page loads only what it shows.
 const loadWheelTest = () => import("@/pages/WheelTest");
@@ -17,7 +18,7 @@ const CounterPicker = lazy(() => loadCounterPicker().then((mod) => ({ default: m
 const BattlePass = lazy(() => loadBattlePass().then((mod) => ({ default: mod.BattlePass })));
 const Policy = lazy(() => loadPolicy().then((mod) => ({ default: mod.Policy })));
 
-// Admin dashboard: separate bundle, only downloaded when someone opens /admin.
+// Admin dashboard: separate bundle, only downloaded when someone opens it (ADMIN_BASE).
 const AdminApp = lazy(() => import("@/admin/AdminApp"));
 
 // Phase 1 site map (brief §2). Free tools and policies are linked from the footer only.
@@ -45,7 +46,7 @@ export function App() {
         <Route path="policies/:slug" element={<Policy />} />
       </Route>
       <Route
-        path="admin/*"
+        path={`${ADMIN_BASE.slice(1)}/*`}
         element={
           <Suspense fallback={null}>
             <AdminApp />

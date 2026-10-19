@@ -2,7 +2,7 @@
  * 6SLOT site config — content Jad may want to tweak.
  *
  * Payments and the founder counter live in `join` below. Price cards, FAQ and the two tests
- * are edited from the admin dashboard (/admin).
+ * are edited from the admin dashboard (/adminDashboard).
  */
 export const site = {
   join: {

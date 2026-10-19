@@ -1,16 +1,17 @@
 import { useEffect, useState, type FormEvent } from "react";
+import { ADMIN_BASE } from "@/admin/basePath";
 import { Link, NavLink, Outlet } from "react-router-dom";
 import { signIn, signOut, useAdmin } from "@/admin/auth";
 import { isSupabaseConfigured } from "@/lib/supabase";
 
 const NAV = [
-  { to: "/admin", label: "Students", icon: "👥", end: true },
-  { to: "/admin/next-session", label: "Next session", icon: "🗓️" },
-  { to: "/admin/giveaway", label: "Giveaway", icon: "🎁" },
-  { to: "/admin/pricing", label: "Price cards", icon: "💳" },
-  { to: "/admin/faq", label: "Q&A", icon: "❓" },
-  { to: "/admin/wheel-test", label: "How Built Are You?", icon: "⬡" },
-  { to: "/admin/position-test", label: "Position Test", icon: "🎯" },
+  { to: ADMIN_BASE, label: "Students", icon: "👥", end: true },
+  { to: `${ADMIN_BASE}/next-session`, label: "Next session", icon: "🗓️" },
+  { to: `${ADMIN_BASE}/giveaway`, label: "Giveaway", icon: "🎁" },
+  { to: `${ADMIN_BASE}/pricing`, label: "Price cards", icon: "💳" },
+  { to: `${ADMIN_BASE}/faq`, label: "Q&A", icon: "❓" },
+  { to: `${ADMIN_BASE}/wheel-test`, label: "How Built Are You?", icon: "⬡" },
+  { to: `${ADMIN_BASE}/position-test`, label: "Position Test", icon: "🎯" },
 ];
 
 function Centered({ children }: { children: React.ReactNode }) {
@@ -71,7 +72,7 @@ function LoginForm() {
 
 /**
  * Admin dashboard shell: sign-in gate + sidebar. Not linked from the public site;
- * open it at /admin. Kept out of search engines with a noindex tag.
+ * open it at /adminDashboard (ADMIN_BASE). Kept out of search engines with a noindex tag.
  */
 export function AdminLayout() {
   const admin = useAdmin();

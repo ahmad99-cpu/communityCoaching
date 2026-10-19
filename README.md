@@ -29,9 +29,9 @@ A cancelled, suspended or expired subscription frees its founder spot.
   `subscriptions` > Insert row with `plan` = founder/member, `status` = active,
   `source` = manual. To remove them later, set `status` = cancelled.
 
-### Admin dashboard (`/admin`)
+### Admin dashboard (`/adminDashboard`)
 
-Sign in at `yoursite/admin` (not linked anywhere on the public site). Pages:
+Sign in at `yoursite/adminDashboard` (e.g. https://6slot.gg/adminDashboard) (not linked anywhere on the public site). Pages:
 
 | Page | What you can do |
 |---|---|
@@ -59,7 +59,7 @@ built-in content (`src/content/defaults.ts`).
 Access is enforced by the database (row-level security), not just the page: a signed-in
 account that isn't in `admins` can't read students or change anything.
 
-**Next session (topic + date):** Dashboard (`/admin`) > Next session. If you forget to update it after a
+**Next session (topic + date):** Dashboard (`/adminDashboard`) > Next session. If you forget to update it after a
 session, the site moves it to the same time next week and shows "Topic announced soon". (One-time setup: run
 `supabase/next_session.sql` in the Supabase SQL editor so the dashboard can save it.)
 

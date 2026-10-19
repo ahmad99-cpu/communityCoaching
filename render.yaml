@@ -1,0 +1,46 @@
+# Render Blueprint for 6slot.gg: a free static site (the database lives on Supabase).
+# Render > New > Blueprint > pick this repo. It reads this file and sets everything below.
+services:
+  - type: web
+    runtime: static
+    name: 6slot
+    branch: main
+    buildCommand: npm ci && npm run build
+    staticPublishPath: ./dist
+    pullRequestPreviewsEnabled: false
+
+    envVars:
+      # Same Node version the project is built and tested with locally.
+      - key: NODE_VERSION
+        value: "22"
+      # Values come from your local .env. `sync: false` = Render asks you to paste them
+      # when the Blueprint is created (they're never stored in this file or on GitHub).
+      - key: VITE_SUPABASE_URL
+        sync: false
+      - key: VITE_SUPABASE_ANON_KEY
+        sync: false
+      - key: VITE_PAYPAL_CLIENT_ID
+        sync: false
+
+    # Single-page app: every page (/adminDashboard, /thank-you, /how-built-are-you…) is index.html.
+    # Real files (scripts, images, /data, /heroes) are still served as-is, because Render
+    # only applies rewrites when no file exists at that path.
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+
+    # Same caching as vercel.json.
+    headers:
+      - path: /assets/*
+        name: Cache-Control
+        value: public, max-age=31536000, immutable
+      - path: /heroes/*
+        name: Cache-Control
+        value: public, max-age=604800, stale-while-revalidate=2592000
+      - path: /data/*
+        name: Cache-Control
+        value: public, max-age=3600, stale-while-revalidate=604800
+      - path: /index.html
+        name: Cache-Control
+        value: no-cache

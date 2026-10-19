@@ -23,7 +23,7 @@ export function countdownParts(ms: number) {
 }
 
 /**
- * The next session as set in the dashboard (/admin → Next session). Fail-safe: if that
+ * The next session as set in the dashboard (/adminDashboard → Next session). Fail-safe: if that
  * session is over and nobody updated it, it rolls forward week by week (sessions are
  * weekly) and drops the old topic, so visitors never see a past date or a stale topic.
  * Re-checks every 30 seconds for the countdown.

@@ -6,15 +6,14 @@
  */
 export const site = {
   join: {
-    /** Founder PayPal payment link ($19). The pay buttons open it in a new tab. */
-    founderLink: "https://www.paypal.com/ncp/payment/MCNF7AWJ6KX6N",
-    /** Regular-price ($27) payment link, used automatically once founder spots are full. */
-    memberLink: "https://www.paypal.com/ncp/payment/9G53UTFCUR5RY",
     /** Founder spots available. */
     founderCap: 25,
-    /** FOUNDERS_TAKEN: founders who have paid. Update by hand after each founder payment. */
+    /**
+     * The live counts come from Supabase (active PayPal subscriptions) automatically. These are a
+     * floor: the site never shows fewer than this. Leave at 0 unless someone joined outside PayPal.
+     */
     foundersTaken: 0,
-    /** All paying members, founders included. Drives the Battle Pass. Never counted lower than foundersTaken. */
+    /** Same, for all paying members (founders included). Drives the Battle Pass. */
     membersTaken: 0,
     /**
      * Later: a URL (e.g. a Google Apps Script web app) returning JSON like {"foundersTaken": 12},

@@ -11,7 +11,7 @@ The code for this was built earlier and has never been switched on:
 - `supabase/functions/`: `paypal-create-subscription`, `paypal-activate`, `paypal-webhook`,
   plus `_shared/paypal.ts`.
 - `src/components/sales/PayPalCheckout.tsx` and `src/lib/paypal.ts`: the subscribe buttons.
-  **Not used on the site yet**: the site still uses `PayButton` (the Pay Links).
+  **Live on 6slot.gg since 2026-10-19.** The one-time Pay Links and `PayButton` were removed.
 
 ## Done (PayPal side, live account)
 

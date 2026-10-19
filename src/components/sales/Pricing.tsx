@@ -4,7 +4,7 @@ import { m } from "framer-motion";
 import { Container } from "@/components/layout/Container";
 import { Reveal } from "@/components/common/Reveal";
 import { FounderSpotsLeft } from "@/components/site/FounderSpotsLeft";
-import { AfterPayNote, PayButton } from "@/components/site/PayButton";
+import { AfterPayNote } from "@/components/site/AfterPayNote";
 import { PayPalCheckout } from "@/components/sales/PayPalCheckout";
 import { isPayPalConfigured } from "@/lib/paypal";
 import { isSupabaseConfigured } from "@/lib/supabaseRest";
@@ -179,9 +179,9 @@ export function Pricing() {
 }
 
 /**
- * The pay button in the price card. With PayPal + Supabase set up: monthly subscriptions, and
- * PayPal's checkout (a heavy script) only loads once the gold button is clicked, so the page stays
- * fast. Without them: the one-time PayPal Pay Links (PayButton).
+ * The pay button in the price card: monthly PayPal subscriptions. PayPal's checkout (a heavy
+ * script) only loads once the gold button is clicked, so the page stays fast. If PayPal or Supabase
+ * isn't configured (e.g. a missing env var on the host), the button is disabled instead.
  */
 function Checkout({ label }: { label: string }) {
   const { foundersSoldOut } = useMemberCounts();
@@ -189,7 +189,11 @@ function Checkout({ label }: { label: string }) {
   const plan = foundersSoldOut ? "member" : "founder";
 
   if (!isPayPalConfigured || !isSupabaseConfigured) {
-    return <PayButton className="w-full py-4 text-base">{label}</PayButton>;
+    return (
+      <button type="button" disabled className="btn-gold w-full cursor-not-allowed py-4 text-base opacity-50">
+        Checkout opens soon
+      </button>
+    );
   }
   if (open) return <PayPalCheckout plan={plan} />;
   return (

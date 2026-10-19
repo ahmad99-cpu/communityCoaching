@@ -1,3 +1,4 @@
+import { usePageTitle } from "@/lib/usePageTitle";
 import { useState } from "react";
 import { AnimatePresence, m } from "framer-motion";
 import { Container } from "@/components/layout/Container";
@@ -19,6 +20,7 @@ const slide = {
 };
 
 export function PositionTest() {
+  usePageTitle("Position Test");
   const { questions, results } = useContent("position_test");
   const [step, setStep] = useState<Step>("intro");
   const [index, setIndex] = useState(0);

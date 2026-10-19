@@ -1,3 +1,4 @@
+import { usePageTitle } from "@/lib/usePageTitle";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Container } from "@/components/layout/Container";
@@ -201,6 +202,7 @@ function BringYourStack() {
  * buyer's excitement into showing up (calendar, timeline), commitment (public goal) and referrals.
  */
 export function ThankYou() {
+  usePageTitle("You're in");
   useNoIndex();
   // The first 25 buyers are founders; everyone after is a member.
   const { foundersSoldOut } = useMemberCounts();

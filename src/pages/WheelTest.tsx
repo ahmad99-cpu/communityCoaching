@@ -1,3 +1,4 @@
+import { usePageTitle } from "@/lib/usePageTitle";
 import { useMemo, useState, type ReactNode } from "react";
 import { AnimatePresence, m } from "framer-motion";
 import { Container } from "@/components/layout/Container";
@@ -62,6 +63,7 @@ const PREVIEW_ANSWERS = [6, 5, 7, 5, 3, 3, 9, 8, 6, 5, 7, 7];
  * a celebration and a personal Player Brief you can share.
  */
 export function WheelTest() {
+  usePageTitle("How Built Are You?");
   const { slots: wheelSlots } = useContent("wheel_test");
   const statements = useMemo(() => flattenStatements(wheelSlots), [wheelSlots]);
   const [step, setStep] = useState<Step>(PREVIEW ? "result" : "intro");

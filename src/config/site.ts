@@ -56,6 +56,15 @@ export const site = {
   },
 
   /**
+   * Visitor numbers (Umami, cloud.umami.is). Paste the Website ID from Umami > Settings > Websites.
+   * Empty = no tracking. Only counts visits on these domains, so local testing is never counted.
+   */
+  analytics: {
+    umamiWebsiteId: "b1734554-1266-4a9b-ae11-22c87904fa7a",
+    domains: ["6slot.gg", "www.6slot.gg"],
+  },
+
+  /**
    * PayPal subscriptions (not used yet: the site runs on the payment links in `join` for now).
    * Kept for the switch to subscriptions: PayPalCheckout + the Supabase functions use this.
    */

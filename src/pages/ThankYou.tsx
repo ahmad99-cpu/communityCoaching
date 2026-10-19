@@ -59,7 +59,7 @@ function StepButton({ step, primary }: { step: Step; primary: boolean }) {
     );
   }
   return (
-    <a href={step.href} target="_blank" rel="noopener noreferrer" className={cls}>
+    <a href={step.href} target="_blank" rel="noopener noreferrer" data-umami-event={`Thank-you: ${step.button}`} className={cls}>
       {step.button}
     </a>
   );
@@ -186,7 +186,7 @@ function BringYourStack() {
           <p className="mt-1 text-sm leading-relaxed text-text-muted">
             Bring a friend to a live session once a month, free. If they join, your next month is on us.
           </p>
-          <button type="button" onClick={copy} className="btn-ghost mt-3 w-full py-2.5 sm:w-auto sm:px-5">
+          <button type="button" onClick={copy} data-umami-event="Copy invite message" className="btn-ghost mt-3 w-full py-2.5 sm:w-auto sm:px-5">
             {copied ? "Copied. Send it to your friends" : "Copy an invite message"}
           </button>
         </div>

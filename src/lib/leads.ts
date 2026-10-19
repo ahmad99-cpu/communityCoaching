@@ -1,4 +1,5 @@
 import { insertRow, isSupabaseConfigured } from "@/lib/supabaseRest";
+import { track } from "@/lib/analytics";
 
 export type LeadSource = "wheel_test" | "position_test";
 
@@ -11,6 +12,7 @@ export type LeadSource = "wheel_test" | "position_test";
  */
 export async function saveLead(source: LeadSource, discord: string, result: unknown) {
   const lead = { source, discord: discord.trim(), result, created_at: new Date().toISOString() };
+  track("Test finished", { test: source });
 
   try {
     const key = "6slot:leads";

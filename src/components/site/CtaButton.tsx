@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useMemberCounts } from "@/lib/memberCounts";
 import { scrollToJoin } from "@/lib/scrollToJoin";
 
@@ -8,9 +8,12 @@ import { scrollToJoin } from "@/lib/scrollToJoin";
  */
 export function CtaButton({ children, className = "" }: { children?: React.ReactNode; className?: string }) {
   const { foundersSoldOut } = useMemberCounts();
+  const { pathname } = useLocation();
   return (
     <Link
       to="/#pricing"
+      data-umami-event="Claim spot click"
+      data-umami-event-page={pathname}
       className={`btn-gold ${className}`}
       onClick={(e) => {
         // Already on the sales page: scroll directly, so repeat clicks still work

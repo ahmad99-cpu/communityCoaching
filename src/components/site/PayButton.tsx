@@ -19,7 +19,14 @@ export function PayButton({ children, className = "" }: { children?: ReactNode; 
     );
   }
   return (
-    <a href={href} target="_blank" rel="noopener noreferrer" className={`btn-gold ${className}`}>
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      data-umami-event="Open PayPal"
+      data-umami-event-plan={foundersSoldOut ? "member" : "founder"}
+      className={`btn-gold ${className}`}
+    >
       {children ?? (foundersSoldOut ? "Join 6SLOT" : "Claim my founder spot")}
     </a>
   );

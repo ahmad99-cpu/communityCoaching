@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { WideContainer } from "@/components/layout/Container";
 import { Icon } from "@/components/site/Icons";
 import { usePageTitle } from "@/lib/usePageTitle";
+import { track } from "@/lib/analytics";
 
 /* ---------------------------------------------------------------- data */
 
@@ -149,6 +150,14 @@ export function CounterPicker() {
         setFailed(true);
       });
   }, [bracket]);
+
+  // Counted once per visit, the first time results show.
+  const used = useRef(false);
+  useEffect(() => {
+    if (used.current || !enemies.length) return;
+    used.current = true;
+    track("Counter Picker used");
+  }, [enemies.length]);
 
   // Keep the draft in the address bar, so the page can be shared or refreshed as-is.
   useEffect(() => {

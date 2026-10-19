@@ -33,7 +33,17 @@ async function verify(req: Request, event: unknown) {
 Deno.serve(async (req) => {
   if (req.method !== "POST") return json({ error: "method_not_allowed" }, 405);
 
-  const event = (await req.json()) as WebhookEvent;
+  // Real PayPal deliveries always carry these; anything without them isn't from PayPal.
+  const signed = ["paypal-transmission-id", "paypal-transmission-sig", "paypal-cert-url"].every((h) => req.headers.get(h));
+  if (!signed) return json({ error: "missing_signature_headers" }, 400);
+
+  let event: WebhookEvent;
+  try {
+    event = (await req.json()) as WebhookEvent;
+  } catch {
+    return json({ error: "invalid_body" }, 400);
+  }
+  // If PayPal itself can't be reached, verify() throws and the 500 makes PayPal retry later.
   if (!(await verify(req, event))) return json({ error: "invalid_signature" }, 401);
 
   // Subscription events carry the subscription as the resource; sale events point to it.

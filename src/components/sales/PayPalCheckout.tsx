@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { isPayPalConfigured, loadPayPal } from "@/lib/paypal";
 import { invokeFunction, isSupabaseConfigured } from "@/lib/supabaseRest";
 import { useMemberCounts } from "@/lib/memberCounts";
+import { track } from "@/lib/analytics";
 
 type Plan = "founder" | "member";
 
@@ -11,9 +12,10 @@ class SpotUnavailableError extends Error {}
 /**
  * Asks our server to hold a spot and create the PayPal subscription
  * (supabase/functions/paypal-create-subscription). Founder spots are capped there,
- * atomically, so the 21st founder can't get through even if two people pay at once.
+ * atomically, so the 26th founder can't get through even if two people pay at once.
  */
 async function createSubscription(plan: Plan): Promise<string> {
+  track("Start subscription", { plan });
   const { data, error } = await invokeFunction<{ subscriptionId?: string; error?: string }>(
     "paypal-create-subscription",
     { plan },

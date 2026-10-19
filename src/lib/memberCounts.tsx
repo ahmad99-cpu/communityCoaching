@@ -1,5 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import { site } from "@/config/site";
+import { isSupabaseConfigured, rpc } from "@/lib/supabaseRest";
 
 interface Counts {
   /** Founders who have paid. */
@@ -37,6 +38,23 @@ export function MemberCountsProvider({ children }: { children: ReactNode }) {
   const [live, setLive] = useState(false);
 
   const refresh = useCallback(async () => {
+    // Live numbers: active subscriptions, counted in Supabase by get_member_counts(). Never shown
+    // lower than the hand-set numbers in site.join, which cover anyone who paid before the switch.
+    if (isSupabaseConfigured) {
+      const { data, error } = await rpc<{ founders?: unknown; members?: unknown }>("get_member_counts");
+      const dbFounders = Number(data?.founders);
+      if (!error && Number.isFinite(dbFounders)) {
+        const dbMembers = Number(data?.members);
+        const founders = clampFounders(Math.max(dbFounders, foundersTaken));
+        setCounts({
+          founders,
+          members: Math.max(Number.isFinite(dbMembers) ? dbMembers : 0, membersTaken, founders),
+        });
+        setLive(true);
+        return;
+      }
+      console.warn("[counts] could not load live counts, using the config numbers:", error?.message);
+    }
     if (!countsUrl) return;
     try {
       const res = await fetch(countsUrl, { cache: "no-store" });
@@ -56,7 +74,7 @@ export function MemberCountsProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
-    if (!countsUrl) return;
+    if (!countsUrl && !isSupabaseConfigured) return;
     refresh();
     const id = window.setInterval(refresh, 60_000);
     const onFocus = () => refresh();

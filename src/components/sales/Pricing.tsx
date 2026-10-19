@@ -1,9 +1,14 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { m } from "framer-motion";
 import { Container } from "@/components/layout/Container";
 import { Reveal } from "@/components/common/Reveal";
 import { FounderSpotsLeft } from "@/components/site/FounderSpotsLeft";
 import { AfterPayNote, PayButton } from "@/components/site/PayButton";
+import { PayPalCheckout } from "@/components/sales/PayPalCheckout";
+import { isPayPalConfigured } from "@/lib/paypal";
+import { isSupabaseConfigured } from "@/lib/supabaseRest";
+import { track } from "@/lib/analytics";
 import { Referral } from "@/components/sales/Referral";
 import { site } from "@/config/site";
 import { useMemberCounts } from "@/lib/memberCounts";
@@ -122,7 +127,7 @@ function MembershipCard() {
         )}
 
         <div className="mt-auto pt-8">
-          <PayButton className="w-full py-4 text-base">{plan.buttonLabel}</PayButton>
+          <Checkout label={plan.buttonLabel} />
           <p className="mt-4 flex h-6 items-center justify-center text-sm">
             <FounderSpotsLeft label="founder spots left" />
           </p>
@@ -170,5 +175,33 @@ export function Pricing() {
         </Reveal>
       </Container>
     </section>
+  );
+}
+
+/**
+ * The pay button in the price card. With PayPal + Supabase set up: monthly subscriptions, and
+ * PayPal's checkout (a heavy script) only loads once the gold button is clicked, so the page stays
+ * fast. Without them: the one-time PayPal Pay Links (PayButton).
+ */
+function Checkout({ label }: { label: string }) {
+  const { foundersSoldOut } = useMemberCounts();
+  const [open, setOpen] = useState(false);
+  const plan = foundersSoldOut ? "member" : "founder";
+
+  if (!isPayPalConfigured || !isSupabaseConfigured) {
+    return <PayButton className="w-full py-4 text-base">{label}</PayButton>;
+  }
+  if (open) return <PayPalCheckout plan={plan} />;
+  return (
+    <button
+      type="button"
+      onClick={() => {
+        setOpen(true);
+        track("Open PayPal", { plan });
+      }}
+      className="btn-gold w-full py-4 text-base"
+    >
+      {label}
+    </button>
   );
 }

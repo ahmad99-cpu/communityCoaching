@@ -3,6 +3,11 @@ export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
+      screens: {
+        // Desktop screens that are short (small laptops, or a browser with tall toolbars): used to
+        // keep the whole hero, including the "Not sure where you stand?" box, on the first screen.
+        short: { raw: "(min-width: 1024px) and (max-height: 760px)" },
+      },
       colors: {
         // 6SLOT palette — navy + gold, matching eixn-dota.com (brief §1).
         // Gold is reserved for CTAs, the founder counter, key headline words and the logo "6".

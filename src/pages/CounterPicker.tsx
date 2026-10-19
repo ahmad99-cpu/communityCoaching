@@ -349,8 +349,9 @@ export function CounterPicker() {
 
         {/* Results, right under the draft */}
         <div className="mt-4 rounded-card border border-gold/25 bg-navy-raised/80 p-3 sm:p-4">
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-3">
-            <div className="flex rounded-control border border-navy-border p-1">
+          {/* Phones: one clean row per control, top to bottom. Desktop (lg): everything on one line. */}
+          <div className="flex flex-col gap-4 lg:flex-row lg:flex-wrap lg:items-center lg:gap-x-5 lg:gap-y-3">
+            <div className="grid grid-cols-2 rounded-control border border-navy-border p-1 lg:inline-grid">
               {(
                 [
                   ["best", "Best picks"],
@@ -362,7 +363,7 @@ export function CounterPicker() {
                   type="button"
                   onClick={() => setTab(key)}
                   aria-pressed={tab === key}
-                  className={`rounded-[7px] px-4 py-1.5 text-sm font-extrabold transition ${
+                  className={`rounded-[7px] px-4 py-2 text-sm font-extrabold transition ${
                     tab === key
                       ? key === "best"
                         ? "bg-gold text-navy"
@@ -374,43 +375,48 @@ export function CounterPicker() {
                 </button>
               ))}
             </div>
-            <div className="flex flex-1 flex-wrap items-center gap-x-4 gap-y-2">
-              <div className="flex flex-wrap items-center gap-1.5">
-                <span className="mr-1 text-[11px] font-black uppercase tracking-[0.16em] text-text-muted">
-                  I'm playing
-                </span>
-                {(positions ? POSITIONS : []).map((label, i) => (
-                  <Chip key={label} on={position === i} onClick={() => setPosition(position === i ? null : i)}>
-                    {label}
-                  </Chip>
-                ))}
+
+            {positions && (
+              <div className="min-w-0 lg:flex lg:items-center lg:gap-2">
+                <p className="mb-2 text-[11px] font-black uppercase tracking-[0.16em] text-text-muted lg:mb-0">I'm playing</p>
+                {/* One swipeable row on phones instead of chips wrapping into a pile. */}
+                <div className="-mx-3 flex gap-1.5 overflow-x-auto px-3 [scrollbar-width:none] sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0 [&::-webkit-scrollbar]:hidden">
+                  {POSITIONS.map((label, i) => (
+                    <Chip key={label} on={position === i} onClick={() => setPosition(position === i ? null : i)}>
+                      {label}
+                    </Chip>
+                  ))}
+                </div>
               </div>
-              <button
-                type="button"
-                role="switch"
-                aria-checked={poolOnly}
-                onClick={() => (pool.size ? setPoolOnly(!poolOnly) : startEditPool())}
-                className="flex items-center gap-2 text-sm"
-              >
-                <span
-                  className={`relative h-5 w-9 shrink-0 rounded-full transition ${poolOnly ? "bg-gold" : "bg-navy-border"}`}
-                >
-                  <span
-                    className={`absolute top-0.5 h-4 w-4 rounded-full bg-white shadow transition-all ${
-                      poolOnly ? "left-[18px]" : "left-0.5"
-                    }`}
-                  />
+            )}
+
+            {/* Settings-style row: label and hint on the left, switch on the right. */}
+            <button
+              type="button"
+              role="switch"
+              aria-checked={poolOnly}
+              onClick={() => (pool.size ? setPoolOnly(!poolOnly) : startEditPool())}
+              className="flex w-full items-center justify-between gap-3 rounded-control border border-navy-border bg-navy/50 px-3 py-2.5 text-left transition hover:border-gold/40 lg:w-auto lg:border-0 lg:bg-transparent lg:p-0"
+            >
+              <span className="min-w-0">
+                <span className={`block text-sm font-bold ${poolOnly ? "text-gold" : "text-text"}`}>Only heroes I play</span>
+                <span className="block text-xs text-text-muted">
+                  {pool.size ? `${pool.size} hero${pool.size === 1 ? "" : "es"} saved` : "Tap to pick your heroes first"}
                 </span>
-                <span className={`font-bold ${poolOnly ? "text-gold" : "text-text"}`}>Only heroes I play</span>
-                <span className="text-xs text-text-muted">{pool.size ? `(${pool.size})` : "· pick them first"}</span>
-              </button>
-            </div>
-            <div className="flex flex-wrap items-center gap-2">
+              </span>
+              <span className={`relative h-6 w-11 shrink-0 rounded-full transition ${poolOnly ? "bg-gold" : "bg-navy-border"}`}>
+                <span
+                  className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-all ${poolOnly ? "left-[22px]" : "left-0.5"}`}
+                />
+              </span>
+            </button>
+
+            <div className="grid grid-cols-2 gap-2 lg:ml-auto lg:flex">
               {data && data.brackets.length > 1 && (
                 <select
                   value={bracket}
                   onChange={(e) => setBracket(e.target.value)}
-                  className="rounded-control border border-navy-border bg-navy px-3 py-2 text-sm text-text"
+                  className="w-full rounded-control border border-navy-border bg-navy px-3 py-2.5 text-sm text-text lg:w-auto lg:py-2"
                   aria-label="Rank bracket"
                 >
                   {data.brackets.map((b) => (
@@ -424,7 +430,9 @@ export function CounterPicker() {
                 type="button"
                 onClick={share}
                 disabled={!enemies.length && !allies.length}
-                className="rounded-control border border-navy-border px-3 py-2 text-sm font-bold text-text transition hover:border-gold/60 disabled:opacity-40"
+                className={`rounded-control border border-navy-border px-3 py-2.5 text-sm font-bold text-text transition hover:border-gold/60 disabled:opacity-40 lg:py-2 ${
+                  data && data.brackets.length > 1 ? "" : "col-span-2"
+                }`}
               >
                 {copied ? "Link copied" : "Share draft"}
               </button>
@@ -688,7 +696,7 @@ function Chip({ on, onClick, children }: { on: boolean; onClick: () => void; chi
       type="button"
       onClick={onClick}
       aria-pressed={on}
-      className={`rounded-full border px-3 py-1 text-xs font-bold transition ${
+      className={`shrink-0 whitespace-nowrap rounded-full border px-3 py-1.5 text-xs font-bold transition ${
         on ? "border-gold bg-gold/15 text-gold" : "border-navy-border text-text-muted hover:text-text"
       }`}
     >

@@ -58,19 +58,22 @@ export function NextSessionBar() {
         </p>
       </WideContainer>
 
-      {/* Tablet and desktop: one line with the boxed countdown. */}
-      <WideContainer className="hidden items-center justify-center gap-x-8 py-2.5 sm:flex lg:h-14 lg:py-0">
+      {/* Tablet and desktop, with the boxed countdown. Tablets / small laptops stack the topic over
+          the date so the topic gets the whole middle and isn't cut to "Laning S…"; lg+ is one line. */}
+      <WideContainer className="hidden items-center justify-center gap-x-5 py-2.5 sm:flex lg:h-14 lg:gap-x-8 lg:py-0">
         <div className="flex min-w-0 items-center gap-x-3">
-          <span className="flex items-center gap-1.5 text-[11px] font-black uppercase tracking-[0.2em] text-gold">
+          <span className="flex shrink-0 items-center gap-1.5 whitespace-nowrap text-[11px] font-black uppercase tracking-[0.2em] text-gold">
             <Icon name="calendar" className="h-3.5 w-3.5" />
-            Next live session
+            Next live<span className="hidden lg:inline"> session</span>
           </span>
-          <span className="truncate text-base font-bold text-text">{topic || "Topic drops soon"}</span>
-          <span className="text-navy-border" aria-hidden>
-            |
-          </span>
-          <span className="whitespace-nowrap text-base font-semibold text-text">
-            {day} · {time}
+          <span className="flex min-w-0 flex-col lg:flex-row lg:items-center lg:gap-x-3">
+            <span className="truncate text-sm font-bold text-text lg:text-base">{topic || "Topic drops soon"}</span>
+            <span className="hidden text-navy-border lg:inline" aria-hidden>
+              |
+            </span>
+            <span className="whitespace-nowrap text-xs font-semibold text-text-muted lg:text-base lg:text-text">
+              {day} · {time}
+            </span>
           </span>
         </div>
 

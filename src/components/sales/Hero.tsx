@@ -55,15 +55,15 @@ export function Hero() {
         </div>
 
         {/* Copy */}
-        <div className="relative z-10 -mt-20 pb-20 text-center sm:-mt-24 sm:pb-24 lg:mt-0 lg:max-w-[760px] lg:self-center lg:py-20 lg:text-left">
+        <div className="relative z-10 -mt-20 pb-20 text-center sm:-mt-24 sm:pb-24 lg:mt-0 lg:max-w-[760px] lg:self-center lg:py-[clamp(1.5rem,5svh,5rem)] lg:text-left">
           <h1
             {...fade(0)}
-            className="hero-in mx-auto max-w-3xl text-4xl font-black uppercase leading-[1.04] tracking-tight sm:text-6xl lg:mx-0 lg:max-w-none lg:text-[clamp(3rem,4.3vw,5.25rem)]"
+            className="hero-in mx-auto max-w-3xl text-4xl font-black uppercase leading-[1.04] tracking-tight sm:text-6xl lg:mx-0 lg:max-w-none lg:text-[clamp(2.5rem,min(4.3vw,8svh),5.25rem)] short:text-[clamp(2.5rem,min(4.3vw,7.4svh),5.25rem)]"
           >
             Stuck at the same rank? <span className="text-gold">Fix it one topic at a time.</span>
           </h1>
 
-          <p {...fade(0.08)} className="hero-in mx-auto mt-6 max-w-xl text-base leading-relaxed text-text-muted sm:text-lg lg:mx-0 xl:max-w-2xl xl:text-xl">
+          <p {...fade(0.08)} className="hero-in mx-auto mt-6 max-w-xl text-base leading-relaxed text-text-muted sm:text-lg lg:mx-0 lg:mt-[clamp(1rem,2.6svh,1.5rem)] short:text-base xl:max-w-2xl [@media(min-width:1280px)_and_(min-height:1000px)]:text-xl">
             One topic a week, learned together as a group. Eixn breaks it down live using members&apos; replays and
             examples he prepares for each topic, then everyone puts it into practice before the session ends. And every
             so often, a pro player drops in. We&apos;re not saying who yet.
@@ -71,15 +71,15 @@ export function Hero() {
 
           <div
             {...fade(0.16)}
-            className="hero-in mt-8 flex flex-col items-center gap-x-6 gap-y-4 sm:flex-row sm:justify-center lg:justify-start"
+            className="hero-in mt-8 flex flex-col items-center gap-x-6 gap-y-4 sm:flex-row sm:justify-center lg:mt-[clamp(1.25rem,3.4svh,2rem)] lg:justify-start"
           >
-            <CtaButton className="w-full px-10 py-4 text-base sm:w-auto" />
+            <CtaButton className="w-full px-10 py-4 text-base sm:w-auto short:py-3" />
             <FounderSpotsLeft className="text-sm" />
           </div>
           {/* Friction removers only (Graziosi/Hormozi): the price comes after the value stack, in Pricing. */}
           <ul
             {...fade(0.22)}
-            className="hero-in mt-5 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-sm text-text-muted lg:justify-start"
+            className="hero-in mt-5 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-sm text-text-muted lg:justify-start short:mt-3"
           >
             <li className="flex items-center gap-2">
               <Icon name="calendar" className="h-4 w-4 text-gold" />
@@ -102,20 +102,22 @@ export function Hero() {
 
           {/* Second path for visitors not ready to buy (lead magnet): clearly visible, but outlined so the
               gold "Claim" button stays the main action. */}
-          <div {...fade(0.3)} className="hero-in mt-8 flex justify-center lg:justify-start">
+          <div {...fade(0.3)} className="hero-in mt-8 flex justify-center lg:mt-[clamp(1.25rem,3.4svh,2rem)] lg:justify-start">
             <Link
               to="/how-built-are-you"
-              className="group flex w-full max-w-xl items-center gap-4 rounded-card border border-gold/40 bg-navy-raised/70 p-4 text-left transition hover:border-gold hover:bg-navy-raised sm:p-5"
+              className="group flex w-full max-w-xl items-center gap-4 rounded-card border border-gold/40 bg-navy-raised/70 p-4 text-left transition hover:border-gold hover:bg-navy-raised sm:p-5 short:py-3"
             >
               <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-control border border-gold/40 bg-navy text-gold">
                 <Icon name="hexagon" className="h-6 w-6" />
               </span>
               <span className="min-w-0 flex-1">
                 <span className="block font-bold text-text sm:text-lg">Not sure where you stand?</span>
-                <span className="mt-0.5 block text-sm text-text-muted">
+                <span className="mt-0.5 block text-sm text-text-muted short:hidden">
                   Take the free 2-minute <strong className="font-semibold text-text">How Built Are You?</strong> test and
                   see which of your 6 slots is holding your MMR back.
                 </span>
+                {/* Short desktop screens: one line instead of two, so the box fits on the first screen. */}
+                <span className="mt-0.5 hidden text-sm text-text-muted short:block">Free 2-minute test: find your weakest slot.</span>
               </span>
               <span
                 aria-hidden

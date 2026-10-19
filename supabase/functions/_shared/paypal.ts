@@ -4,13 +4,15 @@ import { createClient } from "npm:@supabase/supabase-js@2";
 export type Plan = "founder" | "member";
 
 function env(name: string): string {
-  const value = Deno.env.get(name);
+  // Trim: secrets pasted into the dashboard easily pick up a stray space or line break,
+  // which makes PayPal reject the login with "invalid_client".
+  const value = Deno.env.get(name)?.trim();
   if (!value) throw new Error(`Missing secret ${name}`);
   return value;
 }
 
 /** https://api-m.sandbox.paypal.com while testing, https://api-m.paypal.com for launch. */
-const PAYPAL_API = () => Deno.env.get("PAYPAL_API_BASE") ?? "https://api-m.sandbox.paypal.com";
+const PAYPAL_API = () => Deno.env.get("PAYPAL_API_BASE")?.trim() || "https://api-m.sandbox.paypal.com";
 
 export function planIdFor(plan: Plan) {
   return plan === "founder" ? env("PAYPAL_FOUNDER_PLAN_ID") : env("PAYPAL_MEMBER_PLAN_ID");

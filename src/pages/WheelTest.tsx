@@ -55,7 +55,11 @@ const EXAMPLE_SLOTS = [7, 3.5, 6, 8, 5.5, 6.5];
  * can be reviewed without answering 12 questions. Stripped from production builds.
  */
 const PREVIEW = import.meta.env.DEV && new URLSearchParams(window.location.search).has("preview");
-const PREVIEW_ANSWERS = [6, 5, 7, 5, 3, 3, 9, 8, 6, 5, 7, 7];
+// ?preview=0,3,0,3,... loads those 12 answers instead of the sample.
+const PREVIEW_PARAM = PREVIEW ? new URLSearchParams(window.location.search).get("preview") ?? "" : "";
+const PREVIEW_ANSWERS = /^(\d+,){11}\d+$/.test(PREVIEW_PARAM)
+  ? PREVIEW_PARAM.split(",").map(Number)
+  : [6, 5, 7, 5, 3, 3, 9, 8, 6, 5, 7, 7];
 
 /**
  * "How built are you?" — modelled on Tony Robbins' Business Mastery Growth Plan:
@@ -322,7 +326,13 @@ function WheelResultView({
             </p>
           </div>
           <p className="rounded-full border border-gold/60 bg-gold/10 px-4 py-2 text-sm font-bold text-text">
-            Biggest gap: <span className="text-gold">{slotNames[weakestIndex]}</span>
+            {slots.every((v) => v >= 10) ? (
+              <span className="text-gold">Fully built. No gaps.</span>
+            ) : (
+              <>
+                Biggest gap: <span className="text-gold">{slotNames[weakestIndex]}</span>
+              </>
+            )}
           </p>
         </div>
         <div className="mt-4">

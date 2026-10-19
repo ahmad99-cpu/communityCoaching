@@ -1,24 +1,38 @@
 /** Wheel and car geometry shared by the animated RollingCar and the Discord share card. */
 
 const SAMPLES = 180;
-export const WHEEL_R = 44;
+export const WHEEL_R = 35;
+
+/** The smallest a slot can make the wheel (share of full size), so the axle always has a rim. */
+const MIN_SHARE = 0.15;
 
 /**
- * Wheel radius at angle φ, built from the six slot scores. Each slot sets the
- * radius of one corner of the hexagon; between corners we interpolate smoothly,
- * so a fully built wheel (all 10s) is a perfect circle and rolls flat, while a
- * low slot leaves a flat spot that makes the car bounce (brief §5 "The car").
+ * Wheel radius at angle φ, built from the six slot scores so the wheel is the player's radar
+ * shape: each slot is one spoke, as long as its score (10/10 = full size), and the rim runs
+ * straight from spoke to spoke like the radar chart. The better two neighbouring slots are, the
+ * more the rim between them bows out into a circle, so a fully built wheel (all 10s) is round
+ * and rolls flat, while weak slots leave a small, jagged wheel that bumps along (brief §5).
  */
 export function buildProfile(slots: number[]) {
-  const radii = slots.map((s) => WHEEL_R * (0.3 + 0.7 * Math.max(0, Math.min(10, s)) / 10));
+  const radii = slots.map((s) => WHEEL_R * Math.max(MIN_SHARE, Math.min(10, Math.max(0, s)) / 10));
+  const step = Math.PI / 3;
   const pts: { angle: number; r: number }[] = [];
   for (let k = 0; k < SAMPLES; k++) {
     const angle = (k / SAMPLES) * Math.PI * 2;
-    const seg = (angle / (Math.PI * 2)) * 6;
+    const seg = angle / step;
     const i = Math.floor(seg) % 6;
+    const j = (i + 1) % 6;
     const t = seg - Math.floor(seg);
+    const ri = radii[i];
+    const rj = radii[j];
+    // Straight rim between the two spoke tips (exactly the radar's edge), at this angle.
+    const chord = (ri * rj * Math.sin(step)) / (ri * Math.sin(t * step) + rj * Math.sin((1 - t) * step));
+    // Round rim: the spoke lengths blended smoothly along the arc.
     const ease = (1 - Math.cos(t * Math.PI)) / 2;
-    pts.push({ angle, r: radii[i] + (radii[(i + 1) % 6] - radii[i]) * ease });
+    const arc = ri + (rj - ri) * ease;
+    // Strong neighbours bow the rim out into a circle; weak ones keep the radar's straight edge.
+    const bow = (Math.min(ri, rj) / WHEEL_R) ** 2;
+    pts.push({ angle, r: chord + (arc - chord) * bow });
   }
   return { pts, radii };
 }
@@ -46,9 +60,8 @@ export interface CartPart {
 const pt = (r: number, a: number) => `${(r * Math.cos(a)).toFixed(2)},${(r * Math.sin(a)).toFixed(2)}`;
 
 /**
- * One wheel, shaped by the player's result: a gold rim whose outline follows the score profile
- * (a dent for every weak slot, perfectly round when fully built), six spokes (one per slot,
- * slot 1 at the top like the radar) and a hub. Local coords, centred
+ * One wheel, shaped by the player's result: the player's radar shape as the gold rim, six spokes
+ * (one per slot, slot 1 at the top like the radar) and a hub. Local coords, centred
  * on the axle; callers rotate it as it rolls.
  */
 export function wheelParts(slots: number[]): CartPart[] {
@@ -60,8 +73,8 @@ export function wheelParts(slots: number[]): CartPart[] {
   return [
     { d: outline(1), fill: "#1C2A3C", stroke: "#E8B54A", strokeWidth: 3 },
     { d: spokes, stroke: "#E8B54A", strokeWidth: 2, opacity: 0.75 },
-    { d: "M6,0 A6 6 0 1 0 -6,0 A6 6 0 1 0 6,0 Z", fill: "#E8B54A" },
-    { d: "M2,0 A2 2 0 1 0 -2,0 A2 2 0 1 0 2,0 Z", fill: "#0E1724" },
+    { d: "M4,0 A4 4 0 1 0 -4,0 A4 4 0 1 0 4,0 Z", fill: "#E8B54A" },
+    { d: "M1.5,0 A1.5 1.5 0 1 0 -1.5,0 A1.5 1.5 0 1 0 1.5,0 Z", fill: "#0E1724" },
   ];
 }
 

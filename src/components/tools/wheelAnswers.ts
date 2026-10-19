@@ -1,10 +1,10 @@
 /**
  * Tap answers for the "How built are you?" questions (like the "pick the closest fit" chips in
  * Tony Robbins' Growth Plan): four first-person answers per question, from rough to strong,
- * scored 0 / 3 / 7 / 10. Indexed [slot][question], in the same order as the statements in the
+ * scored 1 / 4 / 7 / 10 (even steps, and nobody gets a 0). Indexed [slot][question], in the same order as the statements in the
  * dashboard (How Built Are You?). If a question is reworded there, update its answers here too.
  */
-export const ANSWER_SCORES = [0, 3, 7, 10] as const;
+export const ANSWER_SCORES = [1, 4, 7, 10] as const;
 
 export const WHEEL_ANSWERS: [string, string, string, string][][] = [
   // Role & Drafting

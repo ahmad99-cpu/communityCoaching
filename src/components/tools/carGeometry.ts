@@ -151,6 +151,93 @@ export function creepParts(kind: "melee" | "ranged"): CartPart[] {
   ];
 }
 
+/**
+ * Broken down: every slot is very low (2.5/10 or less), so the cart doesn't roll at all and two
+ * creeps hammer at the wheels instead. Any slot above that and the cart starts rolling.
+ */
+export function isBrokenDown(slots: number[]) {
+  return slots.every((s) => s <= 2.5);
+}
+
+/**
+ * A melee creep at work on the cart: sword put away, and with `shieldOnBack` its shield slung
+ * on its back (same origin and facing as creepParts).
+ */
+export function mechanicParts(shieldOnBack = false): CartPart[] {
+  const BODY = "#5B6B82";
+  const LIGHT = "#8FA0B5";
+  return [
+    ...(shieldOnBack ? [{ d: "M-7 -27 Q-17 -19 -8 -9 Z", fill: "#C4932F" }] : []),
+    { d: "M-5 0 L-3 -11 M5 0 L3 -11", stroke: BODY, strokeWidth: 3.5 },
+    { d: "M-7 -10 L7 -10 L9 -25 L-9 -25 Z", fill: BODY },
+    { d: "M5 -30 A5 5 0 1 0 -5 -30 A5 5 0 1 0 5 -30 Z", fill: LIGHT },
+  ];
+}
+
+/** Gear left lying on the road (origin on the road, about 18 units long). */
+export function groundSwordParts(): CartPart[] {
+  return [
+    { d: "M0 -1.5 L16 -1.5", stroke: "#8FA0B5", strokeWidth: 2.5 },
+    { d: "M2 -5 L2 2", stroke: "#C4932F", strokeWidth: 2.5 },
+  ];
+}
+export function groundShieldParts(): CartPart[] {
+  return [{ d: "M0 0 Q8 -9 16 0 Z", fill: "#C4932F" }];
+}
+
+/** The ranged creep in charge: robe and hood only; its staff is drawn separately so it can point. */
+export function foremanParts(): CartPart[] {
+  return [
+    { d: "M-9 0 L9 0 L5 -25 L-5 -25 Z", fill: "#5B6B82" },
+    { d: "M5 -29 A5.5 5.5 0 1 0 -6 -29 A5.5 5.5 0 1 0 5 -29 Z", fill: "#8FA0B5" },
+    { d: "M-4 -18 L6 -18", stroke: "#8FA0B5", strokeWidth: 2, opacity: 0.6 },
+  ];
+}
+/** Its staff, held at the hand (0,0), pointing up; the caller tilts it to point at the work. */
+export function foremanStaffParts(): CartPart[] {
+  return [
+    { d: "M0 6 L0 -24", stroke: "#C4932F", strokeWidth: 2.5 },
+    { d: "M4 -27 A4 4 0 1 0 -4 -27 A4 4 0 1 0 4 -27 Z", fill: "#E8B54A" },
+  ];
+}
+
+/** The repair crew when the cart is broken down: x on the road, facing (flip = faces left). */
+export const REPAIR_CREW = [
+  { x: REAR_X - 26, flip: false, shieldOnBack: false },
+  { x: REAR_X + 26, flip: true, shieldOnBack: true },
+  { x: FRONT_X + 24, flip: true, shieldOnBack: true },
+];
+/** Gear the crew set down on the road while they work. */
+export const CREW_GEAR: { kind: "sword" | "shield"; x: number }[] = [
+  { kind: "sword", x: REAR_X - 62 },
+  { kind: "shield", x: REAR_X - 46 },
+  { kind: "sword", x: FRONT_X + 42 },
+];
+/** Where the ranged creep stands to give orders: behind the cart, facing it, watching the crew. */
+export const FOREMAN_X = 50;
+/** Hammer angle for a swing phase 0–1 (raised at 0, striking near the end); spark when > 0.93. */
+export const hammerSwing = (phase: number) => Math.abs(Math.sin(phase * Math.PI));
+export const hammerAngle = (swing: number) => -70 + swing * 95;
+/**
+ * The speech bubble above the ranged creep, sized to the order (tail tip at x 0, y 20), so a
+ * long order like "Who skipped laning?" still fits.
+ */
+export function orderBubble(text: string) {
+  const h = Math.round(text.length * 3.8 + 14); // half width, for Montserrat 900 at 11px
+  return `M${-h + 6} -16 H${h - 6} A6 6 0 0 1 ${h} -10 V6 A6 6 0 0 1 ${h - 6} 12 H6 L0 20 L-6 12 H${-h + 6} A6 6 0 0 1 ${-h} 6 V-10 A6 6 0 0 1 ${-h + 6} -16 Z`;
+}
+
+/** What the ranged creep shouts while the crew works (rotates every couple of seconds). */
+export const FOREMAN_ORDERS = ["Faster!", "Wrong wheel!", "Who skipped laning?", "Build it!"];
+
+/** The hammer, held at the shoulder (0,0) and pointing right; the caller swings it. */
+export function hammerParts(): CartPart[] {
+  return [
+    { d: "M0 0 L16 0", stroke: "#C4932F", strokeWidth: 2.5 },
+    { d: "M14 -5 L21 -5 L21 5 L14 5 Z", fill: "#8FA0B5" },
+  ];
+}
+
 /** The wave: 3 melee then 1 ranged at the back, spaced along the road (x offsets in units). */
 export const CREEP_WAVE: { kind: "melee" | "ranged"; dx: number }[] = [
   { kind: "ranged", dx: 0 },

@@ -3,12 +3,26 @@ import {
   contactHeight,
   CREEP_WAVE,
   creepParts,
+  CREW_GEAR,
+  FOREMAN_ORDERS,
+  FOREMAN_X,
+  foremanParts,
+  foremanStaffParts,
   FRONT_X,
+  groundShieldParts,
+  groundSwordParts,
+  hammerAngle,
+  hammerParts,
+  hammerSwing,
+  isBrokenDown,
+  mechanicParts,
+  orderBubble,
   REAR_X,
+  REPAIR_CREW,
   siegeCartParts,
   waveLead,
-  wheelParts,
   WHEEL_R,
+  wheelParts,
   type CartPart,
 } from "@/components/tools/carGeometry";
 import { fmt } from "@/components/tools/wheelData";
@@ -161,15 +175,66 @@ function drawWave(ctx: CanvasRenderingContext2D, scale: number, oy: number, road
   ctx.restore();
 }
 
+/**
+ * Broken-down scene for the card: three melee creeps hammering at the wheels (gear on the road)
+ * and the ranged creep giving orders, one order per quarter of the loop. Same layout as the page.
+ */
+function drawRepairCrew(ctx: CanvasRenderingContext2D, ROAD_Y: number, t: number) {
+  for (const g of CREW_GEAR) {
+    ctx.save();
+    ctx.translate(g.x, ROAD_Y);
+    ctx.scale(1.25, 1.25);
+    drawParts(ctx, g.kind === "sword" ? groundSwordParts() : groundShieldParts());
+    ctx.restore();
+  }
+  // ranged creep behind the cart, facing it, staff jabbing at the work
+  ctx.save();
+  ctx.translate(FOREMAN_X, ROAD_Y);
+  ctx.scale(1.25, 1.25);
+  drawParts(ctx, foremanParts());
+  ctx.translate(6, -20);
+  ctx.rotate(((55 + Math.sin(t * Math.PI * 2 * 3) * 12) * Math.PI) / 180);
+  drawParts(ctx, foremanStaffParts());
+  ctx.restore();
+  // speech bubble
+  ctx.save();
+  ctx.translate(FOREMAN_X - 4, ROAD_Y - 70);
+  const order = FOREMAN_ORDERS[Math.floor(t * FOREMAN_ORDERS.length) % FOREMAN_ORDERS.length];
+  drawParts(ctx, [{ d: orderBubble(order), fill: "#F5F5F5" }]);
+  ctx.font = font(900, 11);
+  ctx.textAlign = "center";
+  ctx.fillStyle = NAVY;
+  ctx.fillText(order, 0, 6);
+  ctx.restore();
+  // the crew, swinging (four swings per loop so the GIF loops cleanly)
+  REPAIR_CREW.forEach((m, i) => {
+    const swing = hammerSwing(t * 4 + i * 0.6);
+    ctx.save();
+    ctx.translate(m.x, ROAD_Y);
+    ctx.scale(m.flip ? -1.25 : 1.25, 1.25);
+    drawParts(ctx, mechanicParts(m.shieldOnBack));
+    ctx.save();
+    ctx.translate(2, -22);
+    ctx.rotate((hammerAngle(swing) * Math.PI) / 180);
+    drawParts(ctx, hammerParts());
+    ctx.restore();
+    if (swing > 0.9) drawParts(ctx, [{ d: "M22 -10 L25 -16 M24 -8 L31 -11 M21 -6 L23 1", stroke: GOLD, strokeWidth: 1.8 }]);
+    ctx.restore();
+  });
+}
+
 function drawCart(ctx: CanvasRenderingContext2D, slots: number[], t: number) {
   const ROAD_Y = 150;
+  const broken = isBrokenDown(slots);
   const scale = 1.7;
-  // cart sits left (bed starts near the card's left edge) so the wave has room to run ahead
-  const ox = 74 - 90 * scale;
+  // cart sits left (bed starts near the card's left edge) so the wave has room to run ahead;
+  // broken down there is no wave, so it slides right to fit the ranged creep and its bubble behind
+  const ox = 74 - 90 * scale + (broken ? 215 : 0);
   const oy = 250;
   const roadY = oy + ROAD_Y * scale;
   const { pts } = buildProfile(slots);
-  const theta = t * Math.PI * 2;
+  // Broken down: the cart doesn't roll (no wheel turn, no road movement, no wave).
+  const theta = broken ? 0 : t * Math.PI * 2;
   const axleY = ROAD_Y - contactHeight(pts, theta - Math.PI / 2);
 
   // road across the whole card
@@ -183,7 +248,7 @@ function drawCart(ctx: CanvasRenderingContext2D, slots: number[], t: number) {
   ctx.stroke();
   ctx.fillStyle = "rgba(143,160,181,0.35)";
   // dashes move 3 gaps per loop, so the GIF loops without a jump
-  const dash = (t * 240) % 80;
+  const dash = broken ? 0 : (t * 240) % 80;
   ctx.save();
   ctx.beginPath();
   ctx.rect(48, roadY, SIZE - 96, 44);
@@ -191,7 +256,7 @@ function drawCart(ctx: CanvasRenderingContext2D, slots: number[], t: number) {
   for (let x = 30 - dash; x < SIZE - 40; x += 80) ctx.fillRect(x, roadY + 22, 40, 5);
   ctx.restore();
 
-  drawWave(ctx, scale, oy, roadY, slots.reduce((sum, v) => sum + v, 0), t);
+  if (!broken) drawWave(ctx, scale, oy, roadY, slots.reduce((sum, v) => sum + v, 0), t);
 
   ctx.save();
   ctx.translate(ox, oy);
@@ -200,6 +265,12 @@ function drawCart(ctx: CanvasRenderingContext2D, slots: number[], t: number) {
   // cart body, sitting on the wheels
   ctx.save();
   ctx.translate(0, axleY - (ROAD_Y - WHEEL_R));
+  if (broken) {
+    // tilted, like on the page: rotate -3° around the front axle
+    ctx.translate(FRONT_X, ROAD_Y - WHEEL_R);
+    ctx.rotate((-3 * Math.PI) / 180);
+    ctx.translate(-FRONT_X, -(ROAD_Y - WHEEL_R));
+  }
   drawParts(ctx, siegeCartParts(ROAD_Y));
   ctx.font = font(900, 11);
   ctx.textAlign = "center";
@@ -216,6 +287,7 @@ function drawCart(ctx: CanvasRenderingContext2D, slots: number[], t: number) {
     drawParts(ctx, wheel);
     ctx.restore();
   }
+  if (broken) drawRepairCrew(ctx, ROAD_Y, t);
   ctx.restore();
 }
 
@@ -224,10 +296,21 @@ function drawScore(ctx: CanvasRenderingContext2D, d: ShareCardData) {
     { text: fmt(d.total), font: font(900, 96), color: TEXT },
     { text: " /60 BUILT", font: font(800, 42), color: MUTED },
   ]);
-  centredRun(ctx, 738, [
-    { text: "Biggest gap: ", font: font(700, 28), color: MUTED },
-    { text: d.slotNames[d.weakestIndex], font: font(800, 28), color: GOLD },
-  ]);
+  centredRun(
+    ctx,
+    738,
+    d.slots.every((v) => v >= 10)
+      ? [{ text: "Fully built. No gaps.", font: font(800, 28), color: GOLD }]
+      : d.weakestIndex < 0
+        ? [
+            { text: "Even wheel: ", font: font(700, 28), color: MUTED },
+            { text: `${fmt(d.slots[0])}/10 in every slot`, font: font(800, 28), color: GOLD },
+          ]
+        : [
+          { text: "Biggest gap: ", font: font(700, 28), color: MUTED },
+          { text: d.slotNames[d.weakestIndex], font: font(800, 28), color: GOLD },
+        ],
+  );
 }
 
 /** Six slot chips (2 columns × 3 rows, wide enough for full names); the biggest gap is outlined in gold. */
@@ -310,9 +393,33 @@ export async function renderShareCard(data: ShareCardData): Promise<Blob> {
   );
 }
 
+/** Encodes in a Web Worker so the page keeps animating; falls back to this thread if workers fail. */
+function encodeOffThread(frames: Uint8ClampedArray[], width: number, height: number, delayCs: number): Promise<Blob> {
+  return new Promise((resolve) => {
+    const fallback = () => resolve(encodeGif(frames.map((data) => ({ data })), width, height, delayCs));
+    let worker: Worker;
+    try {
+      worker = new Worker(new URL("../../lib/gifWorker.ts", import.meta.url), { type: "module" });
+    } catch {
+      fallback();
+      return;
+    }
+    worker.onmessage = (e: MessageEvent<Blob>) => {
+      worker.terminate();
+      resolve(e.data);
+    };
+    worker.onerror = () => {
+      worker.terminate();
+      fallback();
+    };
+    worker.postMessage({ frames, width, height, delayCs });
+  });
+}
+
 /**
  * Renders the card as a looping GIF with the cart rolling (one wheel turn per loop), at
- * 540×540 to keep the file small; Discord autoplays GIFs in the channel.
+ * 540×540 to keep the file small; Discord autoplays GIFs in the channel. Frames are drawn one
+ * at a time (yielding between them) and encoded in a worker, so the page never freezes.
  */
 export async function renderShareGif(data: ShareCardData, frameCount = 36): Promise<Blob> {
   await loadFonts();
@@ -320,12 +427,12 @@ export async function renderShareGif(data: ShareCardData, frameCount = 36): Prom
   const full = makeCanvas(SIZE);
   const small = makeCanvas(OUT);
   small.ctx.imageSmoothingQuality = "high";
-  const frames = [];
+  const frames: Uint8ClampedArray[] = [];
   for (let i = 0; i < frameCount; i++) {
     drawFrame(full.ctx, data, i / frameCount);
     small.ctx.drawImage(full.canvas, 0, 0, OUT, OUT);
-    frames.push({ data: small.ctx.getImageData(0, 0, OUT, OUT).data });
-    if (i % 6 === 5) await new Promise((r) => setTimeout(r, 0));
+    frames.push(small.ctx.getImageData(0, 0, OUT, OUT).data);
+    await new Promise((r) => setTimeout(r, 0));
   }
-  return encodeGif(frames, OUT, OUT, 8);
+  return encodeOffThread(frames, OUT, OUT, 8);
 }

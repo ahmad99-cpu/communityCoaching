@@ -9,6 +9,7 @@ import { AnswerPicker } from "@/components/tools/AnswerPicker";
 import { ANSWER_SCORES, WHEEL_ANSWERS } from "@/components/tools/wheelAnswers";
 import { RadarChart } from "@/components/tools/RadarChart";
 import { RollingCar } from "@/components/tools/RollingCar";
+import { isBrokenDown } from "@/components/tools/carGeometry";
 import { Celebrate } from "@/components/tools/Celebrate";
 import { ShareWheel } from "@/components/tools/ShareWheel";
 import { SLOT_INSIGHTS } from "@/components/tools/slotInsights";
@@ -102,7 +103,7 @@ export function WheelTest() {
     await saveLead("wheel_test", discord, {
       slots: Object.fromEntries(wheelSlots.map((s, i) => [s.name, result.slots[i]])),
       total: result.total,
-      weakest: wheelSlots[result.weakestIndex].name,
+      weakest: result.weakestIndex >= 0 ? wheelSlots[result.weakestIndex].name : "none (even wheel)",
     });
     setStep("result");
     window.scrollTo(0, 0);
@@ -292,7 +293,9 @@ function WheelResultView({
 }) {
   const { slots, total, weakestIndex } = result;
   const strongestIndex = slots.indexOf(Math.max(...slots));
-  const weak = SLOT_INSIGHTS[weakestIndex];
+  // An even wheel (all six slots equal) has no single biggest gap.
+  const weak = weakestIndex >= 0 ? SLOT_INSIGHTS[weakestIndex] : null;
+  const fullyBuilt = slots.every((v) => v >= 10);
   const strong = SLOT_INSIGHTS[strongestIndex];
   const shareData = useMemo(
     () => ({ name, slotNames, slots, total, weakestIndex }),
@@ -326,8 +329,12 @@ function WheelResultView({
             </p>
           </div>
           <p className="rounded-full border border-gold/60 bg-gold/10 px-4 py-2 text-sm font-bold text-text">
-            {slots.every((v) => v >= 10) ? (
+            {fullyBuilt ? (
               <span className="text-gold">Fully built. No gaps.</span>
+            ) : !weak ? (
+              <>
+                Even wheel: <span className="text-gold">{fmt(slots[0])}/10 in every slot</span>
+              </>
             ) : (
               <>
                 Biggest gap: <span className="text-gold">{slotNames[weakestIndex]}</span>
@@ -339,8 +346,17 @@ function WheelResultView({
           <RollingCar slots={slots} />
         </div>
         <p className="mt-2 text-center text-sm text-text-muted">
-          Your cart rolls on your wheel, and the creep wave won&apos;t wait. Every flat spot slows you down. A fully built
-          wheel keeps up with the wave.
+          {isBrokenDown(slots) ? (
+            <>
+              Your cart broke down before the first wave, and your creeps are trying to fix it. Build one slot and it
+              starts rolling.
+            </>
+          ) : (
+            <>
+              Your cart rolls on your wheel, and the creep wave won&apos;t wait. Every flat spot slows you down. A fully
+              built wheel keeps up with the wave.
+            </>
+          )}
         </p>
       </div>
 
@@ -371,23 +387,64 @@ function WheelResultView({
           <Eyebrow>Your Player Brief</Eyebrow>
           <dl className="mt-5 divide-y divide-navy-border">
             <BriefRow label="What's working">
-              <p className="font-extrabold text-text">
-                {slotNames[strongestIndex]} <span className="font-bold text-text-muted">· {fmt(slots[strongestIndex])}/10</span>
-              </p>
-              <p className="mt-1 text-sm leading-relaxed text-text-muted">{strong.strength}</p>
+              {!weak && slots[0] >= 5 ? (
+                <>
+                  <p className="font-extrabold text-text">
+                    Every slot, evenly <span className="font-bold text-text-muted">· {fmt(slots[0])}/10</span>
+                  </p>
+                  <p className="mt-1 text-sm leading-relaxed text-text-muted">
+                    {fullyBuilt
+                      ? "Every part of your game holds up. That's rare at any rank."
+                      : "A balanced player: no slot is letting you down. Now it's about raising all six together."}
+                  </p>
+                </>
+              ) : slots[strongestIndex] >= 5 ? (
+                <>
+                  <p className="font-extrabold text-text">
+                    {slotNames[strongestIndex]}{" "}
+                    <span className="font-bold text-text-muted">· {fmt(slots[strongestIndex])}/10</span>
+                  </p>
+                  <p className="mt-1 text-sm leading-relaxed text-text-muted">{strong.strength}</p>
+                </>
+              ) : (
+                <>
+                  <p className="font-extrabold text-text">Nothing is carrying you yet</p>
+                  <p className="mt-1 text-sm leading-relaxed text-text-muted">
+                    That&apos;s the good news: there&apos;s no single wall holding you back. Every slot you build lifts your
+                    whole game, and you&apos;ll feel it fast.
+                  </p>
+                </>
+              )}
             </BriefRow>
-            <BriefRow label="Your biggest gap" gold>
-              <p className="font-extrabold text-text">
-                {slotNames[weakestIndex]} <span className="font-bold text-text-muted">· {fmt(slots[weakestIndex])}/10</span>
-              </p>
-              <p className="mt-1 text-sm leading-relaxed text-text-muted">{weak.cost}</p>
-            </BriefRow>
-            {weak.firstFix && (
+            {weak ? (
+              <BriefRow label="Your biggest gap" gold>
+                <p className="font-extrabold text-text">
+                  {slotNames[weakestIndex]} <span className="font-bold text-text-muted">· {fmt(slots[weakestIndex])}/10</span>
+                </p>
+                <p className="mt-1 text-sm leading-relaxed text-text-muted">{weak.cost}</p>
+              </BriefRow>
+            ) : fullyBuilt ? (
+              <BriefRow label="Your biggest gap" gold>
+                <p className="font-extrabold text-text">None. Every slot is built.</p>
+                <p className="mt-1 text-sm leading-relaxed text-text-muted">
+                  Keep it that way: the weekly sessions go deeper than the basics, and the meta keeps moving.
+                </p>
+              </BriefRow>
+            ) : (
+              <BriefRow label="Where to start" gold>
+                <p className="font-extrabold text-text">Every slot, evenly</p>
+                <p className="mt-1 text-sm leading-relaxed text-text-muted">
+                  Your wheel is even, so no single slot is the problem. Build one slot at a time: every live session
+                  takes one apart, and each one you build makes the whole wheel rounder.
+                </p>
+              </BriefRow>
+            )}
+            {weak?.firstFix && (
               <BriefRow label="Quick win for your next game">
                 <p className="text-sm leading-relaxed text-text">{weak.firstFix}</p>
               </BriefRow>
             )}
-            {weak.question && (
+            {weak?.question && (
               <BriefRow label="Carry this question into every game">
                 <p className="border-l-2 border-gold pl-3 text-base font-semibold italic leading-relaxed text-text">
                   &ldquo;{weak.question}&rdquo;
@@ -423,7 +480,7 @@ function WheelResultView({
         <ShareWheel data={shareData} />
       </div>
 
-      <JoinBridge gap={slotNames[weakestIndex]} />
+      <JoinBridge gap={weakestIndex >= 0 ? slotNames[weakestIndex] : null} />
 
       <p className="mt-8 text-center">
         <button className="text-sm font-semibold text-text-muted hover:text-text" onClick={onRestart}>
@@ -444,7 +501,7 @@ function BriefRow({ label, gold, children }: { label: string; gold?: boolean; ch
 }
 
 /** Bridge from the diagnosis to the offer: the next live session and why the group fixes the gap. */
-function JoinBridge({ gap }: { gap: string }) {
+function JoinBridge({ gap }: { gap: string | null }) {
   const { start, topic } = useNextSession();
   const { day, time } = formatSessionLocal(start);
 
@@ -452,8 +509,14 @@ function JoinBridge({ gap }: { gap: string }) {
     <div className="card mt-4 border-gold/40 p-6 text-center sm:p-10">
       <h2 className="text-2xl font-black tracking-tight sm:text-3xl">Your wheel won&apos;t round itself.</h2>
       <p className="mx-auto mt-3 max-w-xl leading-relaxed text-text-muted">
-        6SLOT takes one slot apart every week, live with the group. Bring your <strong className="text-text">{gap}</strong> and
-        fix it with players stuck on the same thing.
+        6SLOT takes one slot apart every week, live with the group.{" "}
+        {gap ? (
+          <>
+            Bring your <strong className="text-text">{gap}</strong> and fix it with players stuck on the same thing.
+          </>
+        ) : (
+          "Build it slot by slot, with players climbing the same way."
+        )}
       </p>
       <p className="mt-5 text-sm font-semibold text-text">
         Next live session{topic ? `: ${topic}` : ""} · {day} · {time}

@@ -21,8 +21,9 @@ function downloadUrl(url: string, filename: string) {
  * "Share your build": the still card renders straight away, and the moving GIF (the siege cart
  * rolling, the creep wave running ahead) builds in the background a moment later, so the
  * preview animates and the GIF is ready the moment they want it.
- * "Share my result" saves the result card as an image (phones: the share sheet, which includes
- * Discord). The GIF and copy-to-clipboard are extra options.
+ * "Share my result" shares the moving GIF (phones: the share sheet, which includes Discord;
+ * desktop: saves it, ready to drag into a channel). The still image is the smaller option: copy it
+ * on desktop (browsers can only copy still images), or share it on phones.
  */
 export function ShareWheel({ data }: { data: Omit<ShareCardData, "url"> }) {
   const [png, setPng] = useState<{ blob: Blob; url: string } | null>(null);
@@ -75,7 +76,7 @@ export function ShareWheel({ data }: { data: Omit<ShareCardData, "url"> }) {
     }
   }
 
-  async function shareResult() {
+  async function shareStill() {
     if (!png) return;
     const file = new File([png.blob], "my-6slot-build.png", { type: "image/png" });
     if (isTouch && typeof navigator.canShare === "function" && navigator.canShare({ files: [file] })) {
@@ -92,7 +93,7 @@ export function ShareWheel({ data }: { data: Omit<ShareCardData, "url"> }) {
   async function shareGif() {
     if (!gif) return;
     const file = new File([gif.blob], "my-6slot-build.gif", { type: "image/gif" });
-    if (typeof navigator.canShare === "function" && navigator.canShare({ files: [file] })) {
+    if (isTouch && typeof navigator.canShare === "function" && navigator.canShare({ files: [file] })) {
       try {
         await navigator.share({ files: [file], text: `My 6SLOT build: ${total}/60. How built are you?` });
         return;
@@ -127,16 +128,12 @@ export function ShareWheel({ data }: { data: Omit<ShareCardData, "url"> }) {
         </p>
 
         <div className="mt-5 flex flex-wrap gap-3">
-          <button className="btn-gold px-6 py-3" onClick={shareResult} disabled={!png}>
-            Share my result
+          <button className="btn-gold px-6 py-3" onClick={shareGif} disabled={!gif}>
+            {gif ? "Share my result" : "Preparing your GIF…"}
           </button>
-          {isTouch ? (
-            <button className="btn-ghost px-6 py-3" onClick={shareGif} disabled={!gif}>
-              {gif ? "Share GIF" : "Preparing GIF…"}
-            </button>
-          ) : (
-            <button className="btn-ghost px-6 py-3" onClick={() => gif && downloadUrl(gif.url, "my-6slot-build.gif")} disabled={!gif}>
-              {gif ? "Download GIF" : "Preparing GIF…"}
+          {isTouch && (
+            <button className="btn-ghost px-6 py-3" onClick={shareStill} disabled={!png}>
+              Share still image
             </button>
           )}
           {!isTouch && canCopyImage && (
@@ -152,11 +149,11 @@ export function ShareWheel({ data }: { data: Omit<ShareCardData, "url"> }) {
               Image copied. Paste it in any Discord channel with <strong className="text-text">Ctrl + V</strong>.
             </>
           ) : copy === "failed" ? (
-            "Your browser blocked copying. Use Download GIF instead."
+            "Your browser blocked copying. Use Share my result instead."
           ) : isTouch ? (
-            "Share your result straight to Discord. Want it moving? Share the GIF and your cart rolls in the chat."
+            "Share your result straight to Discord: your cart moves right in the chat."
           ) : (
-            "Share my result saves your card as an image: drag it into any Discord channel. The GIF version rolls right in the chat."
+            "Share my result saves your card as a GIF: drag it into any Discord channel and your cart moves in the chat."
           )}
         </p>
 

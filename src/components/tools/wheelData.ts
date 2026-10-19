@@ -15,13 +15,15 @@ export interface WheelResult {
   slots: number[];
   /** Sum of the six slots, 0–60. */
   total: number;
+  /** The lowest slot, or -1 when all six are equal (an even wheel has no single biggest gap). */
   weakestIndex: number;
 }
 
 export function scoreWheel(answers: number[]): WheelResult {
   const slots = [0, 1, 2, 3, 4, 5].map((i) => (answers[i * 2] + answers[i * 2 + 1]) / 2);
   const total = slots.reduce((a, b) => a + b, 0);
-  const weakestIndex = slots.indexOf(Math.min(...slots));
+  const even = slots.every((s) => s === slots[0]);
+  const weakestIndex = even ? -1 : slots.indexOf(Math.min(...slots));
   return { slots, total, weakestIndex };
 }
 

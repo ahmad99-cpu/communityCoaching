@@ -84,6 +84,9 @@ checks PayPal's signature itself.
   `foundersTaken` / `membersTaken` in `src/config/site.ts` (see `src/lib/memberCounts.tsx`;
   today it only reads `countsUrl`).
 - Small fix: a comment in `PayPalCheckout.tsx` still says "21st founder"; the cap is 25.
+- Keep the sales funnel working in Umami (`src/lib/analytics.ts`): when someone starts a
+  subscription, call `track("Open PayPal", { plan })` (in `createSubscription`), the same event the
+  Pay Link button sends today.
 
 ### 6. Test with real money
 

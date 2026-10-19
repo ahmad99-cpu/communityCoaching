@@ -6,13 +6,11 @@ import { ADMIN_BASE } from "@/admin/basePath";
 
 // Secondary pages get their own small chunks so the sales page loads only what it shows.
 const loadWheelTest = () => import("@/pages/WheelTest");
-const loadPositionTest = () => import("@/pages/PositionTest");
 const loadThankYou = () => import("@/pages/ThankYou");
 const loadPolicy = () => import("@/pages/Policy");
 const loadBattlePass = () => import("@/pages/BattlePass");
 const loadCounterPicker = () => import("@/pages/CounterPicker");
 const WheelTest = lazy(() => loadWheelTest().then((mod) => ({ default: mod.WheelTest })));
-const PositionTest = lazy(() => loadPositionTest().then((mod) => ({ default: mod.PositionTest })));
 const ThankYou = lazy(() => loadThankYou().then((mod) => ({ default: mod.ThankYou })));
 const CounterPicker = lazy(() => loadCounterPicker().then((mod) => ({ default: mod.CounterPicker })));
 const BattlePass = lazy(() => loadBattlePass().then((mod) => ({ default: mod.BattlePass })));
@@ -25,7 +23,7 @@ const AdminApp = lazy(() => import("@/admin/AdminApp"));
 export function App() {
   // Once the page is idle, warm the secondary pages so footer links still open instantly.
   useEffect(() => {
-    const warm = () => [loadWheelTest, loadPositionTest, loadThankYou, loadPolicy, loadBattlePass, loadCounterPicker].forEach((load) => load().catch(() => {}));
+    const warm = () => [loadWheelTest, loadThankYou, loadPolicy, loadBattlePass, loadCounterPicker].forEach((load) => load().catch(() => {}));
     if (typeof window.requestIdleCallback === "function") {
       const id = window.requestIdleCallback(warm, { timeout: 4000 });
       return () => window.cancelIdleCallback(id);
@@ -39,7 +37,6 @@ export function App() {
       <Route element={<SiteLayout />}>
         <Route index element={<SalesPage />} />
         <Route path="how-built-are-you" element={<WheelTest />} />
-        <Route path="position-test" element={<PositionTest />} />
         <Route path="battle-pass" element={<BattlePass />} />
         <Route path="counter-picker" element={<CounterPicker />} />
         <Route path="thank-you" element={<ThankYou />} />

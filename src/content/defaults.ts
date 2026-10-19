@@ -35,7 +35,7 @@ export const DEFAULT_CONTENT: SiteContent = {
       subtitle: "Launch price, locked in forever. First 25 members only.",
       badge: "Limited",
       features: [
-        "Weekly 2 to 3 hour live sessions",
+        "Weekly live sessions, 3+ hours each",
         "Real games broken down live (members' replays and Eixn's prepared examples)",
         "Live practice every session",
         "Practice tasks & progress rewards",
@@ -45,7 +45,7 @@ export const DEFAULT_CONTENT: SiteContent = {
         "Bonus Lobby Nights: 5v5 lobbies coached live by Eixn, streamed for the group",
         "Pro player guests (names coming soon)",
         "Watch parties with live analysis of tournament games",
-        "Members-only giveaways: coaching sessions, Dota 2 skins, merch and more",
+        "Battle Pass: rewards for every member as we grow, up to a real Aegis replica at 100 members",
         "10% off 1-on-1 sessions with Eixn",
       ],
       highlight: "Founder perks: gold Founder role and a vote on every month's topics",
@@ -64,7 +64,7 @@ export const DEFAULT_CONTENT: SiteContent = {
     stack: [
       {
         item: "4 live sessions with Eixn",
-        detail: "2 to 3 hours every Saturday. One topic, real games, live practice.",
+        detail: "3+ hours every Saturday. One topic, real games, live practice.",
         value: 220,
         founderOnly: false,
       },
@@ -94,7 +94,7 @@ export const DEFAULT_CONTENT: SiteContent = {
       },
     ],
     valueBoxTitle: "How we value it:",
-    valueBox: "a single 1-on-1 session with Eixn costs $55. Four live sessions a month at that rate is $220, and each one runs 2 to 3 hours.",
+    valueBox: "a single 1-on-1 session with Eixn costs $55. Four live sessions a month at that rate is $220, and each one runs 3+ hours.",
     guarantee: "Try your first session. Not for you? Get your money back, no questions asked.",
     smallPrint: "Cancel anytime. Founders who cancel lose their $19 price permanently.",
   },
@@ -115,7 +115,7 @@ export const DEFAULT_CONTENT: SiteContent = {
       {
         group: "How 6SLOT works",
         q: "When are the sessions?",
-        a: "Once a week, 2 to 3 hours live on Discord, in English. The first session is October 31 at 12:00 UTC. Times can shift based on a weekly member survey, so they work for as many members as possible.",
+        a: "Once a week, 3+ hours live on Discord, in English. The first session is October 31 at 12:00 UTC. Times can shift based on a weekly member survey, so they work for as many members as possible.",
       },
       {
         group: "How 6SLOT works",
@@ -215,144 +215,6 @@ export const DEFAULT_CONTENT: SiteContent = {
   },
 
   // DRAFT position test content — replace from the dashboard with Jad's final copy.
-  position_test: {
-    questions: [
-      {
-        question: "Your team is losing badly at 25 minutes. What's your first thought?",
-        answers: [
-          { text: "Stay patient, farm safely, my items will win it late", points: { 1: 2 } },
-          { text: "Find a pickoff and swing the game myself", points: { 2: 2 } },
-          { text: "Create space so our cores can breathe", points: { 3: 2 } },
-          { text: "Get vision up and set up a smoke for the team", points: { 4: 1, 5: 2 } },
-        ],
-      },
-      {
-        question: "Which feels best?",
-        answers: [
-          { text: "A perfect farming pattern with zero wasted seconds", points: { 1: 2 } },
-          { text: "Winning a 1v1 through pure mechanics", points: { 2: 2 } },
-          { text: "Surviving a 3-man dive and still getting away", points: { 3: 2 } },
-          { text: "A save that turns a fight around", points: { 5: 2, 4: 1 } },
-        ],
-      },
-      {
-        question: "How do you feel about having very little gold for most of the game?",
-        answers: [
-          { text: "I hate it, I need my items", points: { 1: 2, 2: 1 } },
-          { text: "Fine, as long as I'm impactful", points: { 3: 1, 4: 2 } },
-          { text: "I don't mind at all, I'm there for the team", points: { 5: 2 } },
-        ],
-      },
-      {
-        question: "In lane, you prefer to…",
-        answers: [
-          { text: "Last hit in peace and get my core items", points: { 1: 2 } },
-          { text: "Be alone and dominate my opponent", points: { 2: 2 } },
-          { text: "Pressure the enemy carry and make their life hard", points: { 3: 2 } },
-          { text: "Pull, harass, and protect my core", points: { 5: 2 } },
-          { text: "Roam and look for kills around the map", points: { 4: 2 } },
-        ],
-      },
-      {
-        question: "How do you handle pressure from teammates?",
-        answers: [
-          { text: "I block it out and focus on my own game", points: { 1: 2 } },
-          { text: "I take the lead and tell people what to do", points: { 2: 1, 4: 1 } },
-          { text: "I adapt and fill whatever the team needs", points: { 3: 1, 5: 2 } },
-        ],
-      },
-      {
-        question: "Which stat do you check first after a game?",
-        answers: [
-          { text: "Net worth and last hits", points: { 1: 2 } },
-          { text: "Kills and damage", points: { 2: 2 } },
-          { text: "Stuns and tower damage", points: { 3: 2 } },
-          { text: "Wards placed and assists", points: { 4: 1, 5: 2 } },
-        ],
-      },
-      {
-        question: "Your favourite moment of the game is…",
-        answers: [
-          { text: "The late game, when I'm the strongest hero on the map", points: { 1: 2 } },
-          { text: "The mid game, when I can take over", points: { 2: 2 } },
-          { text: "The first big teamfight", points: { 3: 1, 4: 1 } },
-          { text: "The early game, when every rune and pull matters", points: { 5: 1, 4: 1 } },
-        ],
-      },
-      {
-        question: "How do you like to make decisions?",
-        answers: [
-          { text: "Slowly and safely, minimise risk", points: { 1: 2, 5: 1 } },
-          { text: "Fast and on instinct", points: { 2: 2, 4: 1 } },
-          { text: "Calculated aggression", points: { 3: 2 } },
-        ],
-      },
-      {
-        question: "Which hero type do you naturally gravitate to?",
-        answers: [
-          { text: "Hard-scaling right-clickers", points: { 1: 2 } },
-          { text: "Tempo heroes and spell burst", points: { 2: 2 } },
-          { text: "Tanky initiators", points: { 3: 2 } },
-          { text: "Rotating gankers", points: { 4: 2 } },
-          { text: "Saves, heals and lane protection", points: { 5: 2 } },
-        ],
-      },
-      {
-        question: "When you die, it's usually because…",
-        answers: [
-          { text: "I got caught farming somewhere I shouldn't be", points: { 1: 1, 2: 1 } },
-          { text: "I initiated and my team didn't follow", points: { 3: 2 } },
-          { text: "I was warding or saving someone", points: { 5: 2, 4: 1 } },
-        ],
-      },
-      {
-        question: "Do you enjoy thinking about the whole map, all the time?",
-        answers: [
-          { text: "Not really, I prefer to focus on my own farm", points: { 1: 2 } },
-          { text: "Sometimes, when it's time to move", points: { 2: 1, 3: 1 } },
-          { text: "Yes, that's my favourite part", points: { 4: 2, 5: 1 } },
-        ],
-      },
-      {
-        question: "Pick a sentence that sounds like you.",
-        answers: [
-          { text: "Give me time and I'll win it", points: { 1: 2 } },
-          { text: "Give me the ball", points: { 2: 2 } },
-          { text: "I'll go in first", points: { 3: 2 } },
-          { text: "I'll make plays happen around the map", points: { 4: 2 } },
-          { text: "I make sure everyone else can shine", points: { 5: 2 } },
-        ],
-      },
-    ],
-    results: {
-      1: {
-        name: "Position 1 · Carry",
-        why: "You're patient, you value resources, and you like being the hero who decides the game late. You're comfortable ignoring noise to hit your timings.",
-        heroes: ["Wraith King", "Juggernaut", "Luna", "Medusa", "Faceless Void"],
-      },
-      2: {
-        name: "Position 2 · Mid",
-        why: "You love 1v1 pressure, you trust your mechanics, and you want to dictate the tempo of the game rather than react to it.",
-        heroes: ["Dragon Knight", "Viper", "Storm Spirit", "Puck", "Ember Spirit"],
-      },
-      3: {
-        name: "Position 3 · Offlane",
-        why: "You're fearless, you enjoy creating space, and you'd rather start the fight than wait for it. You make life hard for the enemy carry.",
-        heroes: ["Mars", "Centaur Warrunner", "Axe", "Tidehunter", "Underlord"],
-      },
-      4: {
-        name: "Position 4 · Soft Support",
-        why: "You think about the whole map, you like making plays happen, and you get more out of a great rotation than a big farm.",
-        heroes: ["Earth Spirit", "Tusk", "Hoodwink", "Rubick", "Mirana"],
-      },
-      5: {
-        name: "Position 5 · Hard Support",
-        why: "You're selfless, calm under pressure, and you love the small details that win lanes: pulls, wards, saves and positioning.",
-        heroes: ["Crystal Maiden", "Witch Doctor", "Oracle", "Dazzle", "Lion"],
-      },
-    },
-  },
-
   next_session: {
     startsAt: "2026-10-31T12:00:00Z",
     topic: "",

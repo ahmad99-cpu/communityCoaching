@@ -100,24 +100,6 @@ export interface WheelTestContent {
   slots: WheelSlot[];
 }
 
-export type Position = 1 | 2 | 3 | 4 | 5;
-
-export interface PositionQuestion {
-  question: string;
-  answers: { text: string; points: Partial<Record<Position, number>> }[];
-}
-
-export interface PositionResult {
-  name: string;
-  why: string;
-  heroes: string[];
-}
-
-export interface PositionTestContent {
-  questions: PositionQuestion[];
-  results: Record<Position, PositionResult>;
-}
-
 /** The "Next session" card in the hero, set from the dashboard. */
 export interface NextSessionContent {
   /** Start time as an ISO string in UTC, e.g. "2026-10-31T12:00:00Z". */
@@ -131,7 +113,6 @@ export interface SiteContent {
   pricing: PricingContent;
   faq: FaqContent;
   wheel_test: WheelTestContent;
-  position_test: PositionTestContent;
   next_session: NextSessionContent;
 }
 

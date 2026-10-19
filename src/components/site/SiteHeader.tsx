@@ -12,7 +12,6 @@ import { Icon, type IconName } from "@/components/site/Icons";
 const TOOLS: { to: string; label: string; body: string; icon: IconName; isNew?: boolean }[] = [
   { to: "/counter-picker", label: "Counter Picker", body: "What to pick against any draft", icon: "crosshair", isNew: true },
   { to: "/how-built-are-you", label: "How Built Are You?", body: "Find your weakest slot in 2 minutes", icon: "hexagon" },
-  { to: "/position-test", label: "Position Test", body: "Find the position that fits you", icon: "users" },
 ];
 /** Shown in the menu, greyed out and not clickable, so people know what's coming. */
 const TOOLS_SOON: { label: string; body: string; icon: IconName }[] = [

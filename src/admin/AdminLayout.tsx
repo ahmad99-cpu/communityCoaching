@@ -11,7 +11,6 @@ const NAV = [
   { to: `${ADMIN_BASE}/pricing`, label: "Price cards", icon: "💳" },
   { to: `${ADMIN_BASE}/faq`, label: "Q&A", icon: "❓" },
   { to: `${ADMIN_BASE}/wheel-test`, label: "How Built Are You?", icon: "⬡" },
-  { to: `${ADMIN_BASE}/position-test`, label: "Position Test", icon: "🎯" },
 ];
 
 function Centered({ children }: { children: React.ReactNode }) {

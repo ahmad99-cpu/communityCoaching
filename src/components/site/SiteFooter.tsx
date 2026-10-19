@@ -7,7 +7,6 @@ import { site } from "@/config/site";
 
 const FREE_TOOLS = [
   { label: "How Built Are You?", to: "/how-built-are-you" },
-  { label: "Position Test", to: "/position-test" },
   { label: "Counter Picker", to: "/counter-picker", isNew: true },
 ];
 

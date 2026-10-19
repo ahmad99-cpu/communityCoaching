@@ -104,7 +104,11 @@ export function CounterPicker() {
   const [allies, setAllies] = useState<number[]>(() => idsFromUrl("a"));
   const [side, setSide] = useState<"enemy" | "ally">("enemy");
   const [query, setQuery] = useState("");
-  const [position, setPosition] = useState<number | null>(null); // 0-4 = pos 1-5
+  // 0-4 = pos 1-5; ?p=1..5 opens with a position picked (e.g. from the Position Test result).
+  const [position, setPosition] = useState<number | null>(() => {
+    const p = Number(new URLSearchParams(window.location.search).get("p"));
+    return Number.isInteger(p) && p >= 1 && p <= 5 ? p - 1 : null;
+  });
   const [bracket, setBracket] = useState("all");
   const [tab, setTab] = useState<"best" | "avoid">("best");
   const [pool, setPool] = useState<Set<number>>(readPool);
@@ -162,9 +166,15 @@ export function CounterPicker() {
   // Keep the draft in the address bar, so the page can be shared or refreshed as-is.
   useEffect(() => {
     // Built by hand so the shared link keeps plain commas (?e=1,2,3) instead of %2C.
-    const qs = [enemies.length && `e=${enemies.join(",")}`, allies.length && `a=${allies.join(",")}`].filter(Boolean).join("&");
+    const qs = [
+      enemies.length && `e=${enemies.join(",")}`,
+      allies.length && `a=${allies.join(",")}`,
+      position !== null && `p=${position + 1}`,
+    ]
+      .filter(Boolean)
+      .join("&");
     window.history.replaceState(null, "", qs ? `?${qs}` : window.location.pathname);
-  }, [enemies, allies]);
+  }, [enemies, allies, position]);
 
   const byId = useMemo(() => new Map((heroes ?? []).map((h) => [h.id, h])), [heroes]);
   const active = loaded[bracket];

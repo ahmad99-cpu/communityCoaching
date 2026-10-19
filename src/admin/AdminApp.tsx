@@ -6,7 +6,6 @@ import { GiveawayEditor } from "@/admin/pages/GiveawayEditor";
 import { PricingEditor } from "@/admin/pages/PricingEditor";
 import { FaqEditor } from "@/admin/pages/FaqEditor";
 import { WheelTestEditor } from "@/admin/pages/WheelTestEditor";
-import { PositionTestEditor } from "@/admin/pages/PositionTestEditor";
 import { NextSessionEditor } from "@/admin/pages/NextSessionEditor";
 
 /** Admin dashboard routes, mounted at ADMIN_BASE (/adminDashboard) and lazy-loaded so visitors never download it. */
@@ -20,7 +19,6 @@ export default function AdminApp() {
         <Route path="pricing" element={<PricingEditor />} />
         <Route path="faq" element={<FaqEditor />} />
         <Route path="wheel-test" element={<WheelTestEditor />} />
-        <Route path="position-test" element={<PositionTestEditor />} />
         <Route path="*" element={<Navigate to={ADMIN_BASE} replace />} />
       </Route>
     </Routes>

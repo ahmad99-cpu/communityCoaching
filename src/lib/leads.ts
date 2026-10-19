@@ -1,7 +1,7 @@
 import { insertRow, isSupabaseConfigured } from "@/lib/supabaseRest";
 import { track } from "@/lib/analytics";
 
-export type LeadSource = "wheel_test" | "position_test";
+export type LeadSource = "wheel_test";
 
 /**
  * Saves a free-tool lead (Discord username + result) so Jad can follow up

@@ -15,9 +15,13 @@ subscriptions, Supabase (optional) for storing free-tool leads.
 |---|---|
 | `/` | Sales page (no nav links, only Join) |
 | `/how-built-are-you` | Wheel test: 12 statements → radar wheel + rolling car |
-| `/position-test` | Position test (draft content, see below) |
+| `/counter-picker` | Counter Picker (weekly Stratz data) |
+| `/battle-pass` | Battle Pass |
 | `/thank-you` | After payment (PayPal redirects here) |
-| `/policies/refund`, `/policies/privacy`, `/policies/giveaway` | Policies |
+| `/policies/terms`, `/policies/refund`, `/policies/privacy`, `/policies/giveaway` | Policies |
+
+The Position Test is off the site for now. The latest version is parked on the local branch
+`parked/position-test-v2` (restore from there).
 
 ## Day-to-day updates (Jad)
 
@@ -40,7 +44,6 @@ Sign in at `yoursite/adminDashboard` (e.g. https://6slot.gg/adminDashboard) (not
 | Price cards | Names, prices, features, badges, button text, value box, guarantee. ⚠️ The amount charged comes from the PayPal plan, so change it there too. |
 | Q&A | Add, edit, reorder, delete questions. |
 | How Built Are You? | Rename the 6 slots and their 2 statements each. |
-| Position Test | Questions, answers, points per position, and the 5 results. |
 
 Saved changes go live for everyone on their next page load. "Reset to default" restores the
 built-in content (`src/content/defaults.ts`).

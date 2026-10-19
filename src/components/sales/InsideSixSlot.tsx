@@ -18,7 +18,7 @@ const LOOP: { when: string; title: string; body: string; icon: IconName }[] = [
   {
     when: "Live session",
     title: "Break it down",
-    body: "2 to 3 hours with Eixn and the group. He takes the topic apart using members' replays and examples he prepares, so you see the mistake, the fix, and what it looks like at the top.",
+    body: "3+ hours with Eixn and the group. He takes the topic apart using members' replays and examples he prepares, so you see the mistake, the fix, and what it looks like at the top.",
     icon: "mic",
   },
   {
@@ -30,7 +30,7 @@ const LOOP: { when: string; title: string; body: string; icon: IconName }[] = [
   {
     when: "All week",
     title: "Take it into your games",
-    body: "A specific practice task, a check-in channel to post your progress, and shoutouts for the members who improve the most.",
+    body: "A specific practice task and a check-in channel to post your progress.",
     icon: "clipboard",
   },
 ];
@@ -141,8 +141,26 @@ export function InsideSixSlot() {
           <div className="card p-6 sm:p-8">
             <p className="text-center text-xs font-black uppercase tracking-[0.2em] text-gold">Between sessions, you&apos;re never alone</p>
 
-            {/* Featured bonus: Lobby Nights */}
-            <div className="mt-6 flex flex-col gap-4 rounded-card border border-gold/40 bg-gold/5 p-5 sm:flex-row sm:items-center sm:p-6">
+            <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {BETWEEN.map((b) => (
+                <div key={b.title} className="flex gap-3">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-control border border-navy-border bg-navy text-gold">
+                    <Icon name={b.icon} className="h-5 w-5" />
+                  </span>
+                  <div>
+                    <p className="font-bold text-text">{b.title}</p>
+                    <p className="mt-1 text-sm leading-relaxed text-text-muted">{b.body}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <p className="mt-6 text-center text-sm text-text-muted">
+              Members also get <strong className="text-text">10% off</strong> 1-on-1 sessions with Eixn.
+            </p>
+
+            {/* Bonus, last: Lobby Nights */}
+            <div className="mt-8 flex flex-col gap-4 rounded-card border border-gold/40 bg-gold/5 p-5 sm:flex-row sm:items-center sm:p-6">
               <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-control border border-gold/50 bg-navy text-gold">
                 <Icon name="users" className="h-6 w-6" />
               </span>
@@ -161,22 +179,25 @@ export function InsideSixSlot() {
               </div>
             </div>
 
-            <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {BETWEEN.map((b) => (
-                <div key={b.title} className="flex gap-3">
-                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-control border border-navy-border bg-navy text-gold">
-                    <Icon name={b.icon} className="h-5 w-5" />
+            {/* Next up, not live yet: community tournaments */}
+            <div className="mt-3 flex flex-col gap-4 rounded-card border border-dashed border-navy-border bg-navy/40 p-5 sm:flex-row sm:items-center sm:p-6">
+              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-control border border-navy-border bg-navy text-text-muted">
+                <Icon name="trophy" className="h-6 w-6" />
+              </span>
+              <div className="min-w-0 flex-1">
+                <p className="flex flex-wrap items-center gap-2.5 text-lg font-extrabold text-text">
+                  Community Tournaments
+                  <span className="flex items-center gap-1 rounded-full border border-navy-border px-2.5 py-0.5 text-[10px] font-black uppercase tracking-widest text-text-muted">
+                    <Icon name="lock" className="h-3 w-3" />
+                    Coming soon
                   </span>
-                  <div>
-                    <p className="font-bold text-text">{b.title}</p>
-                    <p className="mt-1 text-sm leading-relaxed text-text-muted">{b.body}</p>
-                  </div>
-                </div>
-              ))}
+                </p>
+                <p className="mt-1 text-sm leading-relaxed text-text-muted">
+                  Sign up with your rank and position, get placed in a balanced team, and play the other members in
+                  6SLOT cups. Opening as the community grows.
+                </p>
+              </div>
             </div>
-            <p className="mt-6 border-t border-navy-border pt-5 text-center text-sm text-text-muted">
-              Members also get <strong className="text-text">10% off</strong> 1-on-1 sessions with Eixn.
-            </p>
           </div>
         </Reveal>
       </Container>

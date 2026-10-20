@@ -54,6 +54,12 @@ const BRACKET_LABELS: Record<string, string> = {
   legend_ancient: "Legend–Ancient",
   divine_immortal: "Divine–Immortal",
 };
+/**
+ * The data refreshes weekly: always ask the server whether the saved copy is still current. When
+ * nothing changed it answers "not modified" (a few bytes), so this stays fast; without it a browser
+ * could keep showing last week's data for days.
+ */
+const FRESH: RequestInit = { cache: "no-cache" };
 const POOL_KEY = "6slot.heroPool";
 const img = (h: Hero) => `/heroes/${h.slug}.webp`;
 
@@ -163,23 +169,23 @@ export function CounterPicker() {
 
   useEffect(() => {
     Promise.all([
-      fetch("/data/heroes.json").then((r) => r.json()),
-      fetch("/data/matchups/index.json").then((r) => r.json()),
+      fetch("/data/heroes.json", FRESH).then((r) => r.json()),
+      fetch("/data/matchups/index.json", FRESH).then((r) => r.json()),
     ])
       .then(([h, m]) => {
         setHeroes(h);
         setData(m);
       })
       .catch(() => setFailed(true));
-    fetch("/data/matchups/patch.json")
+    fetch("/data/matchups/patch.json", FRESH)
       .then((r) => (r.ok ? r.json() : null))
       .then(setPatch)
       .catch(() => {});
-    fetch("/data/matchups/durations.json")
+    fetch("/data/matchups/durations.json", FRESH)
       .then((r) => (r.ok ? r.json() : null))
       .then(setDurations)
       .catch(() => {});
-    fetch("/data/matchups/positions.json")
+    fetch("/data/matchups/positions.json", FRESH)
       .then((r) => (r.ok ? r.json() : null))
       .then(setPositions)
       .catch(() => {});
@@ -191,7 +197,7 @@ export function CounterPicker() {
   useEffect(() => {
     if (requested.current.has(bracket)) return;
     requested.current.add(bracket);
-    fetch(`/data/matchups/${bracket}.json`)
+    fetch(`/data/matchups/${bracket}.json`, FRESH)
       .then((r) => {
         if (!r.ok) throw new Error(String(r.status));
         return r.json();

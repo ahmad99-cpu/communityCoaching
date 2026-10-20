@@ -162,7 +162,9 @@ export function SiteHeader() {
             <Icon name="trophy" className="h-4 w-4 text-gold" />
             Battle Pass
           </NavLink>
-          <CtaButton className="!px-4 !py-2.5 sm:!px-5">Join</CtaButton>
+          <CtaButton className="!px-4 !py-2.5 sm:!px-5" memberLabel="Discord">
+            Join
+          </CtaButton>
         </div>
       </WideContainer>
     </header>

@@ -108,3 +108,25 @@ Disable or delete the two Pay Links in PayPal, so nobody buys the old one-time w
 - Never use the word "homework" in any 6SLOT text (site, PayPal, Discord).
 - No emojis on the site.
 - The site must work on 6slot.gg before PayPal redirects anyone there.
+
+## Follow-up: stop duplicate subscriptions (server side)
+
+Members sometimes come back and subscribe a second time by mistake. The site now hides the
+checkout on the device they paid from (`src/lib/membership.ts`) and tells everyone "already a
+member? no need to pay again", but a member on a new device can still pay twice. Safety net, in
+the Edge Functions (`paypal-activate` and `paypal-webhook`, shared code in `_shared/paypal.ts`):
+
+1. When a subscription becomes ACTIVE, look up other `subscriptions` rows with the same
+   `payer_email` and status `active`.
+2. If one exists, this new one is a duplicate:
+   - cancel it at PayPal right away (`POST /v1/billing/subscriptions/{id}/cancel` with a
+     reason like "Duplicate: already a member"), so it never charges again;
+   - mark the row (e.g. `note = 'duplicate of <older id>'`, status `cancelled`) so it doesn't
+     count towards the founder cap or the member counter;
+   - Jad refunds the first payment of the duplicate in PayPal (or automate it later with
+     the sale refund API: subscription payments are "sales", `POST /v1/payments/sale/{sale_id}/refund`,
+     with the sale id from the PAYMENT.SALE.COMPLETED event).
+3. Show duplicates in the dashboard's Students page so nothing is missed.
+
+Then redeploy the two functions (`npx supabase functions deploy paypal-activate` and
+`paypal-webhook --no-verify-jwt`, project `fhblahgnhqnenqxwzefh`).

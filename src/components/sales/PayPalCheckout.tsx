@@ -4,6 +4,7 @@ import { isPayPalConfigured, loadPayPal } from "@/lib/paypal";
 import { invokeFunction, isSupabaseConfigured } from "@/lib/supabaseRest";
 import { useMemberCounts } from "@/lib/memberCounts";
 import { track } from "@/lib/analytics";
+import { rememberMembership } from "@/lib/membership";
 
 type Plan = "founder" | "member";
 
@@ -69,6 +70,7 @@ export function PayPalCheckout({ plan }: { plan: Plan }) {
               // Best effort: if this fails the PayPal webhook still records the payment.
               await invokeFunction("paypal-activate", { subscriptionId: data.subscriptionID });
             }
+            rememberMembership(plan);
             await refresh();
             navigate("/thank-you");
           },

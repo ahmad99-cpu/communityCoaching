@@ -9,6 +9,7 @@ import { PayPalCheckout } from "@/components/sales/PayPalCheckout";
 import { isPayPalConfigured } from "@/lib/paypal";
 import { isSupabaseConfigured } from "@/lib/supabaseRest";
 import { track } from "@/lib/analytics";
+import { forgetMembership, memberChannel, rememberMembership, useMembership } from "@/lib/membership";
 import { Referral } from "@/components/sales/Referral";
 import { site } from "@/config/site";
 import { useMemberCounts } from "@/lib/memberCounts";
@@ -186,7 +187,41 @@ export function Pricing() {
 function Checkout({ label }: { label: string }) {
   const { foundersSoldOut } = useMemberCounts();
   const [open, setOpen] = useState(false);
+  const member = useMembership();
   const plan = foundersSoldOut ? "member" : "founder";
+
+  // This device already subscribed: show the way in, not a second checkout.
+  if (member) {
+    return (
+      <div className="rounded-control border border-gold/50 bg-gold/10 p-4 text-center">
+        <p className="font-extrabold text-text">
+          You&apos;re already a 6SLOT {member.plan === "founder" ? "founder" : "member"}.
+        </p>
+        <p className="mt-1 text-sm text-text-muted">No need to pay again. Everything happens in the Discord.</p>
+        <a href={memberChannel(member)} target="_blank" rel="noopener noreferrer" className="btn-gold mt-4 w-full py-3.5">
+          {member.plan === "founder" ? "Open the Founders Lounge" : "Open the members chat"}
+        </a>
+        <p className="mt-2 text-xs text-text-muted">
+          Not in the server yet?{" "}
+          <a
+            href={site.links.discordInvite}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-bold text-text underline underline-offset-2 hover:text-gold"
+          >
+            Join here
+          </a>
+        </p>
+        <button
+          type="button"
+          onClick={forgetMembership}
+          className="mt-3 text-xs font-semibold text-text-muted underline underline-offset-2 hover:text-text"
+        >
+          Not you, or buying for a friend? Show the checkout
+        </button>
+      </div>
+    );
+  }
 
   if (!isPayPalConfigured || !isSupabaseConfigured) {
     return (
@@ -195,17 +230,41 @@ function Checkout({ label }: { label: string }) {
       </button>
     );
   }
-  if (open) return <PayPalCheckout plan={plan} />;
   return (
-    <button
-      type="button"
-      onClick={() => {
-        setOpen(true);
-        track("Open PayPal", { plan });
-      }}
-      className="btn-gold w-full py-4 text-base"
-    >
-      {label}
-    </button>
+    <>
+      {open ? (
+        <PayPalCheckout plan={plan} />
+      ) : (
+        <button
+          type="button"
+          onClick={() => {
+            setOpen(true);
+            track("Open PayPal", { plan });
+          }}
+          className="btn-gold w-full py-4 text-base"
+        >
+          {label}
+        </button>
+      )}
+      <p className="mt-3 text-center text-xs leading-relaxed text-text-muted">
+        Already a member? No need to pay again:{" "}
+        <a
+          href={site.links.discordInvite}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="font-bold text-text underline underline-offset-2 hover:text-gold"
+        >
+          open the Discord
+        </a>
+        {" · "}
+        <button
+          type="button"
+          onClick={() => rememberMembership(plan)}
+          className="font-semibold underline underline-offset-2 hover:text-text"
+        >
+          hide checkout on this device
+        </button>
+      </p>
+    </>
   );
 }

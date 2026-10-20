@@ -25,6 +25,13 @@ export const site = {
   links: {
     /** DISCORD_INVITE_LINK: the Discord invite on the thank-you page after payment (the public server). */
     discordInvite: "https://discord.gg/UPz75GNqGP",
+    /**
+     * Where "Open the Discord" takes people the site knows are members (opens the app on phones):
+     * founders go to the Founders Lounge, regular members to the members chat. Channel links only
+     * work for people already in the server, so the invite stays the link for everyone else.
+     */
+    foundersLounge: "https://discord.com/channels/1408527454171172905/1561359478891217056",
+    membersChat: "https://discord.com/channels/1408527454171172905/1561356621781663886",
     /** ONBOARDING_FORM_LINK: the 2-minute onboarding form on the thank-you page. */
     onboardingForm: "https://docs.google.com/forms/d/e/1FAIpQLScvYmdK4GzBbOTUXj_RgBECUd6DoIcyNpWNWrwvmtlHI2pE1g/viewform",
     /**

@@ -12,6 +12,7 @@
  *   public/data/matchups/<bracket>.json   { vs: { [heroId]: [[otherId, games, winRate], ...] } }
  *   public/data/matchups/positions.json   how often each hero is played in positions 1-5 (Stratz only)
  *   public/data/matchups/durations.json   win rate by game length: early / mid / late (Stratz only)
+ *   public/data/matchups/patch.json   each hero's win rate in the current patch, per bracket (Stratz only)
  * winRate is the hero's win rate (%) in games against otherId. Only what the page shows is kept, so the
  * files stay small.
  */
@@ -137,6 +138,56 @@ async function durationsFromStratz(token) {
   return out;
 }
 
+/**
+ * Each hero's win rate in the current patch, per rank bracket, from ALL public games (Stratz's
+ * weekly totals since the patch came out). The matchup files use a smaller sample of games, so
+ * this is the honest "how good is this hero right now" number.
+ * patch.json = { version, from, to, brackets: { [bracket]: { [heroId]: [games, winRate] } } }.
+ * If the patch is younger than Stratz's latest weekly total, it falls back to the latest week and
+ * sets version to null (the page then says "this week" instead of the patch name).
+ */
+const RANKS = {
+  all: null,
+  herald_guardian: "HERALD, GUARDIAN",
+  crusader_archon: "CRUSADER, ARCHON",
+  legend_ancient: "LEGEND, ANCIENT",
+  divine_immortal: "DIVINE, IMMORTAL",
+};
+
+async function patchFromStratz(token) {
+  const versions = (await stratz(token, `{ constants { gameVersions { name asOfDateTime } } }`)).constants.gameVersions;
+  const patch = versions.reduce((a, b) => (b.asOfDateTime > a.asOfDateTime ? b : a));
+  const fields = Object.entries(RANKS)
+    .map(([key, ranks]) => `${key}: winWeek(take: 12${ranks ? `, bracketIds: [${ranks}]` : ""}, groupBy: HERO_ID) { heroId week matchCount winCount }`)
+    .join(" ");
+  const data = (await stratz(token, `{ heroStats { ${fields} } }`)).heroStats;
+
+  const weeks = [...new Set(data.all.map((r) => r.week))].sort((a, b) => a - b);
+  const inPatch = weeks.filter((w) => w >= patch.asOfDateTime);
+  const use = new Set(inPatch.length ? inPatch : weeks.slice(-1));
+  const brackets = {};
+  for (const key of Object.keys(RANKS)) {
+    const sums = {};
+    for (const r of data[key]) {
+      if (!use.has(r.week)) continue;
+      sums[r.heroId] ??= [0, 0];
+      sums[r.heroId][0] += r.matchCount;
+      sums[r.heroId][1] += r.winCount;
+    }
+    brackets[key] = Object.fromEntries(
+      Object.entries(sums).map(([id, [g, w]]) => [id, [g, g ? round1((w / g) * 100) : 0]]),
+    );
+  }
+  const day = (sec) => new Date(sec * 1000).toISOString().slice(0, 10);
+  const last = Math.max(...use);
+  return {
+    version: inPatch.length ? patch.name : null,
+    from: day(inPatch.length ? patch.asOfDateTime : last),
+    to: day(last + 6 * 86400),
+    brackets,
+  };
+}
+
 /* ------------------------------------------------------------------ OpenDota fallback */
 
 async function fromOpenDota() {
@@ -177,6 +228,8 @@ if (token) {
   console.log("positions done");
   writeFileSync(join(OUT_DIR, "durations.json"), JSON.stringify(await durationsFromStratz(token)));
   console.log("durations done");
+  writeFileSync(join(OUT_DIR, "patch.json"), JSON.stringify(await patchFromStratz(token)));
+  console.log("patch done");
 }
 for (const [key, bracket] of Object.entries(data.brackets)) {
   writeFileSync(join(OUT_DIR, `${key}.json`), JSON.stringify(bracket));

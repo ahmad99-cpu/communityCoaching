@@ -27,6 +27,16 @@ interface MatchupIndex {
 type Positions = Record<string, [number, number][]>;
 /** durations.json: per hero, win rate % in the early (15-30), mid (30-45) and late (45+) game. */
 type Durations = Record<string, [number, number, number]>;
+/**
+ * patch.json: each hero's win rate in the current patch, from all public games, per bracket.
+ * `version` is null when the patch is newer than Stratz's latest weekly total ("this week").
+ */
+interface PatchStats {
+  version: string | null;
+  from: string;
+  to: string;
+  brackets: Record<string, Record<string, [games: number, winRate: number]>>;
+}
 
 const ATTRS: { key: Hero["attr"]; label: string }[] = [
   { key: "str", label: "Strength" },
@@ -97,8 +107,10 @@ function overallWinRates(rows?: Record<string, Row[]>) {
 
 interface Suggestion {
   hero: Hero;
-  /** Its usual win rate (all its games), to compare each matchup with. */
+  /** Its win rate across its matchup games: what each matchup is compared with (same games). */
   overall: number;
+  /** Its win rate in the current patch, from all public games (null when not available). */
+  patch: number | null;
   /** Shown big, and what the list is sorted by: the average of the win rates in `parts`. */
   winRate: number;
   /** Its win rate against each enemy, straight from the data. */
@@ -127,6 +139,9 @@ export function CounterPicker() {
   const [loaded, setLoaded] = useState<Record<string, Bracket>>({});
   const [positions, setPositions] = useState<Positions | null>(null);
   const [durations, setDurations] = useState<Durations | null>(null);
+  const [patch, setPatch] = useState<PatchStats | null>(null);
+  /** Hero list filter: 0-4 = only heroes really played in that position. */
+  const [gridRole, setGridRole] = useState<number | null>(null);
   const [failed, setFailed] = useState(false);
 
   const [enemies, setEnemies] = useState<number[]>(() => idsFromUrl("e"));
@@ -156,6 +171,10 @@ export function CounterPicker() {
         setData(m);
       })
       .catch(() => setFailed(true));
+    fetch("/data/matchups/patch.json")
+      .then((r) => (r.ok ? r.json() : null))
+      .then(setPatch)
+      .catch(() => {});
     fetch("/data/matchups/durations.json")
       .then((r) => (r.ok ? r.json() : null))
       .then(setDurations)
@@ -237,10 +256,11 @@ export function CounterPicker() {
       }
       if (!parts.length) continue;
       const winRate = parts.reduce((sum, p) => sum + p.winRate, 0) / parts.length;
-      list.push({ hero: h, overall: overall.get(h.id) ?? 50, winRate, parts, thin });
+      const inPatch = patch?.brackets[bracket]?.[h.id] ?? patch?.brackets.all?.[h.id];
+      list.push({ hero: h, overall: overall.get(h.id) ?? 50, patch: inPatch?.[1] ?? null, winRate, parts, thin });
     }
     return list.sort((x, y) => y.winRate - x.winRate);
-  }, [heroes, enemies, active, picked, position, positions, poolOnly, pool, vs, overall, byId, minGames]);
+  }, [heroes, enemies, active, picked, position, positions, poolOnly, pool, vs, overall, patch, bracket, byId, minGames]);
 
   // Heroes with plenty of games come first in both tabs; "few games" heroes still show, after them, so a
   // lucky small sample never takes the top spot. Don't pick never repeats a hero already in Best picks.
@@ -311,16 +331,17 @@ export function CounterPicker() {
 
   const matches = useMemo(() => {
     if (!heroes) return [];
+    const inRole = (h: Hero) => gridRole === null || !positions || (positions[h.id]?.[gridRole]?.[0] ?? 0) >= MIN_SHARE;
     const q = query.trim().toLowerCase();
-    if (!q) return heroes;
+    if (!q) return heroes.filter(inRole);
     const initials = (n: string) =>
       n
         .split(/[\s-]+/)
         .map((w) => w[0])
         .join("")
         .toLowerCase();
-    return heroes.filter((h) => h.name.toLowerCase().includes(q) || initials(h.name).startsWith(q));
-  }, [heroes, query]);
+    return heroes.filter((h) => inRole(h) && (h.name.toLowerCase().includes(q) || initials(h.name).startsWith(q)));
+  }, [heroes, query, gridRole, positions]);
 
   async function share() {
     try {
@@ -524,7 +545,14 @@ export function CounterPicker() {
             ) : (
               <ol className="grid gap-2.5 sm:grid-cols-2 xl:grid-cols-4">
                 {shown.map((s, i) => (
-                  <ResultCard key={s.hero.id} s={s} rank={i + 1} mine={pool.has(s.hero.id)} avoid={tab === "avoid"} />
+                  <ResultCard
+                    key={s.hero.id}
+                    s={s}
+                    rank={i + 1}
+                    mine={pool.has(s.hero.id)}
+                    avoid={tab === "avoid"}
+                    patchVersion={patch?.version ?? null}
+                  />
                 ))}
               </ol>
             )}
@@ -595,6 +623,21 @@ export function CounterPicker() {
                   Done
                 </button>
               </div>
+            </div>
+          )}
+
+          {/* Role filter for the hero list: heroes really played in that position */}
+          {positions && (
+            <div className="mt-4 flex flex-wrap items-center gap-1.5">
+              <span className="mr-1 text-[11px] font-black uppercase tracking-[0.16em] text-text-muted">Show</span>
+              <Chip on={gridRole === null} onClick={() => setGridRole(null)}>
+                All heroes
+              </Chip>
+              {POSITIONS.map((label, i) => (
+                <Chip key={label} on={gridRole === i} onClick={() => setGridRole(gridRole === i ? null : i)}>
+                  {label}
+                </Chip>
+              ))}
             </div>
           )}
 
@@ -755,7 +798,19 @@ function MineTag() {
   );
 }
 
-function ResultCard({ s, rank, mine, avoid }: { s: Suggestion; rank: number; mine: boolean; avoid: boolean }) {
+function ResultCard({
+  s,
+  rank,
+  mine,
+  avoid,
+  patchVersion,
+}: {
+  s: Suggestion;
+  rank: number;
+  mine: boolean;
+  avoid: boolean;
+  patchVersion: string | null;
+}) {
   return (
     <li
       className={`rounded-control border p-2.5 ${
@@ -783,9 +838,15 @@ function ResultCard({ s, rank, mine, avoid }: { s: Suggestion; rank: number; min
           </p>
           <p
             className="mt-0.5 text-[11px] font-semibold text-text-muted"
-            title={`${s.hero.name} wins ${s.overall.toFixed(1)}% of all its games in this rank bracket`}
+            title={
+              s.patch !== null
+                ? `${s.hero.name} wins ${s.patch.toFixed(1)}% of all its public games ${patchVersion ? `in patch ${patchVersion}` : "this week"} (this rank bracket)`
+                : `${s.hero.name} wins ${s.overall.toFixed(1)}% of its games in this rank bracket`
+            }
           >
-            {Math.round(s.overall)}% overall
+            {s.patch !== null
+              ? `${Math.round(s.patch)}% in ${patchVersion ?? "this week"}`
+              : `${Math.round(s.overall)}% overall`}
           </p>
         </div>
         <span className="shrink-0 text-right">
@@ -800,7 +861,7 @@ function ResultCard({ s, rank, mine, avoid }: { s: Suggestion; rank: number; min
         {s.parts.map((p) => (
           <span
             key={p.hero.id}
-            title={`${s.hero.name} against ${p.hero.name}: wins ${p.winRate.toFixed(1)}% of ${p.games.toLocaleString("en-US")} games (${signed(p.winRate - s.overall)} vs its usual ${s.overall.toFixed(1)}%)`}
+            title={`${s.hero.name} against ${p.hero.name}: wins ${p.winRate.toFixed(1)}% of ${p.games.toLocaleString("en-US")} games. ${signed(p.winRate - s.overall)} compared with its other matchups (same games), so ${p.winRate - s.overall >= 0.5 ? "it counters" : p.winRate - s.overall <= -0.5 ? "it struggles against" : "it's even with"} ${p.hero.name}.`}
             className="flex min-w-0 items-center justify-center gap-1 rounded bg-navy py-0.5 pl-0.5 pr-1 font-black"
           >
             <img src={img(p.hero)} alt={p.hero.name} width={24} height={14} className="h-3.5 w-6 rounded-sm object-cover" />

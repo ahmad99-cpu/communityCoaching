@@ -1,5 +1,5 @@
 import { usePageTitle } from "@/lib/usePageTitle";
-import { useMemo, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { AnimatePresence, m } from "framer-motion";
 import { Container } from "@/components/layout/Container";
 import { CtaButton } from "@/components/site/CtaButton";
@@ -25,6 +25,7 @@ import {
 } from "@/components/tools/wheelData";
 import { useContent } from "@/lib/content";
 import { saveLead } from "@/lib/leads";
+import { decodeWheel, encodeWheel, loadLastWheel, saveLastWheel, wheelPath, type LastWheel } from "@/components/tools/wheelLink";
 
 type Step = "intro" | "questions" | "lead" | "result";
 
@@ -71,11 +72,18 @@ export function WheelTest() {
   usePageTitle("How Built Are You?");
   const { slots: wheelSlots } = useContent("wheel_test");
   const statements = useMemo(() => flattenStatements(wheelSlots), [wheelSlots]);
-  const [step, setStep] = useState<Step>(PREVIEW ? "result" : "intro");
+  // A personal result link (?w=…&n=…) opens straight on that result, on any device.
+  const [linked] = useState(() => {
+    const params = new URLSearchParams(window.location.search);
+    const answers = decodeWheel(params.get("w"));
+    return answers ? { answers, name: params.get("n") ?? "" } : null;
+  });
+  const [step, setStep] = useState<Step>(PREVIEW || linked ? "result" : "intro");
   const [index, setIndex] = useState(0);
-  const [answers, setAnswers] = useState<number[]>(PREVIEW ? PREVIEW_ANSWERS : []);
+  const [answers, setAnswers] = useState<number[]>(linked?.answers ?? (PREVIEW ? PREVIEW_ANSWERS : []));
   const [previous, setPrevious] = useState<WheelHistoryEntry | null>(null);
-  const [playerName, setPlayerName] = useState(PREVIEW ? "EixnFan" : "");
+  const [playerName, setPlayerName] = useState(linked?.name ?? (PREVIEW ? "EixnFan" : ""));
+  const [last] = useState<LastWheel | null>(() => (linked ? null : loadLastWheel()));
 
   const result = useMemo(
     () => (answers.length === statements.length ? scoreWheel(answers) : null),
@@ -100,6 +108,10 @@ export function WheelTest() {
     const history = loadWheelHistory();
     setPrevious(history.length ? history[history.length - 1] : null);
     saveWheelHistory(result.slots);
+    const code = encodeWheel(answers);
+    saveLastWheel(code, discord.trim());
+    // The address bar becomes their personal link: refresh, bookmark or share it to come back.
+    window.history.replaceState(null, "", wheelPath(code, discord.trim()));
     await saveLead("wheel_test", discord, {
       slots: Object.fromEntries(wheelSlots.map((s, i) => [s.name, result.slots[i]])),
       total: result.total,
@@ -110,9 +122,21 @@ export function WheelTest() {
   }
 
   function restart() {
+    window.history.replaceState(null, "", "/how-built-are-you");
     setAnswers([]);
     setIndex(0);
     setStep("questions");
+    window.scrollTo(0, 0);
+  }
+
+  /** "Welcome back": open the last wheel taken on this device, without retaking the test. */
+  function reopen(lastWheel: LastWheel) {
+    const saved = decodeWheel(lastWheel.code);
+    if (!saved) return;
+    setAnswers(saved);
+    setPlayerName(lastWheel.name);
+    setStep("result");
+    window.history.replaceState(null, "", wheelPath(lastWheel.code, lastWheel.name));
     window.scrollTo(0, 0);
   }
 
@@ -122,7 +146,7 @@ export function WheelTest() {
         <AnimatePresence mode="wait">
           {step === "intro" && (
             <m.div key="intro" {...slide}>
-              <Intro slotNames={slotNames} onStart={() => setStep("questions")} />
+              <Intro slotNames={slotNames} onStart={() => setStep("questions")} last={last} onReopen={reopen} />
             </m.div>
           )}
 
@@ -181,7 +205,15 @@ export function WheelTest() {
 
           {step === "result" && result && (
             <m.div key="result" {...slide} className="relative">
-              <WheelResultView name={playerName} slotNames={slotNames} result={result} previous={previous} onRestart={restart} />
+              <WheelResultView
+                name={playerName}
+                slotNames={slotNames}
+                slotResources={wheelSlots.map((s) => s.resources ?? [])}
+                result={result}
+                previous={previous}
+                link={wheelPath(encodeWheel(answers), playerName)}
+                onRestart={restart}
+              />
             </m.div>
           )}
         </AnimatePresence>
@@ -203,7 +235,17 @@ const WALK_AWAY: [IconName, string, string][] = [
 ];
 
 /** Intro: the reward first (what you walk away with), with a live example cart beside it. */
-function Intro({ slotNames, onStart }: { slotNames: string[]; onStart: () => void }) {
+function Intro({
+  slotNames,
+  onStart,
+  last,
+  onReopen,
+}: {
+  slotNames: string[];
+  onStart: () => void;
+  last: LastWheel | null;
+  onReopen: (last: LastWheel) => void;
+}) {
   return (
     <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:gap-14">
       <div className="text-center lg:text-left">
@@ -226,9 +268,27 @@ function Intro({ slotNames, onStart }: { slotNames: string[]; onStart: () => voi
           ))}
         </ul>
 
-        <button className="btn-gold mt-9 w-full px-12 py-4 text-base sm:w-auto" onClick={onStart}>
-          Build my wheel
-        </button>
+        {last ? (
+          <div className="mt-9 flex flex-col items-center gap-3 sm:flex-row lg:justify-start">
+            <button className="btn-gold w-full px-10 py-4 text-base sm:w-auto" onClick={() => onReopen(last)}>
+              See my last wheel
+            </button>
+            <button className="btn-ghost w-full px-8 py-4 text-base sm:w-auto" onClick={onStart}>
+              Retake the test
+            </button>
+          </div>
+        ) : (
+          <button className="btn-gold mt-9 w-full px-12 py-4 text-base sm:w-auto" onClick={onStart}>
+            Build my wheel
+          </button>
+        )}
+        {last && (
+          <p className="mt-3 text-sm text-text-muted">
+            Welcome back{last.name ? `, ${last.name}` : ""}. Your last wheel is from{" "}
+            {new Date(last.date).toLocaleDateString(undefined, { month: "short", day: "numeric" })}. Retake it once a
+            month to see how your slots grow.
+          </p>
+        )}
       </div>
 
       <div className="card p-5 sm:p-8">
@@ -281,14 +341,19 @@ function SlotTracker({ slotNames, index, total }: { slotNames: string[]; index: 
 function WheelResultView({
   name,
   slotNames,
+  slotResources,
   result,
   previous,
+  link,
   onRestart,
 }: {
   name: string;
   slotNames: string[];
+  slotResources: { title: string; url: string }[][];
   result: WheelResult;
   previous: WheelHistoryEntry | null;
+  /** Their personal result link (path), to save and come back to. */
+  link: string;
   onRestart: () => void;
 }) {
   const { slots, total, weakestIndex } = result;
@@ -474,6 +539,10 @@ function WheelResultView({
         </div>
       </div>
 
+      <LearnSlots slotNames={slotNames} resources={slotResources} slots={slots} weakestIndex={weakestIndex} />
+
+      <SaveWheel link={link} name={name} />
+
       {/* Share */}
       <div className="card mt-4 p-6 sm:p-8">
         <Eyebrow className="mb-5">Share your build</Eyebrow>
@@ -487,6 +556,103 @@ function WheelResultView({
           Retake the test
         </button>
       </p>
+    </div>
+  );
+}
+
+/**
+ * "Learn this slot": videos, posts and replays for each slot (set in the dashboard), weakest slot
+ * first, then the rest from lowest to highest score. Hidden until at least one link exists.
+ */
+function LearnSlots({
+  slotNames,
+  resources,
+  slots,
+  weakestIndex,
+}: {
+  slotNames: string[];
+  resources: { title: string; url: string }[][];
+  slots: number[];
+  weakestIndex: number;
+}) {
+  const order = slotNames
+    .map((_, i) => i)
+    .filter((i) => resources[i]?.some((r) => r.url.trim()))
+    .sort((a, b) => (a === weakestIndex ? -1 : b === weakestIndex ? 1 : slots[a] - slots[b]));
+  if (!order.length) return null;
+  return (
+    <div className="card mt-4 p-6 sm:p-8">
+      <Eyebrow>Learn this slot</Eyebrow>
+      <p className="mt-2 text-sm text-text-muted">Eixn&apos;s videos and breakdowns for each slot, starting with your biggest gap.</p>
+      <div className="mt-5 grid gap-4 md:grid-cols-2">
+        {order.map((i) => (
+          <div key={i} className={`rounded-control border p-4 ${i === weakestIndex ? "border-gold/60 bg-gold/5" : "border-navy-border"}`}>
+            <p className={`font-extrabold ${i === weakestIndex ? "text-gold" : "text-text"}`}>
+              {slotNames[i]} <span className="font-bold text-text-muted">· {fmt(slots[i])}/10</span>
+            </p>
+            <ul className="mt-2 space-y-1.5">
+              {resources[i]
+                .filter((r) => r.url.trim())
+                .map((r) => (
+                  <li key={r.url}>
+                    <a
+                      href={r.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 text-sm font-semibold text-text underline decoration-gold/50 underline-offset-2 hover:decoration-gold"
+                    >
+                      <Icon name="play" className="h-4 w-4 shrink-0 text-gold" />
+                      {r.title.trim() || r.url}
+                    </a>
+                  </li>
+                ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/** "Save my wheel": their personal link, to come back to on any device without retaking the test. */
+function SaveWheel({ link, name }: { link: string; name: string }) {
+  const [copied, setCopied] = useState(false);
+  const full = `${window.location.origin}${link}`;
+  const canShare = typeof navigator.share === "function" && window.matchMedia("(pointer: coarse)").matches;
+
+  useEffect(() => setCopied(false), [link]);
+
+  async function copy() {
+    try {
+      await navigator.clipboard.writeText(full);
+      setCopied(true);
+    } catch {
+      // Clipboard blocked: the link is in the address bar too.
+    }
+  }
+
+  return (
+    <div className="card mt-4 flex flex-col gap-4 p-6 sm:flex-row sm:items-center sm:p-8">
+      <div className="min-w-0 flex-1">
+        <Eyebrow>Save your wheel</Eyebrow>
+        <p className="mt-2 text-sm leading-relaxed text-text-muted">
+          This is your personal link. Open it on any device to see this result again, no account and no retake needed.
+        </p>
+        <p className="mt-2 truncate rounded-control border border-navy-border bg-navy px-3 py-2 font-mono text-xs text-text">{full}</p>
+      </div>
+      <div className="flex shrink-0 flex-wrap gap-3">
+        <button className="btn-gold px-6 py-3" onClick={copy}>
+          {copied ? "Link copied" : "Copy my link"}
+        </button>
+        {canShare && (
+          <button
+            className="btn-ghost px-6 py-3"
+            onClick={() => navigator.share({ url: full, text: `${name ? `${name}'s` : "My"} 6SLOT wheel` }).catch(() => {})}
+          >
+            Send to myself
+          </button>
+        )}
+      </div>
     </div>
   );
 }

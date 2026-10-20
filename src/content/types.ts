@@ -93,6 +93,8 @@ export interface FaqContent {
 export interface WheelSlot {
   name: string;
   statements: [string, string];
+  /** Videos, posts or session replays that teach this slot, shown on the result ("Learn this slot"). */
+  resources?: { title: string; url: string }[];
 }
 
 export interface WheelTestContent {

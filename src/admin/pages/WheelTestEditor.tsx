@@ -1,4 +1,4 @@
-import { Field, PageHeader, Panel, SaveBar, TextInput, useSectionDraft } from "@/admin/ui";
+import { Field, PageHeader, Panel, SaveBar, SmallButton, TextInput, useSectionDraft } from "@/admin/ui";
 
 /**
  * The wheel is a hexagon, so there are always exactly 6 slots with 2 statements each.
@@ -15,7 +15,7 @@ export function WheelTestEditor() {
     <div>
       <PageHeader
         title="How Built Are You?"
-        description="The 6 slots of the wheel and their 2 statements each. Players rate each statement from 0 (never) to 10 (always)."
+        description="The 6 slots of the wheel, their 2 statements each, and the videos or posts that teach each slot (shown on the result as “Learn this slot”, weakest slot first)."
       />
 
       <div className="grid gap-5 lg:grid-cols-2">
@@ -36,6 +36,42 @@ export function WheelTestEditor() {
                 />
               </Field>
             ))}
+            <Field label="Learn this slot" hint="Videos, posts or session replays. Shown on the result; leave empty to hide.">
+              <div className="space-y-2">
+                {(slot.resources ?? []).map((r, k) => (
+                  <div key={k} className="flex flex-wrap gap-2">
+                    <div className="min-w-[140px] flex-1">
+                      <TextInput
+                        value={r.title}
+                        placeholder="Title, e.g. How to win a hard lane"
+                        onChange={(title) =>
+                          setSlot(i, { resources: (slot.resources ?? []).map((x, j) => (j === k ? { ...x, title } : x)) })
+                        }
+                      />
+                    </div>
+                    <div className="min-w-[180px] flex-[2]">
+                      <TextInput
+                        value={r.url}
+                        placeholder="https://youtube.com/…"
+                        onChange={(url) =>
+                          setSlot(i, { resources: (slot.resources ?? []).map((x, j) => (j === k ? { ...x, url } : x)) })
+                        }
+                      />
+                    </div>
+                    <SmallButton
+                      tone="danger"
+                      title="Remove"
+                      onClick={() => setSlot(i, { resources: (slot.resources ?? []).filter((_, j) => j !== k) })}
+                    >
+                      ✕
+                    </SmallButton>
+                  </div>
+                ))}
+                <SmallButton onClick={() => setSlot(i, { resources: [...(slot.resources ?? []), { title: "", url: "" }] })}>
+                  + Add link
+                </SmallButton>
+              </div>
+            </Field>
           </Panel>
         ))}
       </div>

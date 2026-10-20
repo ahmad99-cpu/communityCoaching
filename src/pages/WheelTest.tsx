@@ -639,6 +639,14 @@ function SaveWheel({ link, name }: { link: string; name: string }) {
           This is your personal link. Open it on any device to see this result again, no account and no retake needed.
         </p>
         <p className="mt-2 truncate rounded-control border border-navy-border bg-navy px-3 py-2 font-mono text-xs text-text">{full}</p>
+        <p className="mt-3 flex gap-2 text-xs leading-relaxed text-text-muted">
+          <Icon name="message" className="mt-0.5 h-3.5 w-3.5 shrink-0 text-gold" />
+          <span>
+            <strong className="text-text">Tip:</strong> post your link in{" "}
+            <strong className="text-text">#introductions</strong> on the 6SLOT Discord. It&apos;s there whenever you
+            switch phones or computers, and next month you can compare your new wheel with it.
+          </span>
+        </p>
       </div>
       <div className="flex shrink-0 flex-wrap gap-3">
         <button className="btn-gold px-6 py-3" onClick={copy}>

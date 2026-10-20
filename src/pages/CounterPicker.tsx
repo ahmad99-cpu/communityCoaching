@@ -228,8 +228,11 @@ export function CounterPicker() {
   const active = loaded[bracket];
   const vs = useMemo(() => toLookup(active?.vs), [active]);
   const overall = useMemo(() => overallWinRates(active?.vs), [active]);
-  /** Matchups with fewer games than this get a "few games" tag, so people know to take them lightly. */
-  const minGames = data?.source === "stratz" ? (bracket === "all" ? 150 : 60) : 20;
+  /**
+   * Matchups with fewer games than this get a "few games" tag (and rank below solid ones). At 150
+   * games a win rate is within about ±4%; below that, single-bracket numbers get too noisy to trust.
+   */
+  const minGames = data?.source === "stratz" ? 150 : 20;
 
   const picked = useMemo(() => new Set([...enemies, ...allies]), [enemies, allies]);
 

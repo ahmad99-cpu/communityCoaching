@@ -3,6 +3,9 @@
 // returns its id to the browser, which opens PayPal's approval popup for it.
 import { cors, db, json, paypal, planIdFor, type Plan } from "../_shared/paypal.ts";
 
+/** The live site; override with the SITE_URL secret for a staging copy. */
+const SITE_URL = (Deno.env.get("SITE_URL") ?? "https://6slot.gg").replace(/\/+$/, "");
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: cors });
   if (req.method !== "POST") return json({ error: "method_not_allowed" }, 405);
@@ -34,6 +37,10 @@ Deno.serve(async (req) => {
           brand_name: "6SLOT",
           shipping_preference: "NO_SHIPPING",
           user_action: "SUBSCRIBE_NOW",
+          // Used when PayPal opens as a full page instead of the popup (in-app browsers such as
+          // Discord or Instagram, blocked popups): without these, buyers stay stuck on PayPal.
+          return_url: `${SITE_URL}/thank-you`,
+          cancel_url: `${SITE_URL}/#pricing`,
         },
       },
     });

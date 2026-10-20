@@ -66,12 +66,16 @@ export function PayPalCheckout({ plan }: { plan: Plan }) {
           },
           onApprove: async (data) => {
             setStatus("finishing");
-            if (data.subscriptionID) {
-              // Best effort: if this fails the PayPal webhook still records the payment.
-              await invokeFunction("paypal-activate", { subscriptionId: data.subscriptionID });
-            }
             rememberMembership(plan);
-            await refresh();
+            if (data.subscriptionID) {
+              // Best effort, and never more than 5 seconds: the PayPal webhook records the
+              // payment anyway, so the buyer goes to the thank-you page either way.
+              await Promise.race([
+                invokeFunction("paypal-activate", { subscriptionId: data.subscriptionID }),
+                new Promise((r) => setTimeout(r, 5000)),
+              ]);
+            }
+            refresh().catch(() => {});
             navigate("/thank-you");
           },
           onError: () => setStatus((s) => (s === "sold_out" ? s : "error")),

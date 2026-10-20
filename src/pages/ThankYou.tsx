@@ -5,6 +5,8 @@ import { Container } from "@/components/layout/Container";
 import { Icon } from "@/components/site/Icons";
 import { site } from "@/config/site";
 import { useMemberCounts } from "@/lib/memberCounts";
+import { rememberMembership } from "@/lib/membership";
+import { invokeFunction } from "@/lib/supabaseRest";
 import { downloadIcs, googleCalendarUrl, outlookCalendarUrl, type CalendarEvent } from "@/lib/calendar";
 import { countdownParts, formatSessionLocal, SESSION_LENGTH, useNextSession } from "@/lib/sessionTime";
 
@@ -205,8 +207,23 @@ export function ThankYou() {
   usePageTitle("You're in");
   useNoIndex();
   // The first 25 buyers are founders; everyone after is a member.
-  const { foundersSoldOut } = useMemberCounts();
+  const { foundersSoldOut, refresh } = useMemberCounts();
   const role = foundersSoldOut ? "member" : "Founder";
+
+  // Arriving from PayPal's full-page checkout (?subscription_id=I-…): confirm the subscription,
+  // remember this device as a member, and tidy the address bar. The popup checkout did this already.
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get("subscription_id");
+    if (!id || !/^I-[A-Z0-9]+$/.test(id)) return;
+    rememberMembership(foundersSoldOut ? "member" : "founder");
+    invokeFunction("paypal-activate", { subscriptionId: id })
+      .then(() => refresh())
+      .catch(() => {});
+    window.history.replaceState(null, "", "/thank-you");
+    // Runs once, on arrival (the plan only decides which channel the member button opens).
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <section className="py-12 sm:py-20">

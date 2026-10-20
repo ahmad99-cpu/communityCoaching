@@ -24,7 +24,7 @@ export const site = {
 
   links: {
     /** DISCORD_INVITE_LINK: the Discord invite on the thank-you page after payment (the public server). */
-    discordInvite: "https://discord.gg/n5ABqN44nX",
+    discordInvite: "https://discord.gg/UPz75GNqGP",
     /** ONBOARDING_FORM_LINK: the 2-minute onboarding form on the thank-you page. */
     onboardingForm: "https://docs.google.com/forms/d/e/1FAIpQLScvYmdK4GzBbOTUXj_RgBECUd6DoIcyNpWNWrwvmtlHI2pE1g/viewform",
     /**
@@ -39,14 +39,14 @@ export const site = {
      * show as smaller links. Leave a link empty ("") to hide it.
      */
     ask: {
-      discord: "https://discord.gg/n5ABqN44nX",
+      discord: "https://discord.gg/UPz75GNqGP",
       instagram: "https://www.instagram.com/eixndota",
       tiktok: "https://www.tiktok.com/@jadhamoud8",
       /** Add the Facebook page link here to show the Facebook button. */
       facebook: "https://www.facebook.com/p/Eixn-61583056599814/",
     },
     socials: [
-      { label: "Discord", href: "https://discord.gg/n5ABqN44nX", icon: "discord" },
+      { label: "Discord", href: "https://discord.gg/UPz75GNqGP", icon: "discord" },
       { label: "YouTube", href: "https://www.youtube.com/@eixndota", icon: "youtube" },
       { label: "X", href: "https://x.com/EixnDota", icon: "x" },
       { label: "Instagram", href: "https://www.instagram.com/eixndota", icon: "instagram" },

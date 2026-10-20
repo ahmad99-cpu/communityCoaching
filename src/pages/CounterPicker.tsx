@@ -76,8 +76,29 @@ function toLookup(rows?: Record<string, Row[]>) {
   return out;
 }
 
+/**
+ * Each hero's overall win rate, from the same games as its matchups (every game it played, across
+ * all the enemies it met), so "against this enemy" and "overall" are measured the same way.
+ */
+function overallWinRates(rows?: Record<string, Row[]>) {
+  const out = new Map<number, number>();
+  if (!rows) return out;
+  for (const [id, list] of Object.entries(rows)) {
+    let games = 0;
+    let wins = 0;
+    for (const [, g, w] of list) {
+      games += g;
+      wins += (g * w) / 100;
+    }
+    if (games) out.set(Number(id), (wins / games) * 100);
+  }
+  return out;
+}
+
 interface Suggestion {
   hero: Hero;
+  /** Its usual win rate (all its games), to compare each matchup with. */
+  overall: number;
   /** Shown big, and what the list is sorted by: the average of the win rates in `parts`. */
   winRate: number;
   /** Its win rate against each enemy, straight from the data. */
@@ -85,6 +106,14 @@ interface Suggestion {
   /** Some of these numbers come from few games: shown with a small tag. */
   thin: boolean;
 }
+
+/** "+6" / "-3" / "0": the difference from the hero's usual win rate. */
+const signed = (n: number, digits = 1) => {
+  const v = Number(n.toFixed(digits));
+  return v > 0 ? `+${v}` : v < 0 ? `${v}` : "0";
+};
+/** Green when it does better than usual against that enemy (a real counter), red when worse. */
+const deltaColor = (d: number) => (d >= 0.5 ? "text-emerald-400" : d <= -0.5 ? "text-red-400" : "text-text-muted");
 
 /** Green when the pick wins more than it loses, red when it loses more. */
 const wrColor = (wr: number) => (wr >= 50 ? "text-emerald-400" : "text-red-400");
@@ -179,6 +208,7 @@ export function CounterPicker() {
   const byId = useMemo(() => new Map((heroes ?? []).map((h) => [h.id, h])), [heroes]);
   const active = loaded[bracket];
   const vs = useMemo(() => toLookup(active?.vs), [active]);
+  const overall = useMemo(() => overallWinRates(active?.vs), [active]);
   /** Matchups with fewer games than this get a "few games" tag, so people know to take them lightly. */
   const minGames = data?.source === "stratz" ? (bracket === "all" ? 150 : 60) : 20;
 
@@ -207,10 +237,10 @@ export function CounterPicker() {
       }
       if (!parts.length) continue;
       const winRate = parts.reduce((sum, p) => sum + p.winRate, 0) / parts.length;
-      list.push({ hero: h, winRate, parts, thin });
+      list.push({ hero: h, overall: overall.get(h.id) ?? 50, winRate, parts, thin });
     }
     return list.sort((x, y) => y.winRate - x.winRate);
-  }, [heroes, enemies, active, picked, position, positions, poolOnly, pool, vs, byId, minGames]);
+  }, [heroes, enemies, active, picked, position, positions, poolOnly, pool, vs, overall, byId, minGames]);
 
   // Heroes with plenty of games come first in both tabs; "few games" heroes still show, after them, so a
   // lucky small sample never takes the top spot. Don't pick never repeats a hero already in Best picks.
@@ -738,18 +768,26 @@ function ResultCard({ s, rank, mine, avoid }: { s: Suggestion; rank: number; min
           <img src={img(s.hero)} alt="" width={64} height={36} className="block h-9 w-16 object-cover" />
           {mine && <MineTag />}
         </span>
-        {/* The tag drops to its own line when the name needs the room */}
-        <p className="flex min-w-0 flex-1 flex-wrap items-center gap-x-1.5 gap-y-0.5 text-sm font-extrabold leading-tight text-text">
-          <span className="min-w-0">{s.hero.name}</span>
-          {s.thin && (
-            <span
-              title="At least one of these numbers comes from only a few games"
-              className="shrink-0 rounded bg-navy px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-text-muted"
-            >
-              few games
-            </span>
-          )}
-        </p>
+        <div className="min-w-0 flex-1">
+          {/* The tag drops to its own line when the name needs the room */}
+          <p className="flex min-w-0 flex-wrap items-center gap-x-1.5 gap-y-0.5 text-sm font-extrabold leading-tight text-text">
+            <span className="min-w-0">{s.hero.name}</span>
+            {s.thin && (
+              <span
+                title="At least one of these numbers comes from only a few games"
+                className="shrink-0 rounded bg-navy px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-text-muted"
+              >
+                few games
+              </span>
+            )}
+          </p>
+          <p
+            className="mt-0.5 text-[11px] font-semibold text-text-muted"
+            title={`${s.hero.name} wins ${s.overall.toFixed(1)}% of all its games in this rank bracket`}
+          >
+            {Math.round(s.overall)}% overall
+          </p>
+        </div>
         <span className="shrink-0 text-right">
           <span className={`block text-lg font-black leading-none ${wrColor(s.winRate)}`}>{Math.round(s.winRate)}%</span>
           <span className="mt-1 block text-[9px] font-bold uppercase tracking-wide text-text-muted">
@@ -762,11 +800,14 @@ function ResultCard({ s, rank, mine, avoid }: { s: Suggestion; rank: number; min
         {s.parts.map((p) => (
           <span
             key={p.hero.id}
-            title={`${s.hero.name} against ${p.hero.name}: wins ${p.winRate.toFixed(1)}% of ${p.games.toLocaleString("en-US")} games`}
-            className="flex min-w-0 items-center justify-center gap-1 rounded bg-navy py-0.5 pl-0.5 pr-1 text-[10px] font-black"
+            title={`${s.hero.name} against ${p.hero.name}: wins ${p.winRate.toFixed(1)}% of ${p.games.toLocaleString("en-US")} games (${signed(p.winRate - s.overall)} vs its usual ${s.overall.toFixed(1)}%)`}
+            className="flex min-w-0 items-center justify-center gap-1 rounded bg-navy py-0.5 pl-0.5 pr-1 font-black"
           >
             <img src={img(p.hero)} alt={p.hero.name} width={24} height={14} className="h-3.5 w-6 rounded-sm object-cover" />
-            <span className={wrColor(p.winRate)}>{Math.round(p.winRate)}%</span>
+            <span className="flex flex-col items-center leading-none">
+              <span className={`text-[10px] ${wrColor(p.winRate)}`}>{Math.round(p.winRate)}%</span>
+              <span className={`mt-0.5 text-[9px] ${deltaColor(p.winRate - s.overall)}`}>{signed(p.winRate - s.overall, 0)}</span>
+            </span>
           </span>
         ))}
       </div>

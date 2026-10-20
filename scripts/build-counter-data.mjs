@@ -3,8 +3,9 @@
  *
  *   node scripts/build-counter-data.mjs
  *
- * With STRATZ_API_TOKEN (in .env or the environment): real public matches from Stratz, per rank
- * bracket. Without it: OpenDota's free pro-match matchups, a rougher fallback.
+ * Needs STRATZ_API_TOKEN (in .env or the environment): real public matches from Stratz, per rank
+ * bracket. Without it the script stops; `--opendota` builds OpenDota's free pro-match matchups
+ * instead (a rough fallback with no rank brackets), only when asked for.
  *
  * Writes one small file per bracket, so the page only downloads the bracket being viewed:
  *   public/data/matchups/index.json   { source, updated, brackets: ["all", "herald_guardian", ...] }
@@ -162,6 +163,13 @@ async function fromOpenDota() {
 /* ------------------------------------------------------------------ main */
 
 const token = envToken();
+// No token = stop. Falling back to OpenDota (pro matches only, no rank brackets) silently replaced
+// the real data once, when the GitHub secret was missing. Use --opendota to opt in on purpose.
+if (!token && !process.argv.includes("--opendota")) {
+  console.error("STRATZ_API_TOKEN is missing (.env locally, or the repository secret in GitHub Actions).");
+  console.error("Not touching the data. Run with --opendota to build the rough pro-match fallback on purpose.");
+  process.exit(1);
+}
 const data = token ? await fromStratz(token) : await fromOpenDota();
 mkdirSync(OUT_DIR, { recursive: true });
 if (token) {

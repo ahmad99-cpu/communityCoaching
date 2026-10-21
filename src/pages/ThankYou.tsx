@@ -7,6 +7,7 @@ import { site } from "@/config/site";
 import { useMemberCounts } from "@/lib/memberCounts";
 import { rememberMembership } from "@/lib/membership";
 import { invokeFunction } from "@/lib/supabaseRest";
+import { loadOnboarded, OnboardingForm } from "@/components/site/OnboardingForm";
 import { downloadIcs, googleCalendarUrl, outlookCalendarUrl, type CalendarEvent } from "@/lib/calendar";
 import { countdownParts, formatSessionLocal, SESSION_LENGTH, useNextSession } from "@/lib/sessionTime";
 
@@ -15,15 +16,9 @@ type Step = { title: string; note: string; button: string } & ({ href: string } 
 const STEPS: Step[] = [
   {
     title: "Join the 6SLOT Discord",
-    note: "Do this first, so your role can be added.",
+    note: "Your role is added here, and the live sessions happen here.",
     button: "Join Discord",
     href: site.links.discordInvite,
-  },
-  {
-    title: "Fill the onboarding form",
-    note: "2 minutes. Use the same email you paid with on PayPal.",
-    button: "Open the form",
-    href: site.links.onboardingForm,
   },
   {
     title: "Find your weakest slot",
@@ -32,6 +27,33 @@ const STEPS: Step[] = [
     to: "/how-built-are-you",
   },
 ];
+
+/** Step 1: the onboarding questions on the page itself; once sent, a short "done" line. */
+function OnboardingStep() {
+  const [sentAs, setSentAs] = useState(loadOnboarded);
+  return (
+    <li className="flex gap-4 p-5 sm:p-6">
+      <span
+        className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 border-gold text-sm font-black ${sentAs ? "bg-gold text-navy" : "text-gold"}`}
+      >
+        {sentAs ? <Icon name="check" className="h-4 w-4" /> : 1}
+      </span>
+      <div className="min-w-0 flex-1">
+        <p className="font-extrabold text-text">Tell Eixn who you are</p>
+        {sentAs ? (
+          <p className="mt-1 text-sm leading-relaxed text-text-muted">
+            Done. Eixn will find you on Discord as <strong className="text-text">{sentAs}</strong>.
+          </p>
+        ) : (
+          <>
+            <p className="mt-1 text-sm leading-relaxed text-text-muted">1 minute, so your role and your coaching fit you.</p>
+            <OnboardingForm onDone={setSentAs} />
+          </>
+        )}
+      </div>
+    </li>
+  );
+}
 
 /** Keeps the page out of search results (it's only for buyers PayPal sends back here). */
 function useNoIndex() {
@@ -247,10 +269,11 @@ export function ThankYou() {
 
         <h2 className="mt-10 text-sm font-black uppercase tracking-[0.2em] text-text-muted">Do these now</h2>
         <ol className="card mt-3 divide-y divide-navy-border">
+          <OnboardingStep />
           {STEPS.map((s, i) => (
             <li key={s.title} className="flex gap-4 p-5 sm:p-6">
               <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 border-gold text-sm font-black text-gold">
-                {i + 1}
+                {i + 2}
               </span>
               <div className="min-w-0 flex-1">
                 <p className="font-extrabold text-text">{s.title}</p>

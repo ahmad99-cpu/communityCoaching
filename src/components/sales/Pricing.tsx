@@ -265,6 +265,19 @@ function Checkout({ label }: { label: string }) {
           hide checkout on this device
         </button>
       </p>
+      <p className="mt-2 text-center text-xs leading-relaxed text-text-muted">
+        Can't use PayPal?{" "}
+        <a
+          href={site.links.ask.discord}
+          target="_blank"
+          rel="noopener noreferrer"
+          data-umami-event="Can't use PayPal"
+          className="font-bold text-text underline underline-offset-2 hover:text-gold"
+        >
+          Message Eixn on Discord
+        </a>{" "}
+        to pay by card invoice, Whish or OMT.
+      </p>
     </>
   );
 }

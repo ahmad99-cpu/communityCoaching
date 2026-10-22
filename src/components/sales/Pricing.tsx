@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { Link } from "react-router-dom";
 import { m } from "framer-motion";
 import { Container } from "@/components/layout/Container";
@@ -128,11 +128,12 @@ function MembershipCard() {
         )}
 
         <div className="mt-auto pt-8">
-          <Checkout label={plan.buttonLabel} />
-          <p className="mt-4 flex h-6 items-center justify-center text-sm">
-            <FounderSpotsLeft label="founder spots left" />
-          </p>
-          <AfterPayNote className="mt-3 text-center" />
+          <Checkout label={plan.buttonLabel}>
+            <p className="mt-4 flex h-6 items-center justify-center text-sm">
+              <FounderSpotsLeft label="founder spots left" />
+            </p>
+            <AfterPayNote className="mt-2 text-center" />
+          </Checkout>
         </div>
       </div>
 
@@ -184,7 +185,7 @@ export function Pricing() {
  * script) only loads once the gold button is clicked, so the page stays fast. If PayPal or Supabase
  * isn't configured (e.g. a missing env var on the host), the button is disabled instead.
  */
-function Checkout({ label }: { label: string }) {
+function Checkout({ label, children }: { label: string; children?: ReactNode }) {
   const { foundersSoldOut } = useMemberCounts();
   const [open, setOpen] = useState(false);
   const member = useMembership();
@@ -246,38 +247,42 @@ function Checkout({ label }: { label: string }) {
           {label}
         </button>
       )}
-      <p className="mt-3 text-center text-xs leading-relaxed text-text-muted">
-        Already a member? No need to pay again:{" "}
-        <a
-          href={site.links.discordInvite}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="font-bold text-text underline underline-offset-2 hover:text-gold"
-        >
-          open the Discord
-        </a>
-        {" · "}
-        <button
-          type="button"
-          onClick={() => rememberMembership(plan)}
-          className="font-semibold underline underline-offset-2 hover:text-text"
-        >
-          hide checkout on this device
-        </button>
-      </p>
-      <p className="mt-2 text-center text-xs leading-relaxed text-text-muted">
-        Can't use PayPal?{" "}
-        <a
-          href={site.links.ask.discord}
-          target="_blank"
-          rel="noopener noreferrer"
-          data-umami-event="Can't use PayPal"
-          className="font-bold text-text underline underline-offset-2 hover:text-gold"
-        >
-          Message Eixn on Discord
-        </a>{" "}
-        and we'll find another way for you to pay.
-      </p>
+      {children}
+      {/* Help for the few who need it, kept small and together at the bottom. */}
+      <div className="mt-4 space-y-1 border-t border-navy-border pt-3 text-center text-xs leading-relaxed text-text-muted">
+        <p>
+          Already a member?{" "}
+          <a
+            href={site.links.discordInvite}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-bold text-text underline underline-offset-2 hover:text-gold"
+          >
+            Open the Discord
+          </a>
+          {" · "}
+          <button
+            type="button"
+            onClick={() => rememberMembership(plan)}
+            className="font-semibold underline underline-offset-2 hover:text-text"
+          >
+            Hide checkout
+          </button>
+        </p>
+        <p>
+          Can't use PayPal?{" "}
+          <a
+            href={site.links.ask.discord}
+            target="_blank"
+            rel="noopener noreferrer"
+            data-umami-event="Can't use PayPal"
+            className="font-bold text-text underline underline-offset-2 hover:text-gold"
+          >
+            Message Eixn
+          </a>{" "}
+          to pay another way.
+        </p>
+      </div>
     </>
   );
 }

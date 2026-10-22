@@ -276,7 +276,7 @@ function Checkout({ label }: { label: string }) {
         >
           Message Eixn on Discord
         </a>{" "}
-        to pay by card invoice, Whish or OMT.
+        and we'll find another way for you to pay.
       </p>
     </>
   );

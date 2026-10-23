@@ -1,6 +1,7 @@
 import { m } from "framer-motion";
 import { Container } from "@/components/layout/Container";
 import { Reveal } from "@/components/common/Reveal";
+import { site } from "@/config/site";
 import { Icon, type IconName } from "@/components/site/Icons";
 
 /**
@@ -156,7 +157,11 @@ export function InsideSixSlot() {
             </div>
 
             <p className="mt-6 text-center text-sm text-text-muted">
-              Members also get <strong className="text-text">10% off</strong> 1-on-1 sessions with Eixn.
+              Members also get <strong className="text-text">10% off</strong>{" "}
+              <a href={site.links.eixnCoaching} target="_blank" rel="noopener noreferrer" data-umami-event="eixn-dota.com: 10% off perk" className="font-semibold text-text underline decoration-gold/50 underline-offset-2 transition hover:text-gold">
+                1-on-1 sessions with Eixn
+              </a>
+              .
             </p>
 
             {/* Bonus, last: Lobby Nights */}

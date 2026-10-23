@@ -1,6 +1,7 @@
 import { Container } from "@/components/layout/Container";
 import { useEffect, useRef, useState } from "react";
 import { Reveal } from "@/components/common/Reveal";
+import { site } from "@/config/site";
 import { useCountUp } from "@/hooks/useCountUp";
 
 /** Gold highlight for names, same as eixn-dota.com (brief §3.5 design note). */
@@ -70,7 +71,11 @@ export function MeetCoach() {
               <G>Esports World Cup</G>, and a qualification to <G>The International</G>.
             </p>
             <p>
-              Since then, <G>Eixn</G> has helped <G>500+ players</G> climb out of their rank through 1-on-1 coaching.{" "}
+              Since then, <G>Eixn</G> has helped <G>500+ players</G> climb out of their rank through{" "}
+              <a href={site.links.eixnCoaching} target="_blank" rel="noopener noreferrer" data-umami-event="eixn-dota.com: Meet the coach" className="font-semibold text-text underline decoration-gold/50 underline-offset-2 transition hover:text-gold">
+                1-on-1 coaching
+              </a>
+              .{" "}
               <G>6SLOT</G> is how he brings that same approach to more players at once: one topic a week, real games,
               live practice, and a community grinding the same way you are.
             </p>

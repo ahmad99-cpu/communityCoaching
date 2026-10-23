@@ -10,7 +10,10 @@ const FREE_TOOLS = [
   { label: "Counter Picker", to: "/counter-picker", isNew: true },
 ];
 
-const COMMUNITY = [{ label: "Battle Pass", to: "/battle-pass" }];
+const COMMUNITY = [
+  { label: "Battle Pass", to: "/battle-pass" },
+  { label: "1-on-1 with Eixn", to: site.links.eixnDota, external: true },
+];
 
 // Free tools for every Dota player, launching around the 6SLOT launch.
 const COMING_SOON = ["Patch Summary", "Player Report", "Lane Combos", "Item Builds", "Eixn's Tier List"];
@@ -31,19 +34,34 @@ function Column({ title, className = "", children }: { title: string; className?
   );
 }
 
-function LinkList({ links }: { links: { label: string; to: string; isNew?: boolean }[] }) {
+function LinkList({ links }: { links: { label: string; to: string; isNew?: boolean; external?: boolean }[] }) {
   return (
     <ul className="space-y-3 text-sm">
       {links.map((l) => (
         <li key={l.to}>
-          <Link to={l.to} className="group inline-flex items-center gap-2 text-text/80 transition hover:text-gold">
-            <span>{l.label}</span>
-            {l.isNew && (
-              <span className="rounded-full border border-gold/50 bg-gold/10 px-1.5 py-px text-[9px] font-black uppercase tracking-wider text-gold">
-                New
-              </span>
-            )}
-          </Link>
+          {l.external ? (
+            <a
+              href={l.to}
+              target="_blank"
+              rel="noopener noreferrer"
+              data-umami-event={`${new URL(l.to).hostname.replace("www.", "")}: footer`}
+              className="inline-flex items-center gap-1.5 text-text/80 transition hover:text-gold"
+            >
+              {l.label}
+              <svg viewBox="0 0 24 24" aria-hidden className="h-3 w-3 fill-none stroke-current stroke-2">
+                <path d="M7 17 17 7M8 7h9v9" />
+              </svg>
+            </a>
+          ) : (
+            <Link to={l.to} className="group inline-flex items-center gap-2 text-text/80 transition hover:text-gold">
+              <span>{l.label}</span>
+              {l.isNew && (
+                <span className="rounded-full border border-gold/50 bg-gold/10 px-1.5 py-px text-[9px] font-black uppercase tracking-wider text-gold">
+                  New
+                </span>
+              )}
+            </Link>
+          )}
         </li>
       ))}
     </ul>

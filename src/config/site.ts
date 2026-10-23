@@ -39,6 +39,12 @@ export const site = {
      * (unlisted is fine) or a direct .mp4 link. Empty = no video section.
      */
     welcomeVideo: "",
+    /**
+     * Eixn's 1-on-1 coaching site, linked where 6SLOT mentions 1-on-1 (Meet the coach, the 10% off
+     * perk, the footer). "?ref=6slot" shows in eixn-dota.com's stats as visitors sent from 6SLOT.
+     */
+    eixnDota: "https://www.eixn-dota.com/?ref=6slot",
+    eixnCoaching: "https://www.eixn-dota.com/coaching?ref=6slot",
     /** 1-on-1 entry offer on eixn-dota.com, linked from the position test result. */
     realProblemDiagnostic: "https://www.eixn-dota.com/coaching",
     /**

@@ -166,6 +166,9 @@ export function CounterPicker() {
   const [editPool, setEditPool] = useState(false);
   const [copied, setCopied] = useState(false);
   const searchRef = useRef<HTMLInputElement>(null);
+  // Type-to-pick inside the active team panel (separate from the hero-grid search below).
+  const [quick, setQuick] = useState("");
+  const quickRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     Promise.all([
@@ -293,6 +296,7 @@ export function CounterPicker() {
     // That team is full: keep going on the other one.
     if (list.length === 4 && other.length < 5) setSide(side === "enemy" ? "ally" : "enemy");
     setQuery("");
+    setQuick("");
   }
   function onHero(id: number) {
     if (editPool) {
@@ -319,8 +323,12 @@ export function CounterPicker() {
     if (pool.size) setPoolOnly(true);
   }
   function pickSide(next: "enemy" | "ally") {
+    if (next !== side) setQuick("");
     setSide(next);
     if (editPool) finishEditPool();
+    // Computers: the cursor goes straight into that team's box. Phones: no surprise keyboard,
+    // the box is right there to tap.
+    if (window.matchMedia("(pointer: fine)").matches) setTimeout(() => quickRef.current?.focus(), 0);
   }
   function removeFromPool(id: number) {
     setPool((prev) => {
@@ -351,6 +359,48 @@ export function CounterPicker() {
         .toLowerCase();
     return heroes.filter((h) => inRole(h) && (h.name.toLowerCase().includes(q) || initials(h.name).startsWith(q)));
   }, [heroes, query, gridRole, positions]);
+
+  /** Suggestions for the team box: names that start with the text first, then the rest. */
+  const quickMatches = useMemo(() => {
+    const q = quick.trim().toLowerCase();
+    if (!heroes || !q) return [];
+    const initials = (n: string) =>
+      n
+        .split(/[\s-]+/)
+        .map((w) => w[0])
+        .join("")
+        .toLowerCase();
+    const rank = (h: Hero) => {
+      const name = h.name.toLowerCase();
+      if (name.startsWith(q)) return 0;
+      if (name.split(/[\s-]+/).some((w) => w.startsWith(q))) return 1;
+      if (initials(h.name).startsWith(q)) return 2;
+      return name.includes(q) ? 3 : -1;
+    };
+    return heroes
+      .filter((h) => !picked.has(h.id))
+      .map((h) => [h, rank(h)] as const)
+      .filter(([, r]) => r >= 0)
+      .sort((a, b) => a[1] - b[1] || a[0].name.localeCompare(b[0].name))
+      .slice(0, 5)
+      .map(([h]) => h);
+  }, [heroes, quick, picked]);
+
+  // Start typing anywhere (not in a field) and the letters go to the active team's box,
+  // like the draft screen in Dota.
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      if (editPool || e.ctrlKey || e.metaKey || e.altKey || e.key.length !== 1 || !/[a-z]/i.test(e.key)) return;
+      const t = e.target as HTMLElement | null;
+      if (t && (t.isContentEditable || ["INPUT", "TEXTAREA", "SELECT"].includes(t.tagName))) return;
+      if ((side === "enemy" ? enemies : allies).length >= 5) return;
+      e.preventDefault();
+      setQuick((q) => q + e.key);
+      quickRef.current?.focus();
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [editPool, side, enemies, allies]);
 
   async function share() {
     try {
@@ -392,6 +442,11 @@ export function CounterPicker() {
             active={side === "ally"}
             onActivate={() => pickSide("ally")}
             onRemove={(id) => setAllies(allies.filter((x) => x !== id))}
+            quick={quick}
+            onQuick={setQuick}
+            suggestions={quickMatches}
+            onPick={add}
+            inputRef={side === "ally" ? quickRef : undefined}
           />
           <span className="relative mx-auto flex h-14 w-14 items-center justify-center" aria-hidden>
             <span
@@ -412,6 +467,11 @@ export function CounterPicker() {
             active={side === "enemy"}
             onActivate={() => pickSide("enemy")}
             onRemove={(id) => setEnemies(enemies.filter((x) => x !== id))}
+            quick={quick}
+            onQuick={setQuick}
+            suggestions={quickMatches}
+            onPick={add}
+            inputRef={side === "enemy" ? quickRef : undefined}
           />
         </div>
 
@@ -715,6 +775,11 @@ function DraftSide({
   active,
   onActivate,
   onRemove,
+  quick,
+  onQuick,
+  suggestions,
+  onPick,
+  inputRef,
 }: {
   title: string;
   tone: "enemy" | "ally";
@@ -723,6 +788,12 @@ function DraftSide({
   active: boolean;
   onActivate: () => void;
   onRemove: (id: number) => void;
+  /** Type-to-pick box, shown on the active team while it has room. */
+  quick: string;
+  onQuick: (q: string) => void;
+  suggestions: Hero[];
+  onPick: (id: number) => void;
+  inputRef?: React.RefObject<HTMLInputElement>;
 }) {
   const color = tone === "enemy" ? "text-red-400" : "text-teal-300";
   const ring = tone === "enemy" ? "border-red-500/60 bg-red-500/[0.04]" : "border-teal-400/60 bg-teal-400/[0.04]";
@@ -778,6 +849,42 @@ function DraftSide({
           );
         })}
       </div>
+      {active && ids.length < 5 && (
+        <div onClick={(e) => e.stopPropagation()} className="mt-2">
+          <input
+            ref={inputRef}
+            value={quick}
+            onChange={(e) => onQuick(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && suggestions[0]) onPick(suggestions[0].id);
+              if (e.key === "Escape") onQuick("");
+            }}
+            placeholder={`Type a hero to add to ${tone === "enemy" ? "the enemy" : "your team"}`}
+            aria-label={`Type a hero to add to ${title.toLowerCase()}`}
+            autoComplete="off"
+            className="w-full rounded-md border border-navy-border bg-navy px-3 py-2 text-sm text-text placeholder:text-text-muted/70 focus:border-gold focus:outline-none"
+          />
+          {quick.trim() && (
+            <div className="mt-1.5 flex flex-wrap gap-1.5">
+              {suggestions.length ? (
+                suggestions.map((h, i) => (
+                  <button
+                    key={h.id}
+                    type="button"
+                    onClick={() => onPick(h.id)}
+                    className={`flex items-center gap-1.5 rounded-md border py-1 pl-1 pr-2 text-xs font-bold transition hover:border-gold/60 hover:text-gold ${i === 0 ? "border-gold/60 text-text" : "border-navy-border text-text-muted"}`}
+                  >
+                    <img src={img(h)} alt="" width={192} height={108} className="h-5 w-9 rounded-sm object-cover" />
+                    {h.name}
+                  </button>
+                ))
+              ) : (
+                <p className="text-xs text-text-muted">No hero matches "{quick.trim()}".</p>
+              )}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }

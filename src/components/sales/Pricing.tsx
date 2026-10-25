@@ -60,6 +60,45 @@ function FounderProgress({ memberPrice }: { memberPrice: number }) {
   );
 }
 
+/** Once founders are gone: every member counts toward the Battle Pass, all the way to the Aegis at 100. */
+function AegisProgress() {
+  const { members } = useMemberCounts();
+  const goal = 100;
+  const pct = Math.min(100, (members / goal) * 100);
+
+  return (
+    <div>
+      <div className="flex items-end justify-between text-xs font-semibold text-text-muted">
+        <span>
+          <strong className="text-gold">{members}</strong> / {goal} members to the Aegis giveaway
+        </span>
+      </div>
+      <div
+        className="mt-1.5 h-2 overflow-hidden rounded-full bg-navy"
+        role="progressbar"
+        aria-label="Members toward the Aegis giveaway"
+        aria-valuemin={0}
+        aria-valuemax={goal}
+        aria-valuenow={members}
+      >
+        <m.div
+          className="h-full rounded-full bg-gradient-to-r from-gold-dark to-gold"
+          initial={{ width: 0 }}
+          whileInView={{ width: `${pct}%` }}
+          viewport={{ once: true }}
+          transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
+        />
+      </div>
+      <p className="mt-2 text-xs text-text-muted">
+        Every new member unlocks Battle Pass rewards for everyone.{" "}
+        <Link to="/battle-pass" className="underline underline-offset-2 hover:text-text">
+          See the rewards
+        </Link>
+      </p>
+    </div>
+  );
+}
+
 /** Feature list (editable in the dashboard), plus the founder perks line while founder spots are open. */
 function Features({ plan, showHighlight }: { plan: PlanCard; showHighlight: boolean }) {
   const colon = plan.highlight.indexOf(":");
@@ -101,7 +140,11 @@ function MembershipCard() {
   return (
     <div id="join" className="card relative grid overflow-hidden border-2 border-gold shadow-[0_0_60px_-20px_rgba(232,181,74,0.5)] md:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]">
       <div className="flex flex-col p-6 sm:p-8 md:border-r md:border-navy-border">
-        {!foundersSoldOut && (
+        {foundersSoldOut ? (
+          <span className="self-start rounded-full border border-gold/60 bg-gold/10 px-3 py-1 text-[11px] font-black uppercase tracking-widest text-gold">
+            Founders sold out · now open to all
+          </span>
+        ) : (
           <span className="self-start rounded-full bg-gold px-3 py-1 text-[11px] font-black uppercase tracking-widest text-navy">
             Founder price
           </span>
@@ -118,14 +161,14 @@ function MembershipCard() {
           <span className="text-text-muted"> / month</span>
         </p>
         <p className="mt-2 text-sm text-text-muted">
-          {foundersSoldOut ? "Cancel anytime." : "Founder price, locked in for as long as you stay."}
+          {foundersSoldOut
+            ? `About $${Math.round(plan.price / 4)} per 3-hour live session. Cancel anytime.`
+            : "Founder price, locked in for as long as you stay."}
         </p>
 
-        {!foundersSoldOut && (
-          <div className="mt-6">
-            <FounderProgress memberPrice={pricing.member.price} />
-          </div>
-        )}
+        <div className="mt-6">
+          {foundersSoldOut ? <AegisProgress /> : <FounderProgress memberPrice={pricing.member.price} />}
+        </div>
 
         <div className="mt-auto pt-8">
           <Checkout label={plan.buttonLabel}>

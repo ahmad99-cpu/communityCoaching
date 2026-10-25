@@ -68,7 +68,7 @@ export const BATTLE_PASS: BattlePassLevel[] = [
  * The highest milestone already reached. Raise it when a level unlocks (e.g. to 25), so the
  * level stays unlocked on the site even if the member count dips after cancellations.
  */
-export const HIGHEST_GOAL_REACHED = 0;
+export const HIGHEST_GOAL_REACHED = 25;
 
 /** Levels after the Aegis, shown as mystery cards until they're revealed at 100 members. */
 export const COMING_SOON_LEVELS = 3;

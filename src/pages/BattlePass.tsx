@@ -26,7 +26,7 @@ const FINAL_GOAL = BATTLE_PASS[BATTLE_PASS.length - 1].goal;
 function useProgress() {
   const { members } = useMemberCounts();
   const [params] = useSearchParams();
-  const preview = import.meta.env.DEV ? Number(params.get("members")) : NaN;
+  const preview = import.meta.env.DEV && params.has("members") ? Number(params.get("members")) : NaN;
   const count = Number.isFinite(preview) && preview >= 0 ? preview : members;
   const reached = Math.max(count, HIGHEST_GOAL_REACHED);
   const nextIndex = BATTLE_PASS.findIndex((l) => reached < l.goal);

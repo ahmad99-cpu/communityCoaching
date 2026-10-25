@@ -24,6 +24,9 @@ export function loadAnalytics() {
   script.defer = true;
   script.dataset.websiteId = id;
   script.dataset.domains = domains.join(",");
+  // Pages like the Counter Picker keep their state in "?…" and update it on every pick; without
+  // this, Umami counted each update as a new page view (tens of thousands of fake views a month).
+  script.dataset.excludeSearch = "true";
   document.head.appendChild(script);
 }
 

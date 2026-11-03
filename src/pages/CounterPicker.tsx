@@ -630,7 +630,7 @@ export function CounterPicker() {
           <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-navy-border pt-3 text-xs text-text-muted">
             <span>
               {data?.source === "stratz"
-                ? "Data from STRATZ, real public matches."
+                ? "Data from real public matches."
                 : "Early data from OpenDota (pro matches)."}{" "}
               {data &&
                 `Updated ${new Date(data.updated).toLocaleDateString("en-US", { month: "short", day: "numeric" })}.`}

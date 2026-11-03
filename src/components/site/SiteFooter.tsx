@@ -7,7 +7,8 @@ import { site } from "@/config/site";
 
 const FREE_TOOLS = [
   { label: "How Built Are You?", to: "/how-built-are-you" },
-  { label: "Counter Picker", to: "/counter-picker", isNew: true },
+  { label: "Counter Picker", to: "/counter-picker" },
+  { label: "Lane Combos", to: "/lane-combos", isNew: true },
 ];
 
 const COMMUNITY = [
@@ -16,7 +17,7 @@ const COMMUNITY = [
 ];
 
 // Free tools for every Dota player, launching around the 6SLOT launch.
-const COMING_SOON = ["Patch Summary", "Player Report", "Lane Combos", "Item Builds", "Eixn's Tier List"];
+const COMING_SOON = ["Patch Summary", "Player Report", "Item Builds", "Eixn's Tier List"];
 
 const POLICIES = [
   { label: "Terms of Service", to: "/policies/terms" },

@@ -10,14 +10,14 @@ import { Icon, type IconName } from "@/components/site/Icons";
  * own link in the header (the spotlight moves to whichever tool launched last).
  */
 const TOOLS: { to: string; label: string; body: string; icon: IconName; isNew?: boolean }[] = [
-  { to: "/counter-picker", label: "Counter Picker", body: "What to pick against any draft", icon: "crosshair", isNew: true },
+  { to: "/lane-combos", label: "Lane Combos", body: "The duos that win their lane", icon: "users", isNew: true },
+  { to: "/counter-picker", label: "Counter Picker", body: "What to pick against any draft", icon: "crosshair" },
   { to: "/how-built-are-you", label: "How Built Are You?", body: "Find your weakest slot in 2 minutes", icon: "hexagon" },
 ];
 /** Shown in the menu, greyed out and not clickable, so people know what's coming. */
 const TOOLS_SOON: { label: string; body: string; icon: IconName }[] = [
   { label: "Patch Summary", body: "Every patch in 2 minutes", icon: "calendar" },
   { label: "Player Report", body: "Your report card from your Dota ID", icon: "clipboard" },
-  { label: "Lane Combos", body: "The duos that win their lane", icon: "users" },
   { label: "Item Builds", body: "What to buy against them", icon: "shield" },
   { label: "Eixn's Tier List", body: "Eixn ranks every hero, each patch", icon: "star" },
 ];

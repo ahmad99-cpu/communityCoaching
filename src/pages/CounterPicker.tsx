@@ -5,7 +5,7 @@ import { Icon } from "@/components/site/Icons";
 import { usePageTitle } from "@/lib/usePageTitle";
 import { track } from "@/lib/analytics";
 import { PhoneQr } from "@/components/tools/PhoneQr";
-import { matchHeroes, useVoicePicks, type VoiceState } from "@/lib/voicePicks";
+import { isBrave, matchHeroes, useVoicePicks, type VoiceState } from "@/lib/voicePicks";
 
 /* ---------------------------------------------------------------- data */
 
@@ -303,36 +303,54 @@ export function CounterPicker() {
     setQuick("");
   }
   /**
-   * Voice: the heroes heard go into the team being filled, in the order they were said. Only that team:
-   * if more were said than it has room for, they're reported, not quietly put on the other side.
+   * Voice: the mic stays on through the draft, and each phrase's heroes go into the team it was turned
+   * on for, in the order they were said. Only that team: once it's full the mic turns off, and heroes
+   * with no room are reported, never quietly put on the other side.
+   *
+   * Phrases can arrive faster than the page redraws, so this works from `draft` (the latest picks,
+   * updated here at once) rather than from this render's lists.
    */
-  function addHeard(transcripts: string[]) {
-    if (!heroes) return;
+  const draft = useRef({ enemies, allies });
+  draft.current = { enemies, allies };
+  const voiceSide = useRef<"enemy" | "ally">("enemy");
+  function addHeard(transcripts: string[]): boolean {
+    if (!heroes) return true;
     const { ids, missed } = matchHeroes(transcripts, heroes);
-    const [list, setList, other] =
-      side === "enemy" ? [enemies, setEnemies, allies] : ([allies, setAllies, enemies] as const);
-    const fresh = ids.filter((id) => !picked.has(id));
+    const team = voiceSide.current;
+    const { enemies: e, allies: a } = draft.current;
+    const [list, other] = team === "enemy" ? [e, a] : [a, e];
+    const taken = new Set([...e, ...a]);
+    const fresh = ids.filter((id) => !taken.has(id));
     const room = 5 - list.length;
     const added = fresh.slice(0, room);
-    if (added.length) setList([...list, ...added]);
-    if (list.length + added.length === 5 && other.length < 5) setSide(side === "enemy" ? "ally" : "enemy");
+    const next = [...list, ...added];
+    if (added.length) {
+      draft.current = team === "enemy" ? { enemies: next, allies: a } : { enemies: e, allies: next };
+      (team === "enemy" ? setEnemies : setAllies)(next);
+    }
+    const full = next.length === 5;
+    if (full && other.length < 5) setSide(team === "enemy" ? "ally" : "enemy");
     setQuick("");
     const names = (xs: number[]) => xs.map((id) => byId.get(id)?.name ?? "").filter(Boolean);
-    setVoiceNote({
-      team: side === "enemy" ? "the enemy" : "your team",
-      added: names(added),
-      already: names(ids.filter((id) => picked.has(id))),
+    // Adds up over the whole time the mic is on: everything added so far, and this phrase's leftovers.
+    setVoiceNote((prev) => ({
+      team: team === "enemy" ? "the enemy" : "your team",
+      added: [...(prev?.added ?? []), ...names(added)],
+      already: names(ids.filter((id) => taken.has(id))),
       noRoom: names(fresh.slice(room)),
       missed,
-    });
-    track("Counter Picker voice used");
+      full,
+    }));
+    return !full;
   }
   const voice = useVoicePicks(addHeard);
   function onMic() {
     if (voice.state === "listening") voice.stop();
     else {
+      voiceSide.current = side;
       setVoiceNote(null);
       voice.start();
+      track("Counter Picker voice used");
     }
   }
 
@@ -972,46 +990,66 @@ interface VoiceNote {
   already: string[];
   noRoom: string[];
   missed: string[];
+  /** The team reached 5 heroes, so the mic turned off. */
+  full: boolean;
 }
 
-/** Under the team box: listening, what was heard, or why voice didn't work. */
+/** Under the team box: listening, what was heard so far, or why voice didn't work. */
 function VoiceLine({ voice }: { voice: { state: VoiceState; live: string; note: VoiceNote | null } }) {
   const { state, live, note } = voice;
   const line = "mt-1.5 text-xs leading-relaxed text-text-muted";
+  if (state === "denied") {
+    return <p className={line}>The microphone is blocked. Allow it for this site in your browser settings to pick by voice.</p>;
+  }
+  if (state === "unavailable") {
+    return (
+      <p className={line}>
+        <span className="font-bold text-text">
+          {isBrave() ? "Brave turns off the voice-to-text service" : "This browser can't turn voice into text"}
+        </span>
+        , so voice picks can't work here. Use Chrome, Edge or Safari for voice, or just type the hero.
+      </p>
+    );
+  }
+  if (state === "error") return <p className={line}>Voice didn't work this time. Try again, or type the hero.</p>;
+
+  const list = (xs: string[]) => xs.join(", ");
+  const heard = note && (
+    <>
+      {note.added.length > 0 && (
+        <>
+          <span className="font-bold text-emerald-400">
+            Added to {note.team}: {list(note.added)}.
+          </span>{" "}
+        </>
+      )}
+      {note.already.length > 0 && <>Already picked: {list(note.already)}. </>}
+      {note.noRoom.length > 0 && <>No room for {list(note.noRoom)}. </>}
+      {note.missed.length > 0 && <>Didn't catch "{note.missed.join(" ")}". </>}
+    </>
+  );
+
   if (state === "listening") {
     return (
       <div className={line} aria-live="polite">
         <p>
-          <span className="font-bold text-red-300">Listening.</span> Say the heroes, like "Anti-Mage, Pudge, Lina".
+          <span className="font-bold text-red-300">Mic on.</span> Say the heroes all at once or one by one as they're
+          picked. It turns off when the team has 5, or tap the mic to stop.
           {live && <span className="text-text"> "{live}"</span>}
         </p>
+        {heard && <p className="mt-0.5">{heard}</p>}
         <p className="mt-0.5 text-[11px] text-text-muted/80">
           Your browser turns your voice into text (Chrome uses Google, Safari uses Apple). 6SLOT never keeps it.
         </p>
       </div>
     );
   }
-  if (state === "denied") {
-    return <p className={line}>The microphone is blocked. Allow it for this site in your browser settings to pick by voice.</p>;
-  }
-  if (state === "error") return <p className={line}>Voice didn't work this time. Try again, or type the hero.</p>;
   if (!note) return null;
-  const list = (xs: string[]) => xs.join(", ");
   return (
     <p className={line} aria-live="polite">
-      {note.added.length ? (
-        <>
-          <span className="font-bold text-emerald-400">
-            Added to {note.team}: {list(note.added)}.
-          </span>{" "}
-          Tap a hero to remove it.
-        </>
-      ) : (
-        <span className="font-bold text-text">No new hero added.</span>
-      )}
-      {note.already.length > 0 && <> Already picked: {list(note.already)}.</>}
-      {note.noRoom.length > 0 && <> No room for {list(note.noRoom)}.</>}
-      {note.missed.length > 0 && <> Didn't catch "{note.missed.join(" ")}".</>}
+      {heard}
+      {note.added.length ? "Tap a hero to remove it." : <span className="font-bold text-text">No new hero added.</span>}
+      {note.full && <> Team full, mic off.</>}
     </p>
   );
 }

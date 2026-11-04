@@ -5,7 +5,7 @@
  * to Google, Safari to Apple; we never see or keep it). This file only does two things with the text:
  *   - matchHeroes(): finds the heroes in it, with Dota nicknames ("AM", "WK", "Jugg") and a little
  *     forgiveness for misheard names ("lena" -> Lina)
- *   - useVoicePicks(): a tap-to-talk hook that listens once and hands back what it heard
+ *   - useVoicePicks(): tap the mic once and it listens through the draft, handing over each phrase
  */
 import { useCallback, useEffect, useRef, useState } from "react";
 
@@ -119,6 +119,8 @@ const NICKNAMES: Record<string, string[]> = {
 const FILLER = new Set([
   "and", "the", "a", "an", "then", "plus", "also", "with", "enemy", "enemies", "they", "theyve", "have", "has",
   "got", "picked", "pick", "picks", "is", "are", "team", "um", "uh", "okay", "ok", "so", "their", "our", "we",
+  "i", "im", "think", "it", "its", "maybe", "like", "now", "again", "too", "last", "first", "next", "one", "hero",
+  "heroes", "took", "taking", "going", "gonna", "playing", "on", "of", "for", "yeah", "yes", "no", "wait",
 ]);
 
 const norm = (s: string) =>
@@ -252,55 +254,138 @@ function recognitionCtor(): RecognitionCtor | null {
   return w.SpeechRecognition ?? w.webkitSpeechRecognition ?? null;
 }
 
-export type VoiceState = "idle" | "listening" | "denied" | "error";
+/**
+ * "unavailable": the browser has speech recognition but no speech service behind it. Brave turns
+ * Google's off (and says so in navigator.brave), and Opera, Vivaldi and other Chrome-based browsers
+ * often do too: they fail at once, or end before anything is heard.
+ */
+export type VoiceState = "idle" | "listening" | "denied" | "unavailable" | "error";
+
+/** Brave: known to have no speech service, so don't even try (it would just stop). */
+export const isBrave = () => typeof navigator !== "undefined" && "brave" in navigator;
+
+
+/** The mic turns itself off after this long, about one draft, so it isn't left listening all game. */
+export const VOICE_MAX_MS = 3 * 60 * 1000;
 
 /**
- * Tap to talk: start() listens until the player stops speaking (never in the background, so team
- * voice chat isn't picked up), then calls onHeard with every reading of what was said. While
- * listening, `live` is the words so far.
+ * Tap once to listen through the draft: start() keeps the mic on, restarting the browser's
+ * recognition after every pause (Chrome stops it on silence, or after about a minute), and calls
+ * onHeard with every reading of each phrase as soon as it's finished. onHeard returns whether to keep
+ * listening (false once the team is full). It stops on stop(), on that false, or after VOICE_MAX_MS.
+ * While listening, `live` is the words so far.
  */
-export function useVoicePicks(onHeard: (transcripts: string[]) => void) {
+export function useVoicePicks(onHeard: (transcripts: string[]) => boolean) {
   const supported = recognitionCtor() !== null;
   const [state, setState] = useState<VoiceState>("idle");
   const [live, setLive] = useState("");
   const rec = useRef<Recognition | null>(null);
   const handler = useRef(onHeard);
   handler.current = onHeard;
+  /** The mic is on (across the restarts), and since when. */
+  const on = useRef(false);
+  const onSince = useRef(0);
+  /** Sessions in a row that ended at once with nothing heard: the browser has no speech service. */
+  const quickEnds = useRef(0);
+  const timer = useRef<ReturnType<typeof setTimeout>>();
 
-  useEffect(() => () => rec.current?.abort(), []);
+  const stop = useCallback(() => {
+    on.current = false;
+    clearTimeout(timer.current);
+    rec.current?.stop();
+    setLive("");
+    setState((s) => (s === "listening" ? "idle" : s));
+  }, []);
 
-  const stop = useCallback(() => rec.current?.stop(), []);
+  useEffect(
+    () => () => {
+      on.current = false;
+      clearTimeout(timer.current);
+      rec.current?.abort();
+    },
+    [],
+  );
 
-  const start = useCallback(() => {
+  /** One recognition session; when the browser ends it, the next one starts while the mic is on. */
+  const listen = useCallback(() => {
     const Ctor = recognitionCtor();
-    if (!Ctor || rec.current) return;
+    if (!Ctor || !on.current) return;
     const r = new Ctor();
     r.lang = "en-US";
-    r.continuous = false;
+    r.continuous = true;
     r.interimResults = true;
     r.maxAlternatives = 5;
-    let finals: string[] = [];
+    let heardAnything = false;
+    let failed = false;
+    let done = 0; // results already handed over
+    const startedAt = Date.now();
+
     r.onresult = (e) => {
-      const result = e.results[e.results.length - 1];
-      setLive(result[0]?.transcript ?? "");
-      if (result.isFinal) finals = Array.from({ length: result.length }, (_, i) => result[i].transcript);
+      heardAnything = true;
+      quickEnds.current = 0;
+      const results = Array.from(e.results);
+      const last = results[results.length - 1];
+      setLive(last && !last.isFinal ? last[0]?.transcript ?? "" : "");
+      for (let i = done; i < results.length; i++) {
+        const res = results[i];
+        if (!res.isFinal) break;
+        done = i + 1;
+        const keep = handler.current(Array.from({ length: res.length }, (_, k) => res[k].transcript));
+        if (!keep) {
+          stop();
+          return;
+        }
+      }
     };
-    r.onerror = (e) => setState(e.error === "not-allowed" || e.error === "service-not-allowed" ? "denied" : e.error === "no-speech" ? "idle" : "error");
+    r.onerror = (e) => {
+      failed = true;
+      if (e.error === "no-speech" || e.error === "aborted") return; // a pause: the next session carries on
+      on.current = false;
+      clearTimeout(timer.current);
+      if (e.error === "not-allowed") setState("denied");
+      // No speech service behind the browser (or it can't be reached).
+      else if (e.error === "service-not-allowed" || e.error === "network" || e.error === "language-not-supported") setState("unavailable");
+      else setState("error");
+    };
     r.onend = () => {
       rec.current = null;
       setLive("");
-      setState((s) => (s === "listening" ? "idle" : s));
-      if (finals.length) handler.current(finals);
+      if (!on.current) return;
+      if (!failed && !heardAnything && Date.now() - startedAt < 1000) quickEnds.current++;
+      // The very first session, or three in a row, ending at once: nothing to restart against.
+      if (quickEnds.current >= (Date.now() - onSince.current < 1500 ? 1 : 3)) {
+        on.current = false;
+        clearTimeout(timer.current);
+        setState("unavailable");
+        return;
+      }
+      listen();
     };
+
     rec.current = r;
-    setState("listening");
     try {
       r.start();
     } catch {
       rec.current = null;
+      on.current = false;
       setState("error");
     }
-  }, []);
+  }, [stop]);
+
+  const start = useCallback(() => {
+    if (!recognitionCtor() || on.current) return;
+    if (isBrave()) {
+      setState("unavailable");
+      return;
+    }
+    on.current = true;
+    onSince.current = Date.now();
+    quickEnds.current = 0;
+    setState("listening");
+    clearTimeout(timer.current);
+    timer.current = setTimeout(stop, VOICE_MAX_MS);
+    listen();
+  }, [listen, stop]);
 
   return { supported, state, live, start, stop };
 }

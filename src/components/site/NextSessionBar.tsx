@@ -43,7 +43,7 @@ export function NextSessionBar() {
           <span>
             {day} · {time}
           </span>
-          <span className="text-navy-border" aria-hidden>
+          <span className="text-gold" aria-hidden>
             |
           </span>
           {live ? (
@@ -68,7 +68,7 @@ export function NextSessionBar() {
           </span>
           <span className="flex min-w-0 flex-col lg:flex-row lg:items-center lg:gap-x-3">
             <span className="truncate text-sm font-bold text-text lg:text-base">{topic || "Topic drops soon"}</span>
-            <span className="hidden text-navy-border lg:inline" aria-hidden>
+            <span className="hidden text-gold lg:inline" aria-hidden>
               |
             </span>
             <span className="whitespace-nowrap text-xs font-semibold text-text-muted lg:text-base lg:text-text">

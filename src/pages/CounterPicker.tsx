@@ -4,6 +4,8 @@ import { WideContainer } from "@/components/layout/Container";
 import { Icon } from "@/components/site/Icons";
 import { usePageTitle } from "@/lib/usePageTitle";
 import { track } from "@/lib/analytics";
+import { PhoneQr } from "@/components/tools/PhoneQr";
+import { matchHeroes, useVoicePicks, type VoiceState } from "@/lib/voicePicks";
 
 /* ---------------------------------------------------------------- data */
 
@@ -169,6 +171,8 @@ export function CounterPicker() {
   // Type-to-pick inside the active team panel (separate from the hero-grid search below).
   const [quick, setQuick] = useState("");
   const quickRef = useRef<HTMLInputElement>(null);
+  /** What the last voice pick did, shown under the team box. */
+  const [voiceNote, setVoiceNote] = useState<VoiceNote | null>(null);
 
   useEffect(() => {
     Promise.all([
@@ -298,6 +302,40 @@ export function CounterPicker() {
     setQuery("");
     setQuick("");
   }
+  /**
+   * Voice: the heroes heard go into the team being filled, in the order they were said. Only that team:
+   * if more were said than it has room for, they're reported, not quietly put on the other side.
+   */
+  function addHeard(transcripts: string[]) {
+    if (!heroes) return;
+    const { ids, missed } = matchHeroes(transcripts, heroes);
+    const [list, setList, other] =
+      side === "enemy" ? [enemies, setEnemies, allies] : ([allies, setAllies, enemies] as const);
+    const fresh = ids.filter((id) => !picked.has(id));
+    const room = 5 - list.length;
+    const added = fresh.slice(0, room);
+    if (added.length) setList([...list, ...added]);
+    if (list.length + added.length === 5 && other.length < 5) setSide(side === "enemy" ? "ally" : "enemy");
+    setQuick("");
+    const names = (xs: number[]) => xs.map((id) => byId.get(id)?.name ?? "").filter(Boolean);
+    setVoiceNote({
+      team: side === "enemy" ? "the enemy" : "your team",
+      added: names(added),
+      already: names(ids.filter((id) => picked.has(id))),
+      noRoom: names(fresh.slice(room)),
+      missed,
+    });
+    track("Counter Picker voice used");
+  }
+  const voice = useVoicePicks(addHeard);
+  function onMic() {
+    if (voice.state === "listening") voice.stop();
+    else {
+      setVoiceNote(null);
+      voice.start();
+    }
+  }
+
   function onHero(id: number) {
     if (editPool) {
       // Built from the latest list, so quick taps in a row are all kept.
@@ -421,6 +459,19 @@ export function CounterPicker() {
           <p className="mt-1 text-[11px] font-black uppercase tracking-[0.22em] text-text-muted">
             <span className="text-gold">Free tool</span> · Powered by STRATZ
           </p>
+          <div className="mt-3">
+            <PhoneQr
+              version={`${enemies.join(",")}|${allies.join(",")}|${position ?? ""}`}
+              hint={
+                voice.supported ? (
+                  <>
+                    On the phone, tap the <strong className="text-text">mic</strong> beside the team box and say the heroes,
+                    like "Anti-Mage, Pudge, Lina".
+                  </>
+                ) : undefined
+              }
+            />
+          </div>
         </div>
 
         {failed && (
@@ -447,6 +498,7 @@ export function CounterPicker() {
             suggestions={quickMatches}
             onPick={add}
             inputRef={side === "ally" ? quickRef : undefined}
+            voice={voice.supported ? { state: voice.state, live: voice.live, note: voiceNote, onMic } : undefined}
           />
           <span className="relative mx-auto flex h-14 w-14 items-center justify-center" aria-hidden>
             <span
@@ -472,6 +524,7 @@ export function CounterPicker() {
             suggestions={quickMatches}
             onPick={add}
             inputRef={side === "enemy" ? quickRef : undefined}
+            voice={voice.supported ? { state: voice.state, live: voice.live, note: voiceNote, onMic } : undefined}
           />
         </div>
 
@@ -780,6 +833,7 @@ function DraftSide({
   suggestions,
   onPick,
   inputRef,
+  voice,
 }: {
   title: string;
   tone: "enemy" | "ally";
@@ -794,6 +848,8 @@ function DraftSide({
   suggestions: Hero[];
   onPick: (id: number) => void;
   inputRef?: React.RefObject<HTMLInputElement>;
+  /** Tap-to-talk picks, when the browser can do speech (left out when it can't). */
+  voice?: { state: VoiceState; live: string; note: VoiceNote | null; onMic: () => void };
 }) {
   const color = tone === "enemy" ? "text-red-400" : "text-teal-300";
   const ring = tone === "enemy" ? "border-red-500/60 bg-red-500/[0.04]" : "border-teal-400/60 bg-teal-400/[0.04]";
@@ -851,19 +907,38 @@ function DraftSide({
       </div>
       {active && ids.length < 5 && (
         <div onClick={(e) => e.stopPropagation()} className="mt-2">
-          <input
-            ref={inputRef}
-            value={quick}
-            onChange={(e) => onQuick(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && suggestions[0]) onPick(suggestions[0].id);
-              if (e.key === "Escape") onQuick("");
-            }}
-            placeholder={`Type a hero to add to ${tone === "enemy" ? "the enemy" : "your team"}`}
-            aria-label={`Type a hero to add to ${title.toLowerCase()}`}
-            autoComplete="off"
-            className="w-full rounded-md border border-navy-border bg-navy px-3 py-2 text-sm text-text placeholder:text-text-muted/70 focus:border-gold focus:outline-none"
-          />
+          <div className="flex gap-1.5">
+            <input
+              ref={inputRef}
+              value={quick}
+              onChange={(e) => onQuick(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && suggestions[0]) onPick(suggestions[0].id);
+                if (e.key === "Escape") onQuick("");
+              }}
+              placeholder={`Type a hero to add to ${tone === "enemy" ? "the enemy" : "your team"}`}
+              aria-label={`Type a hero to add to ${title.toLowerCase()}`}
+              autoComplete="off"
+              className="w-full rounded-md border border-navy-border bg-navy px-3 py-2 text-sm text-text placeholder:text-text-muted/70 focus:border-gold focus:outline-none"
+            />
+            {voice && (
+              <button
+                type="button"
+                onClick={voice.onMic}
+                aria-pressed={voice.state === "listening"}
+                aria-label={voice.state === "listening" ? "Stop listening" : `Say the heroes to add to ${title.toLowerCase()}`}
+                title={voice.state === "listening" ? "Stop listening" : "Tap and say the heroes"}
+                className={`flex w-10 shrink-0 items-center justify-center rounded-md border transition ${
+                  voice.state === "listening"
+                    ? "animate-pulse border-red-400 bg-red-500/15 text-red-300"
+                    : "border-navy-border bg-navy text-text-muted hover:border-gold/60 hover:text-gold"
+                }`}
+              >
+                <Icon name="mic" className="h-4 w-4" />
+              </button>
+            )}
+          </div>
+          {voice && <VoiceLine voice={voice} />}
           {quick.trim() && (
             <div className="mt-1.5 flex flex-wrap gap-1.5">
               {suggestions.length ? (
@@ -886,6 +961,58 @@ function DraftSide({
         </div>
       )}
     </div>
+  );
+}
+
+/** What one voice pick did: heroes added, and anything it couldn't use. */
+interface VoiceNote {
+  /** Where the heroes went ("the enemy"): the note can show under the other team once this one is full. */
+  team: string;
+  added: string[];
+  already: string[];
+  noRoom: string[];
+  missed: string[];
+}
+
+/** Under the team box: listening, what was heard, or why voice didn't work. */
+function VoiceLine({ voice }: { voice: { state: VoiceState; live: string; note: VoiceNote | null } }) {
+  const { state, live, note } = voice;
+  const line = "mt-1.5 text-xs leading-relaxed text-text-muted";
+  if (state === "listening") {
+    return (
+      <div className={line} aria-live="polite">
+        <p>
+          <span className="font-bold text-red-300">Listening.</span> Say the heroes, like "Anti-Mage, Pudge, Lina".
+          {live && <span className="text-text"> "{live}"</span>}
+        </p>
+        <p className="mt-0.5 text-[11px] text-text-muted/80">
+          Your browser turns your voice into text (Chrome uses Google, Safari uses Apple). 6SLOT never keeps it.
+        </p>
+      </div>
+    );
+  }
+  if (state === "denied") {
+    return <p className={line}>The microphone is blocked. Allow it for this site in your browser settings to pick by voice.</p>;
+  }
+  if (state === "error") return <p className={line}>Voice didn't work this time. Try again, or type the hero.</p>;
+  if (!note) return null;
+  const list = (xs: string[]) => xs.join(", ");
+  return (
+    <p className={line} aria-live="polite">
+      {note.added.length ? (
+        <>
+          <span className="font-bold text-emerald-400">
+            Added to {note.team}: {list(note.added)}.
+          </span>{" "}
+          Tap a hero to remove it.
+        </>
+      ) : (
+        <span className="font-bold text-text">No new hero added.</span>
+      )}
+      {note.already.length > 0 && <> Already picked: {list(note.already)}.</>}
+      {note.noRoom.length > 0 && <> No room for {list(note.noRoom)}.</>}
+      {note.missed.length > 0 && <> Didn't catch "{note.missed.join(" ")}".</>}
+    </p>
   );
 }
 

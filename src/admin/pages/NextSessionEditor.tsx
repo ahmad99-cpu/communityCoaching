@@ -25,7 +25,7 @@ export function NextSessionEditor() {
 
       <div className="space-y-5">
         <Panel title="This week">
-          <Field label="Date & time" hint="In your own timezone. Visitors see it converted to theirs.">
+          <Field label="First session of the week" hint="In your own timezone. Visitors see it converted to theirs.">
             <input
               type="datetime-local"
               className={`${inputClass} [color-scheme:dark]`}
@@ -48,8 +48,8 @@ export function NextSessionEditor() {
         </Panel>
 
         <p className="text-xs leading-relaxed text-text-muted">
-          Forgot to update it? Once a session is over, the site moves the card to the same time next week by itself and
-          shows “Topic drops soon” until you set the new topic.
+          The topic covers this session and the rest of the week (Wednesday and Saturday). Forgot to update it? The site
+          moves on to the next session by itself and shows “Topic drops soon” until you set the new topic.
         </p>
       </div>
 

@@ -22,6 +22,17 @@ export const site = {
     countsUrl: "",
   },
 
+  /**
+   * The weekly live sessions, in UTC (day: 0 = Sunday … 6 = Saturday). The top bar counts down to
+   * the next one, and the topic set in the dashboard covers one full week of them.
+   */
+  sessions: {
+    weekly: [
+      { day: 3, hour: 10, minute: 0 }, // Wednesday, 1 PM GMT+3
+      { day: 6, hour: 12, minute: 0 }, // Saturday, 3 PM GMT+3
+    ],
+  },
+
   links: {
     /** DISCORD_INVITE_LINK: the Discord invite on the thank-you page after payment (the public server). */
     discordInvite: "https://discord.gg/UPz75GNqGP",

@@ -35,7 +35,7 @@ export const DEFAULT_CONTENT: SiteContent = {
       subtitle: "Launch price, locked in forever. First 25 members only.",
       badge: "Limited",
       features: [
-        "Weekly live sessions, 3+ hours each",
+        "2 live sessions every week, Wednesday and Saturday",
         "Real games broken down live (members' replays and Eixn's prepared examples)",
         "Live practice every session",
         "Practice tasks & progress rewards",
@@ -63,8 +63,8 @@ export const DEFAULT_CONTENT: SiteContent = {
     stackTitle: "Everything you get every month",
     stack: [
       {
-        item: "4 live sessions with Eixn",
-        detail: "3+ hours every Saturday. One topic, real games, live practice.",
+        item: "8 live sessions with Eixn",
+        detail: "Every Wednesday and Saturday. One topic a week, real games, live practice.",
         value: 220,
         founderOnly: false,
       },
@@ -115,7 +115,7 @@ export const DEFAULT_CONTENT: SiteContent = {
       {
         group: "How 6SLOT works",
         q: "When are the sessions?",
-        a: "Once a week, 3+ hours live on Discord, in English. The first session is October 31 at 12:00 UTC. Times can shift based on a weekly member survey, so they work for as many members as possible.",
+        a: "Twice a week, live on Discord, in English: Wednesday at 10:00 UTC and Saturday at 12:00 UTC, on the same topic, so you can make whichever fits your week. The bar at the top of the site shows the next one in your own timezone. Times can shift based on member feedback, so they work for as many members as possible.",
       },
       {
         group: "How 6SLOT works",

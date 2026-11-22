@@ -162,7 +162,7 @@ function MembershipCard() {
         </p>
         <p className="mt-2 text-sm text-text-muted">
           {foundersSoldOut
-            ? `About $${Math.round(plan.price / 4)} per 3-hour live session. Cancel anytime.`
+            ? `About $${Math.round(plan.price / (site.sessions.weekly.length * 4))} per live session. Cancel anytime.`
             : "Founder price, locked in for as long as you stay."}
         </p>
 

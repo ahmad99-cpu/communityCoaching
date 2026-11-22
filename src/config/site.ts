@@ -10,9 +10,10 @@ export const site = {
     founderCap: 25,
     /**
      * The live counts come from Supabase (active PayPal subscriptions) automatically. These are a
-     * floor: the site never shows fewer than this. Leave at 0 unless someone joined outside PayPal.
+     * floor: the site never shows fewer than this. All 25 founder spots were claimed on Oct 25, 2026,
+     * and a spot never reopens: a founder who cancels just loses the $19 price. So this stays at 25.
      */
-    foundersTaken: 0,
+    foundersTaken: 25,
     /** Same, for all paying members (founders included). Drives the Battle Pass. */
     membersTaken: 0,
     /**

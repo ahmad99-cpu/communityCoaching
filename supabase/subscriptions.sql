@@ -83,17 +83,19 @@ begin
   delete from subscriptions
    where status = 'pending' and created_at < now() - public.pending_hold();
 
+  -- Every founder who ever paid, plus checkouts still holding a spot. Founder spots never
+  -- reopen: a founder who cancels just loses the price (founders_never_reopen.sql).
   select count(*) into taken
     from subscriptions
-   where plan = 'founder' and status in ('active', 'pending');
+   where plan = 'founder';
 
   if p_plan = 'founder' and taken >= public.founder_cap() then
     return null;
   end if;
-  -- The member plan only opens once founders are sold out (brief §3.7): that means
-  -- paid founders, not checkouts that might still be abandoned.
+  -- The member plan opens once founders are sold out: paid founders (cancelled ones included),
+  -- not checkouts that might still be abandoned.
   if p_plan = 'member'
-     and (select count(*) from subscriptions where plan = 'founder' and status = 'active') < public.founder_cap() then
+     and (select count(*) from subscriptions where plan = 'founder' and status <> 'pending') < public.founder_cap() then
     return null;
   end if;
 
